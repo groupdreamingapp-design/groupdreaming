@@ -69,6 +69,7 @@ export type Installment = {
     alicuotaPura: number;
     gastosAdm: number;
     seguroVida: number;
+    derechoSuscripcion?: number;
   };
   awards?: Award[];
 };

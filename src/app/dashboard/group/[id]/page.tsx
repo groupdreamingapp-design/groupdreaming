@@ -131,6 +131,9 @@ export default function GroupDetailPage() {
                             <div className="grid gap-2 text-sm">
                                 <div className="flex justify-between"><span>Alícuota Pura:</span><strong>{formatCurrency(inst.breakdown.alicuotaPura)}</strong></div>
                                 <div className="flex justify-between"><span>Gastos Adm:</span><strong>{formatCurrency(inst.breakdown.gastosAdm)}</strong></div>
+                                {inst.breakdown.derechoSuscripcion && (
+                                  <div className="flex justify-between"><span>Derecho Suscripción:</span><strong>{formatCurrency(inst.breakdown.derechoSuscripcion)}</strong></div>
+                                )}
                                 <div className="flex justify-between"><span>Seguro de Vida:</span><strong>{formatCurrency(inst.breakdown.seguroVida)}</strong></div>
                                 <div className="flex justify-between font-bold text-base border-t pt-2 mt-2"><span>Total:</span><span>{formatCurrency(inst.total)}</span></div>
                             </div>

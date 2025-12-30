@@ -97,30 +97,42 @@ export const auctions: Auction[] = [
     { id: "auc-2", groupId: "GR-008", capital: 12000, plazo: 36, cuotasPagadas: 20, precioMinimo: 6500, highestBid: 6500, endDate: "2024-07-29" },
 ]
 
+// Assuming GR-001 is the context for these installments
+const capital = 20000;
+const plazo = 60;
+
+const alicuotaPura = capital / plazo;
+const gastosAdm = alicuotaPura * 0.10; // 10%
+const seguroVida = 13.34; // Placeholder fixed value for simplicity
+const totalSuscripcion = capital * 0.03;
+const mesesFinanciacionSuscripcion = Math.floor(plazo * 0.15);
+const cuotaSuscripcion = mesesFinanciacionSuscripcion > 0 ? totalSuscripcion / mesesFinanciacionSuscripcion : 0;
+
+
 export const installments: Installment[] = Array.from({ length: 60 }, (_, i) => {
-    let awards: Award[] = [];
-    // Pre-generate awards for the first 5 installments to have stable data
-    const pregeneratedAwards = [
-        [{ type: 'sorteo', orderNumber: 18 }, { type: 'licitacion', orderNumber: 42 }],
-        [{ type: 'sorteo', orderNumber: 5 }, { type: 'licitacion', orderNumber: 29 }],
-        [{ type: 'sorteo', orderNumber: 51 }, { type: 'licitacion', orderNumber: 11 }],
-        [{ type: 'sorteo', orderNumber: 23 }, { type: 'licitacion', orderNumber: 38 }],
-        [{ type: 'sorteo', orderNumber: 45 }, { type: 'licitacion', orderNumber: 9 }],
-    ]
+    let awards: Award[] | undefined = undefined;
     if (i < 5) {
-        awards = pregeneratedAwards[i];
+        awards = [
+            { type: 'sorteo', orderNumber: Math.floor(Math.random() * 60) + 1 },
+            { type: 'licitacion', orderNumber: Math.floor(Math.random() * 60) + 1 }
+        ];
     }
+
+    const derechoSuscripcion = i < mesesFinanciacionSuscripcion ? cuotaSuscripcion : 0;
+    const totalCuota = alicuotaPura + gastosAdm + seguroVida + derechoSuscripcion;
+
     return {
         id: `cuota-${i + 1}`,
         number: i + 1,
         dueDate: `2024-${((i + 7) % 12) + 1}-10`,
         status: i < 5 ? 'Pagado' : i === 5 ? 'Pendiente' : 'Futuro',
-        total: 380,
+        total: totalCuota,
         breakdown: {
-            alicuotaPura: 333.33,
-            gastosAdm: 33.33,
-            seguroVida: 13.34
+            alicuotaPura: alicuotaPura,
+            gastosAdm: gastosAdm,
+            seguroVida: seguroVida,
+            derechoSuscripcion: i < mesesFinanciacionSuscripcion ? derechoSuscripcion : undefined,
         },
-        awards: awards.length > 0 ? awards : undefined,
+        awards,
     }
 });
