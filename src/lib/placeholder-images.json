@@ -3,7 +3,7 @@
     {
       "id": "hero-family",
       "description": "Couple happily planning their future in a new home.",
-      "imageUrl": "https://images.unsplash.com/photo-1560185007-c5ca9d2c014d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxoYXBweSUyMGNvdXBsZSUyMGhvbWV8ZW58MHx8fHwxNzE4NzIwMzIyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1560185007-c5ca9d2c014d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxoYXBweSUyMGNvdXBsZSUyMGhvbWV8ZW58MHx8fHwxNzE4NzIwMzIyfDA&ixlib=rb-4.1.0&q=80&w=1920",
       "imageHint": "happy couple home",
       "width": 1920,
       "height": 1280
@@ -18,7 +18,7 @@
     },
     {
       "id": "goal-car",
-      "description": "A shiny new modern car.",
+      "description": "Un auto nuevo",
       "imageUrl": "https://images.unsplash.com/photo-1542281286-9e0a16bb7366?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxuZXclMjBjYXJ8ZW58MHx8fHwxNzE4NzIwNDcyfDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "new car",
       "width": 1080,
@@ -26,7 +26,7 @@
     },
     {
       "id": "goal-travel",
-      "description": "A person looking at a beautiful travel destination.",
+      "description": "El viaje de tus sueños",
       "imageUrl": "https://images.unsplash.com/photo-1501785888041-af3ef285b470?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHx0cmF2ZWx8ZW58MHx8fHwxNzE4NzIwNTMxfDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "travel destination",
       "width": 1080,
@@ -34,7 +34,7 @@
     },
     {
       "id": "goal-house",
-      "description": "A modern new house.",
+      "description": "Tu casa propia",
       "imageUrl": "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxub2Rlcm4lMjBob3VzZXxlbnwwfHx8fDE3MTg3MjA1ODd8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "modern house",
       "width": 1080,

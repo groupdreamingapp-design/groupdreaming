@@ -12,6 +12,11 @@ import { Logo } from '@/components/icons';
 import { useEffect, useState } from "react";
 
 const heroImage = PlaceHolderImages.find((img) => img.id === 'hero-family');
+const goalImages = [
+    PlaceHolderImages.find((img) => img.id === 'goal-house'),
+    PlaceHolderImages.find((img) => img.id === 'goal-car'),
+    PlaceHolderImages.find((img) => img.id === 'goal-travel'),
+]
 
 export default function LandingPage() {
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
@@ -48,7 +53,7 @@ export default function LandingPage() {
           <Button variant="ghost" asChild>
             <Link href="/dashboard">Ingresar</Link>
           </Button>
-          <Button asChild className="bg-primary hover:bg-primary/90 text-primary-foreground">
+          <Button asChild>
             <Link href="/dashboard">Comenzar Ahora</Link>
           </Button>
         </nav>
@@ -77,7 +82,7 @@ export default function LandingPage() {
               Somos una comunidad que transforma el ahorro en acción. Unimos la confianza de los círculos de amigos con la seguridad de la tecnología para que alcances tus metas.
             </p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
-              <Button size="lg" asChild className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg">
+              <Button size="lg" asChild>
                 <Link href="/dashboard">
                   Únete a un Grupo <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
@@ -86,6 +91,36 @@ export default function LandingPage() {
           </div>
         </section>
         
+        {/* Goals Section */}
+        <section className="py-24 sm:py-32">
+            <div className="container mx-auto px-4">
+                <h2 className="text-center font-headline text-3xl font-bold tracking-tight sm:text-4xl">
+                    Materializa tus sueños
+                </h2>
+                <p className="mt-4 text-center text-lg text-muted-foreground">
+                    Tu casa, tu auto, ese viaje que tanto esperas. Todo es posible.
+                </p>
+                <div className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-3">
+                    {goalImages.map((image, index) => image && (
+                        <div key={index} className="group relative overflow-hidden rounded-lg">
+                            <Image 
+                                src={image.imageUrl}
+                                alt={image.description}
+                                width={image.width}
+                                height={image.height}
+                                className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                data-ai-hint={image.imageHint}
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                            <div className="absolute bottom-0 left-0 p-6">
+                                <h3 className="text-2xl font-bold text-white">{image.description}</h3>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </section>
+
         {/* Features Section */}
         <section className="py-24 sm:py-32 bg-secondary">
           <div className="container mx-auto px-4">
