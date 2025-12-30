@@ -21,7 +21,7 @@ export function Header() {
           <nav className="grid gap-6 text-lg font-medium">
             <div className="flex items-center gap-2 text-lg font-semibold mb-4">
               <Logo className="h-8 w-8 text-primary" />
-              <span className="text-xl font-bold">Dream Pool</span>
+              <span className="text-xl font-bold">Group Dreaming</span>
             </div>
             <MainNav isMobile={true} />
           </nav>

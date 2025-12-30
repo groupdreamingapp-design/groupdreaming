@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { cn } from '@/lib/utils';
 
 export const metadata: Metadata = {
-  title: 'Dream Pool',
+  title: 'Group Dreaming',
   description: 'El impulso para lo que de verdad importa.',
 };
 

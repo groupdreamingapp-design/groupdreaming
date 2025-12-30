@@ -17,7 +17,7 @@ export default function WalletPage() {
     <>
       <div>
         <h1 className="text-3xl font-bold font-headline">Billetera</h1>
-        <p className="text-muted-foreground">Tu centro de control financiero en Dream Pool.</p>
+        <p className="text-muted-foreground">Tu centro de control financiero en Group Dreaming.</p>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">

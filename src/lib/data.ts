@@ -10,8 +10,8 @@ export const user: User = {
 
 export const savingsGoal: SavingsGoal = {
     name: "Auto 0km",
-    targetAmount: 20000,
-    currentAmount: 7500,
+    targetAmount: 25000,
+    currentAmount: 8500,
     imageUrl: PlaceHolderImages.find(img => img.id === 'goal-car')?.imageUrl || '',
     imageHint: PlaceHolderImages.find(img => img.id === 'goal-car')?.imageHint || 'new car',
 };

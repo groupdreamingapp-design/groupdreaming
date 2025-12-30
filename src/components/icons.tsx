@@ -1,24 +1,14 @@
 export const Logo = ({ className }: { className?: string }) => (
   <svg
     className={className}
-    viewBox="0 0 100 100"
-    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
     fill="none"
-    stroke="currentColor"
-    strokeWidth="6"
+    xmlns="http://www.w3.org/2000/svg"
   >
-    <title>Dream Pool Logo</title>
+    <title>Group Dreaming Logo</title>
     <path
-      d="M25,65 C25,80 35,90 50,90 C65,90 75,80 75,65 C75,50 50,20 50,20 C50,20 25,50 25,65Z"
-      strokeLinecap="round"
-      strokeLinejoin="round"
+      d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 4c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm0 14c-2.03 0-4.43-.82-6.14-2.88a9.96 9.96 0 0112.28 0C16.43 19.18 14.03 20 12 20z"
+      fill="currentColor"
     />
-    <path
-      d="M50,90 V10"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeDasharray="10 10"
-    />
-     <circle cx="50" cy="65" r="8" fill="currentColor" stroke="none" />
   </svg>
 );

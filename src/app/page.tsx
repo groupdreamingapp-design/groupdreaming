@@ -42,7 +42,7 @@ export default function LandingPage() {
       <header className="container mx-auto px-4 sm:px-6 lg:px-8 flex h-20 items-center justify-between">
         <Link href="/" className="flex items-center gap-2">
           <Logo className="h-8 w-8 text-primary" />
-          <span className="text-xl font-bold text-foreground">Dream Pool</span>
+          <span className="text-xl font-bold text-foreground">Group Dreaming</span>
         </Link>
         <nav className="flex items-center gap-4">
           <Button variant="ghost" asChild>
@@ -173,7 +173,7 @@ export default function LandingPage() {
 
       <footer className="bg-secondary">
         <div className="container mx-auto px-4 py-8 text-center text-muted-foreground">
-          <p>&copy; {currentYear} Dream Pool (Group Dreaming S.A.S.). Todos los derechos reservados.</p>
+          <p>&copy; {currentYear} Group Dreaming (Group Dreaming S.A.S.). Todos los derechos reservados.</p>
           <p className="text-sm mt-2">Hecho con ❤️ para cumplir sueños.</p>
         </div>
       </footer>

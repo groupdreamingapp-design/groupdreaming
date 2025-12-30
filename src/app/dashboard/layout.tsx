@@ -18,7 +18,7 @@ export default function DashboardLayout({
           <div className="flex h-16 items-center border-b px-6">
             <Link href="/dashboard" className="flex items-center gap-2 font-semibold">
               <Logo className="h-8 w-8 text-primary" />
-              <span className="text-xl">Dream Pool</span>
+              <span className="text-xl">Group Dreaming</span>
             </Link>
           </div>
           <div className="flex-1">
