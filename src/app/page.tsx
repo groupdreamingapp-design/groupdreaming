@@ -56,13 +56,14 @@ export default function LandingPage() {
 
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="relative w-full py-20 md:py-32 lg:py-40">
+        <section className="relative w-full py-20 md:py-32 lg:py-40 flex items-center justify-center">
           {heroImage &&
             <Image
               src={heroImage.imageUrl}
               alt={heroImage.description}
-              fill
-              className="object-cover object-center"
+              width={heroImage.width}
+              height={heroImage.height}
+              className="absolute inset-0 -z-10 h-full w-full object-cover object-center"
               data-ai-hint={heroImage.imageHint}
               priority
             />
