@@ -33,7 +33,7 @@ export default function LandingPage() {
     { title: "Costos de Ingreso y Mantenimiento", content: "Derecho de Suscripción: 3% + IVA. Gastos Administrativos Mensuales: 10% + IVA sobre la alícuota pura. Seguro de Vida Mensual: 0.09% sobre el saldo de capital pendiente." },
     { title: "Adjudicación y Garantías", content: "Plazos estrictos para aceptación (48hs), presentación de garantías (72hs hábiles) e integración de capital por licitación (24hs) para asegurar la fluidez del sistema." },
     { title: "Gestión de Mora", content: "El incumplimiento en los pagos lleva a la suspensión de derechos y, eventualmente, a la subasta forzosa del plan para proteger al grupo." },
-    { title_es: "Subasta de Planes (Mercado Secundario)", content: "Ofrece una vía de salida flexible, permitiendo vender tu plan a otros inversores de forma segura y regulada por la plataforma." },
+    { title: "Subasta de Planes (Mercado Secundario)", content: "Ofrece una vía de salida flexible, permitiendo vender tu plan a otros inversores de forma segura y regulada por la plataforma." },
     { title: "Política de Baja de Plan", content: "Posibilidad de rescindir el contrato para planes no adjudicados, con retención del capital hasta la finalización del grupo y una penalidad por rescisión." },
   ];
 
@@ -155,7 +155,7 @@ export default function LandingPage() {
                     {rules.map((rule, i) => (
                       <Card key={i}>
                         <CardHeader className="p-4">
-                          <CardTitle className="text-base">{(rule.title_es) ? rule.title_es : rule.title}</CardTitle>
+                          <CardTitle className="text-base">{rule.title}</CardTitle>
                         </CardHeader>
                         <CardContent className="p-4 pt-0">
                           <p className="text-sm text-muted-foreground">{rule.content}</p>
