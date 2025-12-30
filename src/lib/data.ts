@@ -108,16 +108,15 @@ const totalSuscripcion = capital * 0.03;
 const mesesFinanciacionSuscripcion = Math.floor(plazo * 0.15);
 const cuotaSuscripcion = mesesFinanciacionSuscripcion > 0 ? totalSuscripcion / mesesFinanciacionSuscripcion : 0;
 
+const staticAwards: Award[][] = [
+    [{ type: 'sorteo', orderNumber: 23 }, { type: 'licitacion', orderNumber: 45 }],
+    [{ type: 'sorteo', orderNumber: 11 }, { type: 'licitacion', orderNumber: 58 }],
+    [{ type: 'sorteo', orderNumber: 7 }, { type: 'licitacion', orderNumber: 33 }],
+    [{ type: 'sorteo', orderNumber: 54 }, { type: 'licitacion', orderNumber: 19 }],
+    [{ type: 'sorteo', orderNumber: 42 }, { type: 'licitacion', orderNumber: 2 }]
+];
 
 export const installments: Installment[] = Array.from({ length: 60 }, (_, i) => {
-    let awards: Award[] | undefined = undefined;
-    if (i < 5) {
-        awards = [
-            { type: 'sorteo', orderNumber: Math.floor(Math.random() * 60) + 1 },
-            { type: 'licitacion', orderNumber: Math.floor(Math.random() * 60) + 1 }
-        ];
-    }
-
     const derechoSuscripcion = i < mesesFinanciacionSuscripcion ? cuotaSuscripcion : 0;
     const totalCuota = alicuotaPura + gastosAdm + seguroVida + derechoSuscripcion;
 
@@ -133,6 +132,6 @@ export const installments: Installment[] = Array.from({ length: 60 }, (_, i) => 
             seguroVida: seguroVida,
             derechoSuscripcion: i < mesesFinanciacionSuscripcion ? derechoSuscripcion : undefined,
         },
-        awards,
+        awards: i < 5 ? staticAwards[i] : undefined,
     }
 });
