@@ -62,6 +62,7 @@ export default function AuctionsPage() {
   const [autoBidEnabled, setAutoBidEnabled] = useState(false);
   const [maxBid, setMaxBid] = useState('');
   const [autoIncrement, setAutoIncrement] = useState('');
+  const [hasReadRules, setHasReadRules] = useState(false);
   const { toast } = useToast();
   
   const [openDialogs, setOpenDialogs] = useState<Record<string, boolean>>({});
@@ -164,6 +165,7 @@ export default function AuctionsPage() {
     setAutoBidEnabled(false);
     setMaxBid('');
     setAutoIncrement('');
+    setHasReadRules(false);
   }
 
   const handleOpenChange = (auctionId: string, open: boolean) => {
@@ -309,10 +311,15 @@ export default function AuctionsPage() {
                         )}
                       
                        <div className="items-top flex space-x-2 pt-2">
-                           <Switch id="terms" checked={termsAccepted} onCheckedChange={(checked) => handleAcceptTerms(checked, auction)} />
+                           <Switch id="terms" checked={termsAccepted} onCheckedChange={(checked) => handleAcceptTerms(checked, auction)} disabled={!hasReadRules} />
                           <div className="grid gap-1.5 leading-none">
-                            <Label htmlFor="terms" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                            <Label htmlFor="terms" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center gap-2">
                               Acepto los términos y condiciones
+                              <Button variant="link" size="sm" className="p-0 h-auto" asChild>
+                                <Link href="/dashboard/auctions/rules" target="_blank" onClick={() => setHasReadRules(true)}>
+                                  (Ver Reglamento)
+                                </Link>
+                              </Button>
                             </Label>
                             <p className="text-xs text-muted-foreground">
                               Si ganas la subasta, te comprometes a pagar el monto ofertado. Se aplicará una comisión del 2% (+IVA) sobre el valor final.
