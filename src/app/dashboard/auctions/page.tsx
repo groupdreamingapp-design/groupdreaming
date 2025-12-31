@@ -84,8 +84,6 @@ export default function AuctionsPage() {
         const isValid = validateOffer(auction);
         if (isValid) {
             setTermsAccepted(true);
-        } else {
-            setTermsAccepted(false);
         }
     } else {
         setTermsAccepted(false);
@@ -102,7 +100,6 @@ export default function AuctionsPage() {
         return;
     }
     
-    // Validations are already done when accepting terms, but we can do a final check
     if (!validateOffer(auction)) {
         return;
     }
@@ -221,7 +218,7 @@ export default function AuctionsPage() {
                             <Bot className="h-5 w-5" />
                             <span>Oferta Automática</span>
                           </Label>
-                          <Switch id="autobid-switch" checked={autoBidEnabled} onCheckedChange={setAutoBidEnabled} />
+                          <Switch id="autobid-switch" checked={autoBidEnabled} onCheckedChange={setAutoBidEnabled} disabled={termsAccepted}/>
                         </div>
                         
                         {autoBidEnabled ? (
@@ -237,6 +234,7 @@ export default function AuctionsPage() {
                                         value={maxBid}
                                         onChange={(e) => setMaxBid(e.target.value)}
                                         className={cn(Number(maxBid) > 0 && isMaxBidInvalid && "border-red-500")}
+                                        disabled={termsAccepted}
                                     />
                                    </div>
                                    <div className="space-y-2">
@@ -248,6 +246,7 @@ export default function AuctionsPage() {
                                         value={autoIncrement}
                                         onChange={(e) => setAutoIncrement(e.target.value)}
                                         className={cn(Number(autoIncrement) > 0 && isAutoIncrementInvalid && "border-red-500")}
+                                        disabled={termsAccepted}
                                     />
                                    </div>
                                </div>
@@ -262,6 +261,7 @@ export default function AuctionsPage() {
                                     value={offerAmount}
                                     onChange={(e) => setOfferAmount(e.target.value)}
                                     className={cn(isManualOfferInvalid && offerAmount && "border-red-500")}
+                                    disabled={termsAccepted}
                                 />
                             </div>
                         )}
@@ -300,5 +300,3 @@ export default function AuctionsPage() {
     </>
   );
 }
-
-    
