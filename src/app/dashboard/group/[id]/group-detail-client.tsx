@@ -24,6 +24,7 @@ type GroupDetailClientProps = {
 
 const generateStaticAwards = (groupId: string, totalMembers: number, totalMonths: number, isAwarded: boolean = false): Award[][] => {
     // Simple pseudo-random number generator to ensure consistency between server and client
+    // Using the groupId as a seed
     let seed = 0;
     for (let i = 0; i < groupId.length; i++) {
         seed = (seed + groupId.charCodeAt(i)) % 1000000;
@@ -373,3 +374,5 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
     </>
   );
 }
+
+    
