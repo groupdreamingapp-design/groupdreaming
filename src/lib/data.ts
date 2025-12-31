@@ -11,12 +11,34 @@ export const user: User = {
 
 const IVA = 1.21;
 
+const calculateCuotaPromedio = (capital: number, plazo: number): number => {
+    const alicuotaPura = capital / plazo;
+    const gastosAdm = (alicuotaPura * 0.10) * IVA;
+    const seguroVidaPromedio = (capital * 0.0009) / 2; // Rough average
+    const derechoSuscripcionPromedio = ((capital * 0.03) * IVA) / plazo;
+    return alicuotaPura + gastosAdm + seguroVidaPromedio + derechoSuscripcionPromedio;
+}
+
 export const initialGroups: Group[] = [
-    { id: "ID-20240729-1001", capital: 5000, plazo: 12, cuotaPromedio: 458, membersCount: 10, totalMembers: 24, status: "Abierto", userIsMember: false, userIsAwarded: false, },
-    { id: "ID-20240729-1002", capital: 10000, plazo: 24, cuotaPromedio: 458, membersCount: 20, totalMembers: 48, status: "Abierto", userIsMember: false, userIsAwarded: false, },
-    { id: "ID-20240729-1003", capital: 15000, plazo: 36, cuotaPromedio: 458, membersCount: 30, totalMembers: 72, status: "Abierto", userIsMember: false, userIsAwarded: false, },
-    { id: "ID-20240729-1004", capital: 20000, plazo: 48, cuotaPromedio: 458, membersCount: 40, totalMembers: 96, status: "Abierto", userIsMember: false, userIsAwarded: false, },
-    { id: "ID-20240115-9998", capital: 15000, plazo: 48, cuotaPromedio: 345, membersCount: 96, totalMembers: 96, status: "Activo", monthsCompleted: 12, userIsMember: true, userIsAwarded: true, },
+    // Grupos Abiertos (Nuevos y variados)
+    { id: "ID-20240801-5012", capital: 5000, plazo: 12, cuotaPromedio: calculateCuotaPromedio(5000, 12), membersCount: 5, totalMembers: 24, status: "Abierto", userIsMember: false, userIsAwarded: false },
+    { id: "ID-20240801-5024", capital: 5000, plazo: 24, cuotaPromedio: calculateCuotaPromedio(5000, 24), membersCount: 12, totalMembers: 48, status: "Abierto", userIsMember: false, userIsAwarded: false },
+    { id: "ID-20240801-1012", capital: 10000, plazo: 12, cuotaPromedio: calculateCuotaPromedio(10000, 12), membersCount: 2, totalMembers: 24, status: "Abierto", userIsMember: false, userIsAwarded: false },
+    { id: "ID-20240801-1024", capital: 10000, plazo: 24, cuotaPromedio: calculateCuotaPromedio(10000, 24), membersCount: 22, totalMembers: 48, status: "Abierto", userIsMember: false, userIsAwarded: false },
+    { id: "ID-20240801-1036", capital: 10000, plazo: 36, cuotaPromedio: calculateCuotaPromedio(10000, 36), membersCount: 10, totalMembers: 72, status: "Abierto", userIsMember: false, userIsAwarded: false },
+    { id: "ID-20240801-1524", capital: 15000, plazo: 24, cuotaPromedio: calculateCuotaPromedio(15000, 24), membersCount: 40, totalMembers: 48, status: "Abierto", userIsMember: false, userIsAwarded: false },
+    { id: "ID-20240801-1536", capital: 15000, plazo: 36, cuotaPromedio: calculateCuotaPromedio(15000, 36), membersCount: 30, totalMembers: 72, status: "Abierto", userIsMember: false, userIsAwarded: false },
+    { id: "ID-20240801-1548", capital: 15000, plazo: 48, cuotaPromedio: calculateCuotaPromedio(15000, 48), membersCount: 15, totalMembers: 96, status: "Abierto", userIsMember: false, userIsAwarded: false },
+    { id: "ID-20240801-2036", capital: 20000, plazo: 36, cuotaPromedio: calculateCuotaPromedio(20000, 36), membersCount: 60, totalMembers: 72, status: "Abierto", userIsMember: false, userIsAwarded: false },
+    { id: "ID-20240801-2048", capital: 20000, plazo: 48, cuotaPromedio: calculateCuotaPromedio(20000, 48), membersCount: 80, totalMembers: 96, status: "Abierto", userIsMember: false, userIsAwarded: false },
+    { id: "ID-20240801-2060", capital: 20000, plazo: 60, cuotaPromedio: calculateCuotaPromedio(20000, 60), membersCount: 25, totalMembers: 120, status: "Abierto", userIsMember: false, userIsAwarded: false },
+    { id: "ID-20240801-2548", capital: 25000, plazo: 48, cuotaPromedio: calculateCuotaPromedio(25000, 48), membersCount: 90, totalMembers: 96, status: "Abierto", userIsMember: false, userIsAwarded: false },
+    { id: "ID-20240801-2560", capital: 25000, plazo: 60, cuotaPromedio: calculateCuotaPromedio(25000, 60), membersCount: 110, totalMembers: 120, status: "Abierto", userIsMember: false, userIsAwarded: false },
+    { id: "ID-20240801-2572", capital: 25000, plazo: 72, cuotaPromedio: calculateCuotaPromedio(25000, 72), membersCount: 40, totalMembers: 144, status: "Abierto", userIsMember: false, userIsAwarded: false },
+    { id: "ID-20240801-2584", capital: 25000, plazo: 84, cuotaPromedio: calculateCuotaPromedio(25000, 84), membersCount: 1, totalMembers: 168, status: "Abierto", userIsMember: false, userIsAwarded: false },
+
+    // Grupos del usuario (para mantener el estado de "Mis Grupos")
+    { id: "ID-20240115-9998", capital: 15000, plazo: 48, cuotaPromedio: 345, membersCount: 96, totalMembers: 96, status: "Activo", monthsCompleted: 12, userIsMember: true, userIsAwarded: true },
     { id: "ID-20230720-9999", capital: 15000, plazo: 36, cuotaPromedio: 455, membersCount: 72, totalMembers: 72, status: "Cerrado", monthsCompleted: 36, userIsMember: true, userIsAwarded: false, }
 ];
 
@@ -100,3 +122,5 @@ export const generateExampleInstallments = (capital: number, plazo: number): Ins
         };
     });
 };
+
+    
