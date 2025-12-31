@@ -20,7 +20,7 @@ export default function AuctionsPage() {
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [autoBidEnabled, setAutoBidEnabled] = useState(false);
   const [maxBid, setMaxBid] = useState('');
-  const [autoIncrement, setAutoIncrement] = useState('');
+  const [autoIncrement, setAutoIncrement]_useState('');
   const { toast } = useToast();
 
   const formatCurrency = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD' }).format(amount);
@@ -28,6 +28,15 @@ export default function AuctionsPage() {
   const handleConfirmOffer = (auction: (typeof auctions)[0]) => {
     const minBidIncrement = auction.precioMinimo * 0.03;
     const nextMinBid = auction.highestBid + minBidIncrement;
+
+    if (!termsAccepted) {
+        toast({
+            variant: "destructive",
+            title: "Términos y Condiciones",
+            description: "Debes aceptar los términos y condiciones para continuar.",
+        });
+        return;
+    }
 
     if (autoBidEnabled) {
       const maxBidNum = Number(maxBid);
@@ -40,19 +49,19 @@ export default function AuctionsPage() {
           });
           return;
       }
-      if (autoIncrementNum < minBidIncrement) {
-        toast({
-            variant: "destructive",
-            title: "Incremento inválido",
-            description: `El incremento por puja debe ser de al menos ${formatCurrency(minBidIncrement)}.`,
-        });
-        return;
-      }
       if (maxBidNum <= auction.highestBid) {
          toast({
             variant: "destructive",
             title: "Oferta máxima inválida",
             description: `Tu oferta máxima debe superar la mejor oferta actual de ${formatCurrency(auction.highestBid)}.`,
+        });
+        return;
+      }
+      if (autoIncrementNum < minBidIncrement) {
+        toast({
+            variant: "destructive",
+            title: "Incremento inválido",
+            description: `El incremento por puja debe ser de al menos ${formatCurrency(minBidIncrement)}.`,
         });
         return;
       }
@@ -74,15 +83,6 @@ export default function AuctionsPage() {
         });
         return;
       }
-    }
-
-    if (!termsAccepted) {
-        toast({
-            variant: "destructive",
-            title: "Términos y Condiciones",
-            description: "Debes aceptar los términos y condiciones para continuar.",
-        });
-        return;
     }
 
     if (autoBidEnabled) {
@@ -124,10 +124,7 @@ export default function AuctionsPage() {
           const isManualOfferInvalid = !autoBidEnabled && (!offerAmount || Number(offerAmount) < nextMinBid);
           const isMaxBidInvalid = autoBidEnabled && (!maxBid || Number(maxBid) <= auction.highestBid);
           const isAutoIncrementInvalid = autoBidEnabled && (!autoIncrement || Number(autoIncrement) < minBidIncrement);
-          const isAutoBidInvalid = autoBidEnabled && (isMaxBidInvalid || isAutoIncrementInvalid);
-
-          const isOfferDisabled = !termsAccepted || isManualOfferInvalid || isAutoBidInvalid;
-
+          
           return (
             <Card key={auction.id} className="flex flex-col">
               <CardHeader>
@@ -209,9 +206,8 @@ export default function AuctionsPage() {
                                         type="number" 
                                         placeholder={`> ${formatCurrency(auction.highestBid)}`}
                                         value={maxBid}
-                                        min={auction.highestBid + 0.01}
                                         onChange={(e) => setMaxBid(e.target.value)}
-                                        className={cn(isMaxBidInvalid && "border-red-500")}
+                                        className={cn(Number(maxBid) > 0 && isMaxBidInvalid && "border-red-500")}
                                     />
                                    </div>
                                    <div className="space-y-2">
@@ -221,9 +217,8 @@ export default function AuctionsPage() {
                                         type="number" 
                                         placeholder={`Min: ${formatCurrency(minBidIncrement)}`}
                                         value={autoIncrement}
-                                        min={minBidIncrement}
                                         onChange={(e) => setAutoIncrement(e.target.value)}
-                                        className={cn(isAutoIncrementInvalid && "border-red-500")}
+                                        className={cn(Number(autoIncrement) > 0 && isAutoIncrementInvalid && "border-red-500")}
                                     />
                                    </div>
                                </div>
@@ -236,7 +231,6 @@ export default function AuctionsPage() {
                                     type="number" 
                                     placeholder={formatCurrency(nextMinBid)}
                                     value={offerAmount}
-                                    min={nextMinBid}
                                     onChange={(e) => setOfferAmount(e.target.value)}
                                     className={cn(isManualOfferInvalid && offerAmount && "border-red-500")}
                                 />
@@ -262,7 +256,6 @@ export default function AuctionsPage() {
                       <Button 
                         type="button" 
                         onClick={() => handleConfirmOffer(auction)}
-                        disabled={isOfferDisabled}
                       >
                         Confirmar Oferta
                       </Button>
@@ -277,3 +270,5 @@ export default function AuctionsPage() {
     </>
   );
 }
+
+    
