@@ -1,3 +1,4 @@
+
 import type { Group, User, Transaction, Auction, Installment, Award } from './types';
 import { PlaceHolderImages } from './placeholder-images';
 
@@ -8,20 +9,41 @@ export const user: User = {
   avatarUrl: PlaceHolderImages.find(img => img.id === 'user-avatar-1')?.imageUrl || '',
 };
 
-export const initialGroups: Group[] = [
-  {
-    id: "GR-001",
-    capital: 20000, 
-    plazo: 60,
-    cuotaPromedio: 380,
-    membersCount: 119, // Almost full
-    totalMembers: 120,
-    status: "Abierto",
-    userIsMember: false,
-    userIsAwarded: false,
-  },
-  {
-    id: "GR-002",
+const capitalOptions = [5000, 10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000, 50000];
+const plazoOptions = [12, 24, 36, 48, 60, 72, 84, 96, 108, 120];
+
+const generateInitialGroups = (): Group[] => {
+  const groups: Group[] = [];
+  let idCounter = 1;
+
+  for (const capital of capitalOptions) {
+    for (const plazo of plazoOptions) {
+      // Approximate formula for cuotaPromedio based on previous data
+      const alicuotaPura = capital / plazo;
+      const gastosAdm = alicuotaPura * 0.10;
+      const seguroVida = 13; // Approximation
+      const cuotaPromedio = alicuotaPura + gastosAdm + seguroVida;
+
+      if (cuotaPromedio <= 1000) {
+        const totalMembers = plazo * 2;
+        groups.push({
+          id: `GR-${String(idCounter++).padStart(3, '0')}`,
+          capital,
+          plazo,
+          cuotaPromedio,
+          membersCount: Math.floor(Math.random() * totalMembers * 0.5), // Start with some members
+          totalMembers,
+          status: "Abierto",
+          userIsMember: false,
+          userIsAwarded: false,
+        });
+      }
+    }
+  }
+
+  // Add a couple of non-open groups for the user's dashboard
+  groups.push({
+    id: "GR-998",
     capital: 15000,
     plazo: 48,
     cuotaPromedio: 345,
@@ -31,32 +53,10 @@ export const initialGroups: Group[] = [
     monthsCompleted: 12,
     userIsMember: true,
     userIsAwarded: true,
-  },
-  {
-    id: "GR-003",
-    capital: 50000,
-    plazo: 120,
-    cuotaPromedio: 460,
-    membersCount: 112,
-    totalMembers: 240,
-    status: "Abierto",
-    userIsMember: false,
-    userIsAwarded: false,
-  },
-  {
-    id: "GR-004",
-    capital: 10000,
-    plazo: 24,
-    cuotaPromedio: 465,
-    membersCount: 48,
-    totalMembers: 48,
-    status: "Activo",
-    monthsCompleted: 22,
-    userIsMember: false,
-    userIsAwarded: false,
-  },
-  {
-    id: "GR-005",
+  });
+
+   groups.push({
+    id: "GR-999",
     capital: 15000,
     plazo: 36,
     cuotaPromedio: 455,
@@ -66,19 +66,13 @@ export const initialGroups: Group[] = [
     monthsCompleted: 36,
     userIsMember: true,
     userIsAwarded: false,
-  },
-  {
-    id: "GR-006",
-    capital: 25000,
-    plazo: 72,
-    cuotaPromedio: 385,
-    membersCount: 68,
-    totalMembers: 144,
-    status: "Abierto",
-    userIsMember: false,
-    userIsAwarded: false,
-  },
-];
+  });
+
+
+  return groups;
+};
+
+export const initialGroups: Group[] = generateInitialGroups();
 
 export const transactions: Transaction[] = [
     { id: "txn-1", date: "2024-07-15", type: "Depósito", description: "Transferencia bancaria", amount: 1000, status: "Completado" },

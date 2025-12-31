@@ -4,7 +4,7 @@
 import { useMemo, useState } from "react";
 import { initialGroups } from "@/lib/data";
 import { GroupCard } from "@/components/app/group-card";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
@@ -13,6 +13,8 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import type { Group } from "@/lib/types";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { SlidersHorizontal } from "lucide-react";
 
 const capitalOptions = [5000, 10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000, 50000];
 const plazoOptions = [12, 24, 36, 48, 60, 72, 84, 96, 108, 120];
@@ -95,90 +97,102 @@ export default function ExplorePage() {
             <p className="text-muted-foreground">Encuentra el plan perfecto que se adapte a tus sueños.</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            {/* Filters Sidebar */}
-            <aside className="md:col-span-1">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Filtros</CardTitle>
-                </CardHeader>
+          {/* Filters Card */}
+          <Collapsible className="mb-8">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                    <CardTitle>Filtros de Búsqueda</CardTitle>
+                    <CardDescription>Usa los filtros para encontrar tu plan ideal.</CardDescription>
+                </div>
+                 <CollapsibleTrigger asChild>
+                  <Button variant="ghost">
+                    <SlidersHorizontal className="mr-2 h-4 w-4" />
+                    Mostrar/Ocultar Filtros
+                  </Button>
+                </CollapsibleTrigger>
+              </CardHeader>
+              <CollapsibleContent>
                 <CardContent>
-                  <ScrollArea className="h-[60vh]">
-                  <div className="space-y-6 p-1">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div>
                       <h3 className="font-semibold mb-2">Capital (USD)</h3>
-                      <div className="space-y-2">
-                        {capitalOptions.map(option => (
-                          <div key={option} className="flex items-center space-x-2">
-                            <Checkbox 
-                              id={`capital-${option}`} 
-                              onCheckedChange={() => handleFilterChange('capital', option)}
-                              checked={filters.capital.includes(option)}
-                            />
-                            <Label htmlFor={`capital-${option}`} className="font-normal">{formatCurrency(option)}</Label>
-                          </div>
-                        ))}
-                      </div>
+                      <ScrollArea className="h-40">
+                        <div className="space-y-2 pr-4">
+                          {capitalOptions.map(option => (
+                            <div key={option} className="flex items-center space-x-2">
+                              <Checkbox 
+                                id={`capital-${option}`} 
+                                onCheckedChange={() => handleFilterChange('capital', option)}
+                                checked={filters.capital.includes(option)}
+                              />
+                              <Label htmlFor={`capital-${option}`} className="font-normal">{formatCurrency(option)}</Label>
+                            </div>
+                          ))}
+                        </div>
+                      </ScrollArea>
                     </div>
-                    <Separator />
                     <div>
                       <h3 className="font-semibold mb-2">Plazo (Meses)</h3>
-                      <div className="space-y-2">
-                        {plazoOptions.map(option => (
-                          <div key={option} className="flex items-center space-x-2">
-                             <Checkbox 
-                              id={`plazo-${option}`} 
-                              onCheckedChange={() => handleFilterChange('plazo', option)}
-                              checked={filters.plazo.includes(option)}
-                            />
-                            <Label htmlFor={`plazo-${option}`} className="font-normal">{option} meses</Label>
-                          </div>
-                        ))}
-                      </div>
+                      <ScrollArea className="h-40">
+                        <div className="space-y-2 pr-4">
+                          {plazoOptions.map(option => (
+                            <div key={option} className="flex items-center space-x-2">
+                              <Checkbox 
+                                id={`plazo-${option}`} 
+                                onCheckedChange={() => handleFilterChange('plazo', option)}
+                                checked={filters.plazo.includes(option)}
+                              />
+                              <Label htmlFor={`plazo-${option}`} className="font-normal">{option} meses</Label>
+                            </div>
+                          ))}
+                        </div>
+                      </ScrollArea>
                     </div>
-                     <Separator />
                     <div>
                       <h3 className="font-semibold mb-2">Cuota Promedio</h3>
-                      <div className="space-y-2">
-                        {cuotaRanges.map(range => (
-                          <div key={range.label} className="flex items-center space-x-2">
-                             <Checkbox 
-                              id={`cuota-${range.label}`} 
-                              onCheckedChange={() => handleCuotaChange(range)}
-                              checked={filters.cuota.some(r => r.min === range.min && r.max === range.max)}
-                            />
-                            <Label htmlFor={`cuota-${range.label}`} className="font-normal">{range.label}</Label>
-                          </div>
-                        ))}
-                      </div>
+                       <ScrollArea className="h-40">
+                        <div className="space-y-2 pr-4">
+                          {cuotaRanges.map(range => (
+                            <div key={range.label} className="flex items-center space-x-2">
+                              <Checkbox 
+                                id={`cuota-${range.label}`} 
+                                onCheckedChange={() => handleCuotaChange(range)}
+                                checked={filters.cuota.some(r => r.min === range.min && r.max === range.max)}
+                              />
+                              <Label htmlFor={`cuota-${range.label}`} className="font-normal">{range.label}</Label>
+                            </div>
+                          ))}
+                        </div>
+                      </ScrollArea>
                     </div>
                   </div>
-                  </ScrollArea>
                 </CardContent>
-              </Card>
-            </aside>
+              </CollapsibleContent>
+            </Card>
+          </Collapsible>
+          
 
-            {/* Groups Grid */}
-            <section className="md:col-span-3">
-              {filteredGroups.length > 0 ? (
-                <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-                  {filteredGroups.map(group => (
-                    <GroupCard 
-                      key={group.id} 
-                      group={group} 
-                      showJoinButton={true} 
-                      isPublic={true}
-                    />
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-16 text-muted-foreground col-span-full">
-                    <p>No se encontraron grupos con los filtros seleccionados.</p>
-                    <p>Intenta modificar tu búsqueda.</p>
-                </div>
-              )}
-            </section>
-          </div>
+          {/* Groups Grid */}
+          <section>
+            {filteredGroups.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {filteredGroups.map(group => (
+                  <GroupCard 
+                    key={group.id} 
+                    group={group} 
+                    showJoinButton={true} 
+                    isPublic={true}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-16 text-muted-foreground col-span-full">
+                  <p>No se encontraron grupos con los filtros seleccionados.</p>
+                  <p>Intenta modificar tu búsqueda o <Button variant="link" className="p-0 h-auto" onClick={() => setFilters({ capital: [], plazo: [], cuota: [] })}>borrar los filtros</Button>.</p>
+              </div>
+            )}
+          </section>
         </div>
       </main>
 
