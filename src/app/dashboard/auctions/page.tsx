@@ -10,7 +10,6 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
@@ -23,23 +22,13 @@ export default function AuctionsPage() {
   const [autoIncrement, setAutoIncrement] = useState('');
   const { toast } = useToast();
   
-  // State to control dialog visibility manually
   const [openDialogs, setOpenDialogs] = useState<Record<string, boolean>>({});
 
   const formatCurrency = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD' }).format(amount);
   
-  const handleConfirmOffer = (auction: (typeof auctions)[0]) => {
+  const validateOffer = (auction: (typeof auctions)[0]) => {
     const minBidIncrement = auction.precioMinimo * 0.03;
     const nextMinBid = auction.highestBid + minBidIncrement;
-
-    if (!termsAccepted) {
-        toast({
-            variant: "destructive",
-            title: "Términos y Condiciones",
-            description: "Debes aceptar los términos y condiciones para continuar.",
-        });
-        return;
-    }
 
     if (autoBidEnabled) {
       const maxBidNum = Number(maxBid);
@@ -50,7 +39,7 @@ export default function AuctionsPage() {
               title: "Error en la oferta automática",
               description: "Debes completar la oferta máxima y el monto de incremento.",
           });
-          return;
+          return false;
       }
       if (maxBidNum <= auction.highestBid) {
          toast({
@@ -58,7 +47,7 @@ export default function AuctionsPage() {
             title: "Oferta máxima inválida",
             description: `Tu oferta máxima debe superar la mejor oferta actual de ${formatCurrency(auction.highestBid)}.`,
         });
-        return;
+        return false;
       }
       if (autoIncrementNum < minBidIncrement) {
         toast({
@@ -66,7 +55,7 @@ export default function AuctionsPage() {
             title: "Incremento inválido",
             description: `El incremento por puja debe ser de al menos ${formatCurrency(minBidIncrement)}.`,
         });
-        return;
+        return false;
       }
     } else {
       const offerAmountNum = Number(offerAmount);
@@ -76,7 +65,7 @@ export default function AuctionsPage() {
               title: "Error en la oferta",
               description: "Por favor, ingresa un monto para tu oferta.",
           });
-          return;
+          return false;
       }
       if (offerAmountNum < nextMinBid) {
         toast({
@@ -84,8 +73,38 @@ export default function AuctionsPage() {
             title: "Oferta muy baja",
             description: `Tu oferta debe ser igual o mayor a la próxima puja mínima de ${formatCurrency(nextMinBid)}.`,
         });
-        return;
+        return false;
       }
+    }
+    return true;
+  }
+
+  const handleAcceptTerms = (checked: boolean, auction: (typeof auctions)[0]) => {
+    if (checked) {
+        const isValid = validateOffer(auction);
+        if (isValid) {
+            setTermsAccepted(true);
+        } else {
+            setTermsAccepted(false);
+        }
+    } else {
+        setTermsAccepted(false);
+    }
+  };
+
+  const handleConfirmOffer = (auction: (typeof auctions)[0]) => {
+    if (!termsAccepted) {
+        toast({
+            variant: "destructive",
+            title: "Términos y Condiciones",
+            description: "Debes aceptar los términos y condiciones para continuar.",
+        });
+        return;
+    }
+    
+    // Validations are already done when accepting terms, but we can do a final check
+    if (!validateOffer(auction)) {
+        return;
     }
 
     if (autoBidEnabled) {
@@ -248,7 +267,7 @@ export default function AuctionsPage() {
                         )}
                       
                        <div className="items-top flex space-x-2 pt-2">
-                          <Checkbox id="terms" checked={termsAccepted} onCheckedChange={(checked) => setTermsAccepted(Boolean(checked))} />
+                           <Switch id="terms" checked={termsAccepted} onCheckedChange={(checked) => handleAcceptTerms(checked, auction)} />
                           <div className="grid gap-1.5 leading-none">
                             <Label htmlFor="terms" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                               Acepto los términos y condiciones
@@ -261,11 +280,12 @@ export default function AuctionsPage() {
                     </div>
                     <DialogFooter>
                       <DialogClose asChild>
-                        <Button type="button" variant="secondary" data-radix-dialog-close-button="true">Cancelar</Button>
+                        <Button type="button" variant="secondary">Cancelar</Button>
                       </DialogClose>
                      <Button 
                         type="button" 
                         onClick={() => handleConfirmOffer(auction)}
+                        disabled={!termsAccepted}
                       >
                         Confirmar Oferta
                       </Button>
@@ -279,5 +299,6 @@ export default function AuctionsPage() {
       </div>
     </>
   );
+}
 
     
