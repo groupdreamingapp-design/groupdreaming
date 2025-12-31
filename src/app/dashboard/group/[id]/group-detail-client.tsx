@@ -14,7 +14,7 @@ import { ArrowLeft, Users, Clock, Users2, Calendar, Gavel, HandCoins, Ticket, In
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { useGroups } from '@/hooks/use-groups';
-import { installments as allInstallments, initialGroups, staticAwards } from '@/lib/data';
+import { installments as allInstallments, initialGroups, allAwards } from '@/lib/data';
 
 type GroupDetailClientProps = {
     groupId: string;
@@ -127,7 +127,7 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                       status = 'Futuro';
                     }
                     
-                    const currentAwards = status === 'Pagado' ? staticAwards[(inst.number - 1) % staticAwards.length] : undefined;
+                    const currentAwards = status === 'Pagado' ? allAwards[(inst.number - 1) % allAwards.length] : undefined;
 
                     return (
                       <TableRow key={inst.id}>

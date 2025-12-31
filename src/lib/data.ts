@@ -65,15 +65,35 @@ const totalSuscripcion = (capital * 0.03) * IVA; // 3% + IVA
 const mesesFinanciacionSuscripcion = Math.floor(plazo * 0.20);
 const cuotaSuscripcion = mesesFinanciacionSuscripcion > 0 ? totalSuscripcion / mesesFinanciacionSuscripcion : 0;
 
-export const staticAwards: Award[][] = [
-    [{ type: 'sorteo', orderNumber: 23 }, { type: 'licitacion', orderNumber: 45 }],
-    [{ type: 'sorteo', orderNumber: 11 }, { type: 'licitacion', orderNumber: 58 }],
-    [{ type: 'sorteo', orderNumber: 7 }, { type: 'licitacion', orderNumber: 33 }],
-    [{ type: 'sorteo', orderNumber: 54 }, { type: 'licitacion', orderNumber: 19 }],
-    [{ type: 'sorteo', orderNumber: 42 }, { type: 'licitacion', orderNumber: 2 }],
-    [{ type: 'sorteo', orderNumber: 68 }, { type: 'licitacion', orderNumber: 1 }],
-    [{ type: 'sorteo', orderNumber: 3 }, { type: 'licitacion', orderNumber: 29 }],
-];
+const generateStaticAwards = (totalMembers: number, totalMonths: number): Award[][] => {
+    // Create a shuffled list of unique member order numbers
+    const memberOrderNumbers = Array.from({ length: totalMembers }, (_, i) => i + 1);
+    for (let i = memberOrderNumbers.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [memberOrderNumbers[i], memberOrderNumbers[j]] = [memberOrderNumbers[j], memberOrderNumbers[i]];
+    }
+
+    const awards: Award[][] = [];
+    let memberIndex = 0;
+
+    for (let i = 0; i < totalMonths; i++) {
+        if (memberIndex >= totalMembers - 1) break; // Stop if we run out of members
+
+        const sorteoWinner = memberOrderNumbers[memberIndex++];
+        const licitacionWinner = memberOrderNumbers[memberIndex++];
+        
+        awards.push([
+            { type: 'sorteo', orderNumber: sorteoWinner },
+            { type: 'licitacion', orderNumber: licitacionWinner }
+        ]);
+    }
+
+    return awards;
+};
+
+
+export const allAwards: Award[][] = generateStaticAwards(144, 84);
+
 
 export const installments: Installment[] = Array.from({ length: 84 }, (_, i) => { // Increased length to satisfy all plans
     const saldoCapital = capital - (alicuotaPura * i);
