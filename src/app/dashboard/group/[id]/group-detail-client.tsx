@@ -15,9 +15,10 @@ import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { useGroups } from '@/hooks/use-groups';
 import { installments as allInstallments, initialGroups } from '@/lib/data';
-import { useMemo } from 'react';
-import { Separator } from '@/components/ui/separator';
+import { useMemo, useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Separator } from '@/components/ui/separator';
+
 
 type GroupDetailClientProps = {
     groupId: string;
@@ -47,7 +48,6 @@ const generateStaticAwards = (groupId: string, totalMembers: number, totalMonths
     let potentialWinners = [...memberOrderNumbers];
     
     if (isAwarded) {
-        // Find and remove user to re-insert them at a specific spot
         const userIndex = potentialWinners.indexOf(userOrderNumber);
         if (userIndex > -1) {
             potentialWinners.splice(userIndex, 1);
@@ -57,17 +57,10 @@ const generateStaticAwards = (groupId: string, totalMembers: number, totalMonths
     potentialWinners = shuffle(potentialWinners);
     
     if (isAwarded) {
-        // Ensure user wins in one of the first few months if they are awarded
-        const userWinMonthIndex = 4; // e.g., month 5 (index 4)
         const awardsPerMonth = 2;
-        const insertPosition = userWinMonthIndex * awardsPerMonth;
+        const insertPosition = 4 * awardsPerMonth; 
         
-        // Remove the winner that was going to be there
-        if (potentialWinners.length > insertPosition) {
-             potentialWinners.splice(insertPosition, 1, userOrderNumber);
-        } else {
-             potentialWinners.push(userOrderNumber);
-        }
+        potentialWinners.splice(insertPosition, 0, userOrderNumber);
     }
     
     const awards: Award[][] = [];
@@ -92,6 +85,9 @@ const generateStaticAwards = (groupId: string, totalMembers: number, totalMonths
 
 export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
   const { groups } = useGroups();
+  const [cuotasToAdvance, setCuotasToAdvance] = useState<number>(0);
+  const [cuotasToBid, setCuotasToBid] = useState<number>(0);
+
   const groupTemplate = initialGroups.find(g => g.id === groupId);
   const dynamicGroupState = groups.find(g => g.id === groupId);
   const group = dynamicGroupState ? { ...groupTemplate, ...dynamicGroupState } : groupTemplate;
@@ -130,6 +126,22 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
   const penalidadBaja = capitalAportadoPuro * 0.05 * IVA;
   const comisionVenta = capitalAportadoPuro * 0.02 * IVA;
   const liquidacionMinima = capitalAportadoPuro - comisionVenta;
+
+  const futureInstallments = installments.slice(cuotasPagadas, group.plazo);
+
+  const calculateSavings = (cuotasCount: number) => {
+    if (cuotasCount <= 0 || cuotasCount > futureInstallments.length) return { totalToPay: 0, totalOriginal: 0, totalSaving: 0 };
+    
+    const installmentsToConsider = futureInstallments.slice(0, cuotasCount);
+    const totalToPay = installmentsToConsider.reduce((acc, inst) => acc + inst.breakdown.alicuotaPura, 0);
+    const totalOriginal = installmentsToConsider.reduce((acc, inst) => acc + inst.total, 0);
+    const totalSaving = totalOriginal - totalToPay;
+
+    return { totalToPay, totalOriginal, totalSaving };
+  }
+
+  const advanceSavings = calculateSavings(cuotasToAdvance);
+  const bidSavings = calculateSavings(cuotasToBid);
 
   return (
     <>
@@ -173,7 +185,7 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
             </CardContent>
           </Card>
         </div>
-
+        
         {isMember && group.status === 'Activo' && (
           <div className="lg:col-span-3">
             <Card>
@@ -184,7 +196,6 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
               <CardContent className="flex flex-wrap gap-2">
                 {!group.userIsAwarded && (
                   <>
-                    {/* Licitar */}
                     <Dialog>
                       <DialogTrigger asChild><Button size="sm"><Gavel className="mr-2 h-4 w-4" /> Licitar</Button></DialogTrigger>
                       <DialogContent>
@@ -193,7 +204,7 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                             <p className="text-sm text-muted-foreground">Tu oferta competirá con otros miembros. Si ganas, el monto se usa para cancelar las últimas cuotas de tu plan.</p>
                             <div className="grid w-full max-w-sm items-center gap-1.5">
                                 <Label htmlFor="cuotas-licitar">Cuotas a licitar (adelantar)</Label>
-                                <Select>
+                                <Select onValueChange={(value) => setCuotasToBid(Number(value))}>
                                     <SelectTrigger id="cuotas-licitar">
                                         <SelectValue placeholder="Selecciona la cantidad de cuotas" />
                                     </SelectTrigger>
@@ -204,6 +215,17 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                                     </SelectContent>
                                 </Select>
                             </div>
+                            {cuotasToBid > 0 ? (
+                                <Card className="bg-muted/50">
+                                    <CardContent className="p-4 text-sm space-y-1">
+                                        <p>Pagarías (valor puro): <strong>{formatCurrency(bidSavings.totalToPay)}</strong></p>
+                                        <p>En lugar de (valor final): <span className='line-through'>{formatCurrency(bidSavings.totalOriginal)}</span></p>
+                                        <p className="text-green-600 font-semibold">¡Ahorras {formatCurrency(bidSavings.totalSaving)} en gastos y seguros!</p>
+                                    </CardContent>
+                                </Card>
+                            ) : (
+                                <p className="text-xs text-muted-foreground">Selecciona una cantidad de cuotas para ver el ahorro.</p>
+                            )}
                             <div className="flex items-center space-x-2">
                               <Switch id="licitacion-automatica" />
                               <Label htmlFor="licitacion-automatica">Activar Licitación Automática</Label>
@@ -218,7 +240,6 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                   </>
                 )}
                 
-                {/* Adelantar Cuotas */}
                 <Dialog>
                   <DialogTrigger asChild><Button size="sm" variant="secondary"><TrendingUp className="mr-2 h-4 w-4" /> Adelantar</Button></DialogTrigger>
                   <DialogContent>
@@ -227,7 +248,7 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                         <p className="text-sm text-muted-foreground">No compite por adjudicación, pero reduce el costo final de tu plan.</p>
                         <div className="grid w-full max-w-sm items-center gap-1.5">
                             <Label htmlFor="cuotas-adelantar">Cantidad de cuotas a adelantar</Label>
-                             <Select>
+                             <Select onValueChange={(value) => setCuotasToAdvance(Number(value))}>
                                 <SelectTrigger id="cuotas-adelantar">
                                     <SelectValue placeholder="Selecciona la cantidad de cuotas" />
                                 </SelectTrigger>
@@ -238,12 +259,17 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                                 </SelectContent>
                             </Select>
                         </div>
-                        <Card className="bg-muted/50">
-                            <CardContent className="p-4 text-sm">
-                                <p>Pagarías: <strong>{formatCurrency(1850)}</strong> en lugar de {formatCurrency(1900)}.</p>
-                                <p className="text-green-600">¡Ahorras {formatCurrency(50)} en gastos y seguros!</p>
-                            </CardContent>
-                        </Card>
+                        {cuotasToAdvance > 0 ? (
+                            <Card className="bg-muted/50">
+                                <CardContent className="p-4 text-sm space-y-1">
+                                    <p>Pagarías (valor puro): <strong>{formatCurrency(advanceSavings.totalToPay)}</strong></p>
+                                    <p>En lugar de (valor final): <span className='line-through'>{formatCurrency(advanceSavings.totalOriginal)}</span></p>
+                                    <p className="text-green-600 font-semibold">¡Ahorras {formatCurrency(advanceSavings.totalSaving)} en gastos y seguros!</p>
+                                </CardContent>
+                            </Card>
+                        ) : (
+                            <p className="text-xs text-muted-foreground">Selecciona una cantidad de cuotas para ver el ahorro.</p>
+                        )}
                     </div>
                     <DialogFooter>
                         <Button type="submit">Adelantar Cuotas</Button>
@@ -253,7 +279,6 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
 
                 {!group.userIsAwarded && (
                   <>
-                    {/* Subastar Plan */}
                     <Dialog>
                       <DialogTrigger asChild><Button size="sm" variant="secondary"><Hand className="mr-2 h-4 w-4" /> Subastar</Button></DialogTrigger>
                       <DialogContent>
@@ -272,7 +297,6 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                         </DialogFooter>
                       </DialogContent>
                     </Dialog>
-                    {/* Dar de Baja */}
                     <Dialog>
                       <DialogTrigger asChild><Button size="sm" variant="destructive"><FileX2 className="mr-2 h-4 w-4" /> Dar de Baja</Button></DialogTrigger>
                       <DialogContent>
@@ -297,7 +321,7 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
             </Card>
           </div>
         )}
-
+        
         <div className="lg:col-span-3">
           <Card>
             <CardHeader>
