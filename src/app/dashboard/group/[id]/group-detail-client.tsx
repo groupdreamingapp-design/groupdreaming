@@ -27,7 +27,7 @@ const generateStaticAwards = (groupId: string, totalMembers: number, totalMonths
     for (let i = 0; i < groupId.length; i++) {
         seed = (seed + groupId.charCodeAt(i)) % 1000000;
     }
-    const random = () => {
+    const customRandom = () => {
         const x = Math.sin(seed++) * 10000;
         return x - Math.floor(x);
     };
@@ -38,7 +38,7 @@ const generateStaticAwards = (groupId: string, totalMembers: number, totalMonths
     const shuffle = (array: number[]) => {
         let currentIndex = array.length, randomIndex;
         while (currentIndex !== 0) {
-            randomIndex = Math.floor(random() * currentIndex);
+            randomIndex = Math.floor(customRandom() * currentIndex);
             currentIndex--;
             [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
         }
@@ -63,11 +63,30 @@ const generateStaticAwards = (groupId: string, totalMembers: number, totalMonths
     
     const awards: Award[][] = [];
     for (let i = 0; i < totalMonths; i++) {
-        if (potentialWinners.length < 2) break;
-        awards.push([
-            { type: 'sorteo', orderNumber: potentialWinners.shift()! },
-            { type: 'licitacion', orderNumber: potentialWinners.shift()! }
-        ]);
+        if (potentialWinners.length < 2) {
+             // To avoid infinite loops if we run out of winners, we'll just stop pushing.
+             // Or reset potentialWinners if we want awards every month regardless of member count
+             break;
+        };
+
+        const sorteoWinner = potentialWinners.shift()!;
+        let licitacionWinner = potentialWinners.shift()!;
+
+        // Ensure we don't accidentally assign the same winner if list gets small
+        if (licitacionWinner === undefined && potentialWinners.length > 0) {
+             licitacionWinner = potentialWinners.shift()!;
+        }
+       
+        if(licitacionWinner) {
+            awards.push([
+                { type: 'sorteo', orderNumber: sorteoWinner },
+                { type: 'licitacion', orderNumber: licitacionWinner }
+            ]);
+        } else {
+            awards.push([
+                { type: 'sorteo', orderNumber: sorteoWinner }
+            ]);
+        }
     }
 
     return awards;
