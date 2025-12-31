@@ -99,10 +99,10 @@ export function GroupCard({ group, isPublic = false }: GroupCardProps) {
                 <span>{progressText}</span>
               </div>
               <div className="relative">
-                <Progress value={progressValue} aria-label={`Progreso del grupo ${progressValue.toFixed(0)}%`} className={cn(group.status === 'Abierto' && membersMissing > 0 && "bg-destructive/80")} />
+                <Progress value={progressValue} aria-label={`Progreso del grupo ${progressValue.toFixed(0)}%`} className={cn(group.status === 'Abierto' && membersMissing > 0 && "bg-primary/20")} />
                 {group.status === 'Abierto' && membersMissing > 0 && (
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-xs font-bold text-destructive-foreground">Faltan {membersMissing}</span>
+                    <span className="text-xs font-bold text-destructive">Faltan {membersMissing}</span>
                   </div>
                 )}
               </div>
@@ -130,4 +130,3 @@ export function GroupCard({ group, isPublic = false }: GroupCardProps) {
     </Card>
   );
 }
-

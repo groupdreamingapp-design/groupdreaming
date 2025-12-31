@@ -43,11 +43,13 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
   const formatCurrency = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD' }).format(amount);
   const isMember = group.userIsMember;
   const cuotasPagadas = 5;
-  const capitalAportado = cuotasPagadas * (installments.length > 0 ? installments[0].breakdown.alicuotaPura : 0);
+  const alicuotaPuraTotal = installments.length > 0 ? installments[0].breakdown.alicuotaPura : 0;
+  const capitalAportadoPuro = cuotasPagadas * alicuotaPuraTotal;
+
   const IVA = 1.21;
-  const penalidadBaja = capitalAportado * 0.05 * IVA; // 5% de penalidad + 21% IVA sobre la penalidad
-  const comisionVenta = capitalAportado * 0.02 * IVA; // 2% de comisión + 21% IVA
-  const liquidacionMinima = capitalAportado - comisionVenta;
+  const penalidadBaja = capitalAportadoPuro * 0.05 * IVA; // 5% de penalidad + 21% IVA sobre la penalidad
+  const comisionVenta = capitalAportadoPuro * 0.02 * IVA; // 2% de comisión + 21% IVA
+  const liquidacionMinima = capitalAportadoPuro - comisionVenta;
 
   return (
     <>
@@ -70,7 +72,7 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
               <CardContent className="grid grid-cols-2 gap-4 text-sm">
                 <div className="flex items-center gap-2"><Info className="h-4 w-4 text-primary" /><span>N° de Orden: <strong>42</strong></span></div>
                 <div className="flex items-center gap-2"><TrendingUp className="h-4 w-4 text-primary" /><span>Cuotas Pagadas: <strong>{cuotasPagadas}/{group.plazo}</strong></span></div>
-                <div className="flex items-center gap-2"><HandCoins className="h-4 w-4 text-primary" /><span>Capital Aportado: <strong>{formatCurrency(capitalAportado)}</strong></span></div>
+                <div className="flex items-center gap-2"><HandCoins className="h-4 w-4 text-primary" /><span>Capital Aportado (Puro): <strong>{formatCurrency(capitalAportadoPuro)}</strong></span></div>
                 <div className="flex items-center gap-2">
                     {group.userIsAwarded ? <Trophy className="h-4 w-4 text-yellow-500" /> : <Calendar className="h-4 w-4 text-primary" />}
                     <span>Adjudicación: {group.userIsAwarded ? <strong className="text-green-600">Adjudicado</strong> : <strong>Pendiente</strong>}</span>
@@ -184,7 +186,7 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                           <Switch id="licitacion-automatica" />
                           <Label htmlFor="licitacion-automatica">Activar Licitación Automática</Label>
                         </div>
-                        <p className="text-xs text-muted-foreground">El sistema pujará por ti hasta un máximo que definas. Recuerda que si ganas y no integras el capital, se aplicará una multa del 2% (+IVA) sobre tu oferta.</p>
+                        <p className="text-xs text-muted-foreground">Recuerda que si ganas y no integras el capital, se aplicará una multa del 2% (+IVA) sobre tu oferta.</p>
                     </div>
                     <DialogFooter>
                         <Button type="submit">Confirmar Licitación</Button>
@@ -222,9 +224,9 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                      <div className="space-y-4 text-sm">
                         <p>Esta es tu vía de salida flexible. A continuación un ejemplo del cálculo del precio base y lo que recibirías.</p>
                         <Card className="bg-muted/50 p-4 space-y-2">
-                           <div className="flex justify-between"><span>Capital Aportado:</span><strong>{formatCurrency(capitalAportado)}</strong></div>
+                           <div className="flex justify-between"><span>Capital Aportado (Puro):</span><strong>{formatCurrency(capitalAportadoPuro)}</strong></div>
                            <div className="flex justify-between text-red-600"><span>Comisión por Venta (2% + IVA):</span><strong>-{formatCurrency(comisionVenta)}</strong></div>
-                           <div className="flex justify-between font-bold border-t pt-2"><span>Liquidación Estimada:</span><strong>{formatCurrency(liquidacionMinima)}</strong></div>
+                           <div className="flex justify-between font-bold border-t pt-2"><span>Liquidación Estimada (Precio Base):</span><strong>{formatCurrency(liquidacionMinima)}</strong></div>
                            <p className="text-xs text-muted-foreground">El valor final dependerá del precio de venta en la subasta.</p>
                         </Card>
                     </div>
@@ -239,11 +241,11 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                   <DialogContent>
                     <DialogHeader><DialogTitle>Dar de Baja el Plan</DialogTitle><DialogDescription>Rescinde tu contrato. Aplica solo para planes no adjudicados.</DialogDescription></DialogHeader>
                     <div className="space-y-4 text-sm">
-                        <p>Se te devolverá el capital aportado al finalizar el grupo, menos una penalidad. Ejemplo del cálculo:</p>
+                        <p>Se te devolverá el capital puro aportado al finalizar el grupo, menos una penalidad. Ejemplo del cálculo:</p>
                         <Card className="bg-muted/50 p-4 space-y-2">
-                           <div className="flex justify-between"><span>Capital Aportado:</span><strong>{formatCurrency(capitalAportado)}</strong></div>
+                           <div className="flex justify-between"><span>Capital Aportado (Puro):</span><strong>{formatCurrency(capitalAportadoPuro)}</strong></div>
                            <div className="flex justify-between text-red-600"><span>Penalidad (5% + IVA):</span><strong>-{formatCurrency(penalidadBaja)}</strong></div>
-                           <div className="flex justify-between font-bold border-t pt-2"><span>Monto a Devolver (al final):</span><strong>{formatCurrency(capitalAportado - penalidadBaja)}</strong></div>
+                           <div className="flex justify-between font-bold border-t pt-2"><span>Monto a Devolver (al final):</span><strong>{formatCurrency(capitalAportadoPuro - penalidadBaja)}</strong></div>
                         </Card>
                          <p className="text-xs text-muted-foreground">La devolución se efectuará una vez finalizado el plazo original del grupo para no afectar al resto de los miembros.</p>
                     </div>
