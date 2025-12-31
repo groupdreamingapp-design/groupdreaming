@@ -4,17 +4,18 @@
 import { useMemo, useState } from "react";
 import { initialGroups } from "@/lib/data";
 import { GroupCard } from "@/components/app/group-card";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
 import { Logo } from "@/components/icons";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import type { Group } from "@/lib/types";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { SlidersHorizontal } from "lucide-react";
+import { SlidersHorizontal, ListRestart } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
 
 const capitalOptions = [5000, 10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000, 50000];
 const plazoOptions = [12, 24, 36, 48, 60, 72, 84, 96, 108, 120];
@@ -26,12 +27,17 @@ const cuotaRanges = [
   { label: "$801 - $1000", min: 801, max: 1000 },
 ];
 
+type SortKey = 'capital_asc' | 'capital_desc' | 'plazo_asc' | 'plazo_desc' | 'cuota_asc' | 'cuota_desc' | 'miembros_faltantes';
+
+
 export default function ExplorePage() {
   const [filters, setFilters] = useState({
     capital: [] as number[],
     plazo: [] as number[],
     cuota: [] as { min: number; max: number }[],
   });
+  const [sortKey, setSortKey] = useState<SortKey>('miembros_faltantes');
+
 
   const handleFilterChange = (type: 'capital' | 'plazo', value: number) => {
     setFilters(prev => {
@@ -54,7 +60,12 @@ export default function ExplorePage() {
     });
   };
 
-  const filteredGroups: Group[] = useMemo(() => {
+  const clearFilters = () => {
+    setFilters({ capital: [], plazo: [], cuota: [] });
+  };
+
+
+  const processedGroups: Group[] = useMemo(() => {
     let availableGroups = initialGroups.filter(g => g.status === 'Abierto');
 
     if (filters.capital.length > 0) {
@@ -68,8 +79,31 @@ export default function ExplorePage() {
         filters.cuota.some(range => g.cuotaPromedio >= range.min && g.cuotaPromedio <= range.max)
       );
     }
-    return availableGroups;
-  }, [filters]);
+
+    // Sorting logic
+    const sortedGroups = [...availableGroups].sort((a, b) => {
+        switch (sortKey) {
+            case 'capital_asc':
+                return a.capital - b.capital;
+            case 'capital_desc':
+                return b.capital - a.capital;
+            case 'plazo_asc':
+                return a.plazo - b.plazo;
+            case 'plazo_desc':
+                return b.plazo - a.plazo;
+            case 'cuota_asc':
+                return a.cuotaPromedio - b.cuotaPromedio;
+            case 'cuota_desc':
+                return b.cuotaPromedio - a.cuotaPromedio;
+            case 'miembros_faltantes':
+                return (a.totalMembers - a.membersCount) - (b.totalMembers - b.membersCount);
+            default:
+                return 0;
+        }
+    });
+
+    return sortedGroups;
+  }, [filters, sortKey]);
 
   const formatCurrency = (amount: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount);
 
@@ -168,16 +202,42 @@ export default function ExplorePage() {
                     </div>
                   </div>
                 </CardContent>
+                 <CardFooter>
+                    <Button variant="ghost" onClick={clearFilters}>
+                        <ListRestart className="mr-2 h-4 w-4" />
+                        Limpiar Filtros
+                    </Button>
+                </CardFooter>
               </CollapsibleContent>
             </Card>
           </Collapsible>
           
+          <div className="flex justify-end items-center mb-4">
+            <div className="flex items-center gap-2">
+              <Label htmlFor="sort-by" className="text-sm">Ordenar por:</Label>
+              <Select onValueChange={(value: SortKey) => setSortKey(value)} defaultValue={sortKey}>
+                <SelectTrigger className="w-[240px]" id="sort-by">
+                  <SelectValue placeholder="Seleccionar orden" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="miembros_faltantes">Miembros Faltantes</SelectItem>
+                  <SelectItem value="cuota_asc">Cuota (menor a mayor)</SelectItem>
+                  <SelectItem value="cuota_desc">Cuota (mayor a menor)</SelectItem>
+                  <SelectItem value="capital_asc">Capital (menor a mayor)</SelectItem>
+                  <SelectItem value="capital_desc">Capital (mayor a menor)</SelectItem>
+                  <SelectItem value="plazo_asc">Plazo (menor a mayor)</SelectItem>
+                  <SelectItem value="plazo_desc">Plazo (mayor a menor)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
 
           {/* Groups Grid */}
           <section>
-            {filteredGroups.length > 0 ? (
+            {processedGroups.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {filteredGroups.map(group => (
+                {processedGroups.map(group => (
                   <GroupCard 
                     key={group.id} 
                     group={group} 
@@ -189,7 +249,7 @@ export default function ExplorePage() {
             ) : (
               <div className="text-center py-16 text-muted-foreground col-span-full">
                   <p>No se encontraron grupos con los filtros seleccionados.</p>
-                  <p>Intenta modificar tu búsqueda o <Button variant="link" className="p-0 h-auto" onClick={() => setFilters({ capital: [], plazo: [], cuota: [] })}>borrar los filtros</Button>.</p>
+                  <p>Intenta modificar tu búsqueda o <Button variant="link" className="p-0 h-auto" onClick={clearFilters}>borrar los filtros</Button>.</p>
               </div>
             )}
           </section>
@@ -204,3 +264,5 @@ export default function ExplorePage() {
     </div>
   );
 }
+
+    
