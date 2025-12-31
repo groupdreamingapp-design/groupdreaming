@@ -6,10 +6,12 @@ import { Progress } from "@/components/ui/progress";
 import { Users, Clock, CheckCircle2, Lock, Hourglass, Ticket, Gavel, Trophy, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { toast } from "@/hooks/use-toast";
 
 type GroupCardProps = {
   group: Group;
   showJoinButton?: boolean;
+  onJoin?: () => void;
 };
 
 const statusConfig = {
@@ -19,7 +21,7 @@ const statusConfig = {
   Cerrado: { icon: Lock, color: "bg-gray-500", text: "text-gray-500" },
 };
 
-export function GroupCard({ group, showJoinButton = false }: GroupCardProps) {
+export function GroupCard({ group, showJoinButton = false, onJoin }: GroupCardProps) {
   const { icon: StatusIcon } = statusConfig[group.status];
   const formatCurrency = (amount: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
 
@@ -35,6 +37,16 @@ export function GroupCard({ group, showJoinButton = false }: GroupCardProps) {
     : group.status === 'Activo'
     ? `${group.monthsCompleted} de ${group.plazo} meses`
     : 'Grupo finalizado';
+    
+  const handleJoinClick = () => {
+    if (onJoin) {
+      onJoin();
+      toast({
+        title: "¡Felicitaciones!",
+        description: `Te has unido al grupo ${group.id}.`,
+      });
+    }
+  };
 
   return (
     <Card className="flex flex-col">
@@ -86,7 +98,7 @@ export function GroupCard({ group, showJoinButton = false }: GroupCardProps) {
             <p className="font-bold text-lg">{formatCurrency(group.cuotaPromedio)}</p>
         </div>
         {showJoinButton ? (
-          <Button disabled={group.status !== 'Abierto'}>Unirse</Button>
+          <Button disabled={group.status !== 'Abierto'} onClick={handleJoinClick}>Unirse</Button>
         ) : (
           <Button asChild variant="secondary" size="sm">
             <Link href={`/dashboard/group/${group.id}`}>

@@ -8,23 +8,23 @@ export const user: User = {
   avatarUrl: PlaceHolderImages.find(img => img.id === 'user-avatar-1')?.imageUrl || '',
 };
 
-export const groups: Group[] = [
+export const initialGroups: Group[] = [
   {
     id: "GR-001",
-    capital: 20000, // Multiple of 5000, between 5k-50k
-    plazo: 60, // Multiple of 12, between 12-120
-    cuotaPromedio: 380, // Under 1000
-    membersCount: 55,
+    capital: 20000, 
+    plazo: 60,
+    cuotaPromedio: 380,
+    membersCount: 119, // Almost full
     totalMembers: 120, // 60 * 2
     status: "Abierto",
-    userIsMember: true,
+    userIsMember: false,
     userIsAwarded: false,
   },
   {
     id: "GR-002",
-    capital: 15000, // Changed from 10000 to 15000
-    plazo: 48, // OK
-    cuotaPromedio: 345, // Recalculated
+    capital: 15000,
+    plazo: 48,
+    cuotaPromedio: 345,
     membersCount: 90,
     totalMembers: 96, // 48 * 2
     status: "Activo",
@@ -34,9 +34,9 @@ export const groups: Group[] = [
   },
   {
     id: "GR-003",
-    capital: 50000, // OK
-    plazo: 120, // OK
-    cuotaPromedio: 460, // OK
+    capital: 50000,
+    plazo: 120,
+    cuotaPromedio: 460,
     membersCount: 112,
     totalMembers: 240, // 120 * 2
     status: "Abierto",
@@ -44,9 +44,9 @@ export const groups: Group[] = [
   },
   {
     id: "GR-004",
-    capital: 10000, // Changed from 5000
-    plazo: 24, // OK
-    cuotaPromedio: 465, // Recalculated
+    capital: 10000,
+    plazo: 24,
+    cuotaPromedio: 465,
     membersCount: 48,
     totalMembers: 48, // 24 * 2
     status: "Activo",
@@ -55,9 +55,9 @@ export const groups: Group[] = [
   },
   {
     id: "GR-005",
-    capital: 15000, // OK
-    plazo: 36, // OK
-    cuotaPromedio: 455, // OK
+    capital: 15000,
+    plazo: 36,
+    cuotaPromedio: 455,
     membersCount: 72,
     totalMembers: 72, // 36 * 2
     status: "Cerrado",
@@ -66,9 +66,9 @@ export const groups: Group[] = [
   },
   {
     id: "GR-006",
-    capital: 25000, // OK
-    plazo: 72, // OK
-    cuotaPromedio: 385, // OK
+    capital: 25000,
+    plazo: 72,
+    cuotaPromedio: 385,
     membersCount: 68,
     totalMembers: 144, // 72 * 2
     status: "Abierto",
@@ -127,3 +127,6 @@ export const installments: Installment[] = Array.from({ length: 60 }, (_, i) => 
         awards: i < 5 ? staticAwards[i] : undefined,
     }
 });
+
+// Rename 'groups' to 'initialGroups' to clarify its role
+export { initialGroups as groups };

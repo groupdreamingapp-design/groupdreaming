@@ -1,12 +1,22 @@
 
-import { groups } from "@/lib/data";
+'use client';
+
+import { useState, useMemo } from "react";
+import { useGroups } from "@/hooks/use-groups";
 import { GroupCard } from "@/components/app/group-card";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
 
 export default function ExploreGroupsPage() {
+  const { groups, joinGroup } = useGroups();
+  
+  const availableGroups = useMemo(() => {
+    return groups.filter(g => g.status === 'Abierto' && !g.userIsMember);
+  }, [groups]);
+
   return (
     <>
       <div>
@@ -46,11 +56,23 @@ export default function ExploreGroupsPage() {
         </CardContent>
       </Card>
       <Separator />
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        {groups.filter(g => g.status === 'Abierto' && !g.userIsMember).map(group => (
-          <GroupCard key={group.id} group={group} showJoinButton={true} />
-        ))}
-      </div>
+       {availableGroups.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          {availableGroups.map(group => (
+            <GroupCard 
+              key={group.id} 
+              group={group} 
+              showJoinButton={true} 
+              onJoin={() => joinGroup(group.id)} 
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-16 text-muted-foreground">
+            <p>No hay grupos disponibles en este momento.</p>
+            <p>¡Vuelve a intentarlo más tarde!</p>
+        </div>
+      )}
     </>
   );
 }

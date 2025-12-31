@@ -1,7 +1,9 @@
 
 'use client';
 
-import { user, transactions, groups } from "@/lib/data"
+import { useMemo } from "react";
+import { user, transactions } from "@/lib/data"
+import { useGroups } from "@/hooks/use-groups";
 import { StatCard } from "@/components/app/stat-card"
 import { Repeat, Users, Wallet } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -10,16 +12,18 @@ import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { GroupCard } from "@/components/app/group-card"
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export default function DashboardPage() {
-
+  const { groups } = useGroups();
   const formatCurrency = (amount: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
 
   const availableBalance = transactions.reduce((acc, tx) => acc + tx.amount, 0);
 
-  const myGroups = groups.filter(g => g.userIsMember);
-  const activeGroups = myGroups.filter(g => g.status === 'Activo' || g.status === 'Abierto' || g.status === 'Pendiente');
-  const closedGroups = myGroups.filter(g => g.status === 'Cerrado');
+  const myGroups = useMemo(() => groups.filter(g => g.userIsMember), [groups]);
+  const activeGroups = useMemo(() => myGroups.filter(g => g.status === 'Activo' || g.status === 'Abierto' || g.status === 'Pendiente'), [myGroups]);
+  const closedGroups = useMemo(() => myGroups.filter(g => g.status === 'Cerrado'), [myGroups]);
 
   return (
     <>
@@ -50,9 +54,13 @@ export default function DashboardPage() {
                           ))}
                       </div>
                   ) : (
-                      <div className="text-center py-16 text-muted-foreground">
+                      <div className="text-center py-16 text-muted-foreground flex flex-col items-center gap-4">
                           <p>Aún no te has unido a ningún grupo.</p>
-                          <p>¡Explora los grupos disponibles y empieza a cumplir tus sueños!</p>
+                          <Button asChild>
+                            <Link href="/dashboard/explore-groups">
+                              ¡Explora los grupos disponibles y empieza a cumplir tus sueños!
+                            </Link>
+                          </Button>
                       </div>
                   )}
               </TabsContent>
