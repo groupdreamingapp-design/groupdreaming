@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Clock, Tag, TrendingUp } from "lucide-react";
 
 export default function AuctionsPage() {
-  const formatCurrency = (amount: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
+  const formatCurrency = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD' }).format(amount);
   
   return (
     <>

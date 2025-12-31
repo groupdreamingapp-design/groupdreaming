@@ -35,7 +35,7 @@ export default function GroupPublicDetailPage() {
 
   const exampleInstallments = generateExampleInstallments(group.capital, group.plazo);
 
-  const formatCurrency = (amount: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
+  const formatCurrency = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD' }).format(amount);
   
   const handleJoinGroup = () => {
     joinGroup(group.id);

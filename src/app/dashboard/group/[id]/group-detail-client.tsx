@@ -15,11 +15,12 @@ import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { useGroups } from '@/hooks/use-groups';
 import { installments as allInstallments } from '@/lib/data';
-import { useParams } from 'next/navigation';
 
-export default function GroupDetailClient() {
-  const params = useParams();
-  const groupId = typeof params.id === 'string' ? params.id : '';
+type GroupDetailClientProps = {
+    groupId: string;
+};
+
+export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
   const { groups } = useGroups();
   const group = groups.find(g => g.id === groupId);
 
@@ -39,7 +40,7 @@ export default function GroupDetailClient() {
     );
   }
 
-  const formatCurrency = (amount: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
+  const formatCurrency = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD' }).format(amount);
   const isMember = group.userIsMember;
   const cuotasPagadas = 5;
   const capitalAportado = cuotasPagadas * (installments.length > 0 ? installments[0].breakdown.alicuotaPura : 0);

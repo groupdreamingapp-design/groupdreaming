@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button";
 
 export default function DashboardPage() {
   const { groups } = useGroups();
-  const formatCurrency = (amount: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
+  const formatCurrency = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD' }).format(amount);
 
   const availableBalance = transactions.reduce((acc, tx) => acc + tx.amount, 0);
 
@@ -57,7 +57,7 @@ export default function DashboardPage() {
                       <div className="text-center py-16 text-muted-foreground flex flex-col items-center gap-4">
                           <p>Aún no te has unido a ningún grupo.</p>
                           <Button asChild>
-                            <Link href="/dashboard/explore-groups">
+                            <Link href="/dashboard/explore">
                               ¡Explora los grupos disponibles y empieza a cumplir tus sueños!
                             </Link>
                           </Button>
