@@ -148,7 +148,7 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-3 flex flex-col md:flex-row gap-4">
+        <div className="lg:col-span-2 flex flex-col md:flex-row gap-4">
           {isMember && (
             <Card className="flex-1 flex flex-col">
               <CardHeader>
@@ -164,93 +164,6 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                     <span>Adjudicación: {group.userIsAwarded ? <strong className="text-green-600">Adjudicado</strong> : <strong>Pendiente</strong>}</span>
                 </div>
               </CardContent>
-              {isMember && !group.userIsAwarded && group.status === 'Activo' && (
-                 <CardFooter className="flex-wrap gap-2">
-                  {/* Licitar */}
-                  <Dialog>
-                    <DialogTrigger asChild><Button size="sm"><Gavel className="mr-2 h-4 w-4" /> Licitar</Button></DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader><DialogTitle>Licitar por Adjudicación</DialogTitle><DialogDescription>Ofrece adelantar cuotas para obtener el capital. Quien más ofrezca, gana.</DialogDescription></DialogHeader>
-                      <div className="space-y-4">
-                          <p className="text-sm text-muted-foreground">Tu oferta competirá con otros miembros. Si ganas, el monto se usa para cancelar las últimas cuotas de tu plan.</p>
-                          <div className="grid w-full max-w-sm items-center gap-1.5">
-                              <Label htmlFor="cuotas-licitar">Cuotas a licitar (adelantar)</Label>
-                              <Input type="number" id="cuotas-licitar" placeholder="Ej: 10" />
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <Switch id="licitacion-automatica" />
-                            <Label htmlFor="licitacion-automatica">Activar Licitación Automática</Label>
-                          </div>
-                          <p className="text-xs text-muted-foreground">Recuerda que si ganas y no integras el capital, se aplicará una multa del 2% (+IVA) sobre tu oferta.</p>
-                      </div>
-                      <DialogFooter>
-                          <Button type="submit">Confirmar Licitación</Button>
-                      </DialogFooter>
-                    </DialogContent>
-                  </Dialog>
-                  {/* Adelantar Cuotas */}
-                  <Dialog>
-                    <DialogTrigger asChild><Button size="sm" variant="secondary"><TrendingUp className="mr-2 h-4 w-4" /> Adelantar</Button></DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader><DialogTitle>Adelantar Cuotas</DialogTitle><DialogDescription>Paga cuotas futuras para acortar tu plan y obtén una bonificación.</DialogDescription></DialogHeader>
-                      <div className="space-y-4">
-                          <p className="text-sm text-muted-foreground">No compite por adjudicación, pero reduce el costo final de tu plan.</p>
-                          <div className="grid w-full max-w-sm items-center gap-1.5">
-                              <Label htmlFor="cuotas-adelantar">Cantidad de cuotas a adelantar</Label>
-                              <Input type="number" id="cuotas-adelantar" placeholder="Ej: 5" />
-                          </div>
-                          <Card className="bg-muted/50">
-                              <CardContent className="p-4 text-sm">
-                                  <p>Pagarías: <strong>{formatCurrency(1850)}</strong> en lugar de {formatCurrency(1900)}.</p>
-                                  <p className="text-green-600">¡Ahorras {formatCurrency(50)} en gastos y seguros!</p>
-                              </CardContent>
-                          </Card>
-                      </div>
-                      <DialogFooter>
-                          <Button type="submit">Adelantar Cuotas</Button>
-                      </DialogFooter>
-                    </DialogContent>
-                  </Dialog>
-                  {/* Subastar Plan */}
-                  <Dialog>
-                    <DialogTrigger asChild><Button size="sm" variant="secondary"><Hand className="mr-2 h-4 w-4" /> Subastar</Button></DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader><DialogTitle>Subastar Plan (Vender)</DialogTitle><DialogDescription>Ofrece tu plan en el mercado secundario a otros inversores.</DialogDescription></DialogHeader>
-                       <div className="space-y-4 text-sm">
-                          <p>Esta es tu vía de salida flexible. A continuación un ejemplo del cálculo del precio base y lo que recibirías.</p>
-                          <Card className="bg-muted/50 p-4 space-y-2">
-                             <div className="flex justify-between"><span>Capital Aportado (Puro):</span><strong>{formatCurrency(capitalAportadoPuro)}</strong></div>
-                             <div className="flex justify-between text-red-600"><span>Comisión por Venta (2% + IVA):</span><strong>-{formatCurrency(comisionVenta)}</strong></div>
-                             <div className="flex justify-between font-bold border-t pt-2"><span>Liquidación Estimada (Precio Base):</span><strong>{formatCurrency(liquidacionMinima)}</strong></div>
-                             <p className="text-xs text-muted-foreground">El valor final dependerá del precio de venta en la subasta.</p>
-                          </Card>
-                      </div>
-                      <DialogFooter>
-                          <Button type="submit">Poner en Subasta</Button>
-                      </DialogFooter>
-                    </DialogContent>
-                  </Dialog>
-                  {/* Dar de Baja */}
-                  <Dialog>
-                    <DialogTrigger asChild><Button size="sm" variant="destructive"><FileX2 className="mr-2 h-4 w-4" /> Dar de Baja</Button></DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader><DialogTitle>Dar de Baja el Plan</DialogTitle><DialogDescription>Rescinde tu contrato. Aplica solo para planes no adjudicados.</DialogDescription></DialogHeader>
-                      <div className="space-y-4 text-sm">
-                          <p>Se te devolverá el capital puro aportado al finalizar el grupo, menos una penalidad. Ejemplo del cálculo:</p>
-                          <Card className="bg-muted/50 p-4 space-y-2">
-                             <div className="flex justify-between"><span>Capital Aportado (Puro):</span><strong>{formatCurrency(capitalAportadoPuro)}</strong></div>
-                             <div className="flex justify-between text-red-600"><span>Penalidad (5% + IVA):</span><strong>-{formatCurrency(penalidadBaja)}</strong></div>
-                             <div className="flex justify-between font-bold border-t pt-2"><span>Monto a Devolver (al final):</span><strong>{formatCurrency(capitalAportadoPuro - penalidadBaja)}</strong></div>
-                          </Card>
-                           <p className="text-xs text-muted-foreground">La devolución se efectuará una vez finalizado el plazo original del grupo para no afectar al resto de los miembros.</p>
-                      </div>
-                      <DialogFooter>
-                          <Button type="submit" variant="destructive">Confirmar Baja</Button>
-                      </DialogFooter>
-                    </DialogContent>
-                  </Dialog>
-                </CardFooter>
-              )}
             </Card>
           )}
           <Card className="flex-1">
@@ -266,6 +179,102 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
             </CardContent>
           </Card>
         </div>
+
+        {isMember && !group.userIsAwarded && group.status === 'Activo' && (
+          <div className="lg:col-span-1">
+            <Card>
+              <CardHeader>
+                <CardTitle>Acciones del Plan</CardTitle>
+                <CardDescription>Opciones disponibles para tu plan.</CardDescription>
+              </CardHeader>
+              <CardContent className="flex flex-wrap gap-2">
+                {/* Licitar */}
+                <Dialog>
+                  <DialogTrigger asChild><Button size="sm"><Gavel className="mr-2 h-4 w-4" /> Licitar</Button></DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader><DialogTitle>Licitar por Adjudicación</DialogTitle><DialogDescription>Ofrece adelantar cuotas para obtener el capital. Quien más ofrezca, gana.</DialogDescription></DialogHeader>
+                    <div className="space-y-4">
+                        <p className="text-sm text-muted-foreground">Tu oferta competirá con otros miembros. Si ganas, el monto se usa para cancelar las últimas cuotas de tu plan.</p>
+                        <div className="grid w-full max-w-sm items-center gap-1.5">
+                            <Label htmlFor="cuotas-licitar">Cuotas a licitar (adelantar)</Label>
+                            <Input type="number" id="cuotas-licitar" placeholder="Ej: 10" />
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Switch id="licitacion-automatica" />
+                          <Label htmlFor="licitacion-automatica">Activar Licitación Automática</Label>
+                        </div>
+                        <p className="text-xs text-muted-foreground">Recuerda que si ganas y no integras el capital, se aplicará una multa del 2% (+IVA) sobre tu oferta.</p>
+                    </div>
+                    <DialogFooter>
+                        <Button type="submit">Confirmar Licitación</Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+                {/* Adelantar Cuotas */}
+                <Dialog>
+                  <DialogTrigger asChild><Button size="sm" variant="secondary"><TrendingUp className="mr-2 h-4 w-4" /> Adelantar</Button></DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader><DialogTitle>Adelantar Cuotas</DialogTitle><DialogDescription>Paga cuotas futuras para acortar tu plan y obtén una bonificación.</DialogDescription></DialogHeader>
+                    <div className="space-y-4">
+                        <p className="text-sm text-muted-foreground">No compite por adjudicación, pero reduce el costo final de tu plan.</p>
+                        <div className="grid w-full max-w-sm items-center gap-1.5">
+                            <Label htmlFor="cuotas-adelantar">Cantidad de cuotas a adelantar</Label>
+                            <Input type="number" id="cuotas-adelantar" placeholder="Ej: 5" />
+                        </div>
+                        <Card className="bg-muted/50">
+                            <CardContent className="p-4 text-sm">
+                                <p>Pagarías: <strong>{formatCurrency(1850)}</strong> en lugar de {formatCurrency(1900)}.</p>
+                                <p className="text-green-600">¡Ahorras {formatCurrency(50)} en gastos y seguros!</p>
+                            </CardContent>
+                        </Card>
+                    </div>
+                    <DialogFooter>
+                        <Button type="submit">Adelantar Cuotas</Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+                {/* Subastar Plan */}
+                <Dialog>
+                  <DialogTrigger asChild><Button size="sm" variant="secondary"><Hand className="mr-2 h-4 w-4" /> Subastar</Button></DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader><DialogTitle>Subastar Plan (Vender)</DialogTitle><DialogDescription>Ofrece tu plan en el mercado secundario a otros inversores.</DialogDescription></DialogHeader>
+                     <div className="space-y-4 text-sm">
+                        <p>Esta es tu vía de salida flexible. A continuación un ejemplo del cálculo del precio base y lo que recibirías.</p>
+                        <Card className="bg-muted/50 p-4 space-y-2">
+                           <div className="flex justify-between"><span>Capital Aportado (Puro):</span><strong>{formatCurrency(capitalAportadoPuro)}</strong></div>
+                           <div className="flex justify-between text-red-600"><span>Comisión por Venta (2% + IVA):</span><strong>-{formatCurrency(comisionVenta)}</strong></div>
+                           <div className="flex justify-between font-bold border-t pt-2"><span>Liquidación Estimada (Precio Base):</span><strong>{formatCurrency(liquidacionMinima)}</strong></div>
+                           <p className="text-xs text-muted-foreground">El valor final dependerá del precio de venta en la subasta.</p>
+                        </Card>
+                    </div>
+                    <DialogFooter>
+                        <Button type="submit">Poner en Subasta</Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+                {/* Dar de Baja */}
+                <Dialog>
+                  <DialogTrigger asChild><Button size="sm" variant="destructive"><FileX2 className="mr-2 h-4 w-4" /> Dar de Baja</Button></DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader><DialogTitle>Dar de Baja el Plan</DialogTitle><DialogDescription>Rescinde tu contrato. Aplica solo para planes no adjudicados.</DialogDescription></DialogHeader>
+                    <div className="space-y-4 text-sm">
+                        <p>Se te devolverá el capital puro aportado al finalizar el grupo, menos una penalidad. Ejemplo del cálculo:</p>
+                        <Card className="bg-muted/50 p-4 space-y-2">
+                           <div className="flex justify-between"><span>Capital Aportado (Puro):</span><strong>{formatCurrency(capitalAportadoPuro)}</strong></div>
+                           <div className="flex justify-between text-red-600"><span>Penalidad (5% + IVA):</span><strong>-{formatCurrency(penalidadBaja)}</strong></div>
+                           <div className="flex justify-between font-bold border-t pt-2"><span>Monto a Devolver (al final):</span><strong>{formatCurrency(capitalAportadoPuro - penalidadBaja)}</strong></div>
+                        </Card>
+                         <p className="text-xs text-muted-foreground">La devolución se efectuará una vez finalizado el plazo original del grupo para no afectar al resto de los miembros.</p>
+                    </div>
+                    <DialogFooter>
+                        <Button type="submit" variant="destructive">Confirmar Baja</Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              </CardContent>
+            </Card>
+          </div>
+        )}
 
         <div className="lg:col-span-3">
           <Card>
