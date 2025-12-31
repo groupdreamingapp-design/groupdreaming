@@ -112,7 +112,7 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {installments.slice(0, 12).map((inst) => (
+                  {installments.map((inst) => (
                     <TableRow key={inst.id}>
                       <TableCell>{inst.number}</TableCell>
                       <TableCell>{inst.dueDate}</TableCell>
