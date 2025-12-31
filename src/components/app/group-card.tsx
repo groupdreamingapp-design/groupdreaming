@@ -54,11 +54,11 @@ export function GroupCard({ group, showJoinButton = false, onJoin, isPublic = fa
   return (
     <Card className="flex flex-col">
       <Link href={cardLink} className="flex flex-col flex-grow">
-        <CardHeader>
+        <CardHeader className="p-4">
           <div className="flex justify-between items-start">
             <div>
               <CardDescription>{group.id}</CardDescription>
-              <CardTitle className="text-2xl">{formatCurrency(group.capital)}</CardTitle>
+              <CardTitle className="text-xl">{formatCurrency(group.capital)}</CardTitle>
             </div>
             <div className="relative">
               <Badge className={cn(statusConfig[group.status].text, "border-current")} variant="outline">
@@ -73,16 +73,16 @@ export function GroupCard({ group, showJoinButton = false, onJoin, isPublic = fa
             </div>
           </div>
         </CardHeader>
-        <CardContent className="flex-grow">
+        <CardContent className="flex-grow p-4 pt-0">
           <div className="space-y-4">
             <div>
-              <div className="flex justify-between text-sm text-muted-foreground mb-1">
+              <div className="flex justify-between text-xs text-muted-foreground mb-1">
                 <span>Progreso</span>
                 <span>{progressText}</span>
               </div>
               <Progress value={progressValue} aria-label={`Progreso del grupo ${progressValue.toFixed(0)}%`} />
             </div>
-            <div className="grid grid-cols-2 gap-4 text-sm">
+            <div className="grid grid-cols-2 gap-4 text-xs">
               <div className="flex items-center gap-2">
                 <Users className="h-4 w-4 text-muted-foreground" />
                 <span>{group.totalMembers} Miembros</span>
@@ -95,14 +95,14 @@ export function GroupCard({ group, showJoinButton = false, onJoin, isPublic = fa
           </div>
         </CardContent>
       </Link>
-      <CardFooter className="flex justify-between items-center bg-muted/50 p-4 mt-4">
+      <CardFooter className="flex justify-between items-center bg-muted/50 p-3 mt-4">
         <div className="text-center">
             <p className="text-xs text-muted-foreground">Cuota Promedio</p>
-            <p className="font-bold text-lg">{formatCurrency(group.cuotaPromedio)}</p>
+            <p className="font-bold text-base">{formatCurrency(group.cuotaPromedio)}</p>
         </div>
         {showJoinButton ? (
-          <Button disabled={group.status !== 'Abierto'} onClick={handleJoinClick}>
-            {isPublic ? 'Registrarse para Unirse' : 'Unirse'}
+          <Button size="sm" disabled={group.status !== 'Abierto'} onClick={handleJoinClick}>
+            {isPublic ? 'Registrarse' : 'Unirse'}
           </Button>
         ) : (
           <Button asChild variant="secondary" size="sm">
@@ -115,5 +115,3 @@ export function GroupCard({ group, showJoinButton = false, onJoin, isPublic = fa
     </Card>
   );
 }
-
-    
