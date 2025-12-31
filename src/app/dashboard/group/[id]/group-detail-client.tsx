@@ -29,10 +29,11 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
   if (!group) {
     return (
       <div className="flex flex-col items-center justify-center h-full text-center">
+        <FileX2 className="h-16 w-16 text-muted-foreground mb-4" />
         <h1 className="text-2xl font-bold">Grupo no encontrado</h1>
         <p className="text-muted-foreground">El grupo que buscas no existe o fue eliminado.</p>
         <Button asChild className="mt-4">
-          <Link href="/dashboard/explore">Explorar otros grupos</Link>
+          <Link href="/dashboard/my-groups">Volver a Mis Grupos</Link>
         </Button>
       </div>
     );
@@ -46,8 +47,8 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
   return (
     <>
       <div className="mb-4">
-        <Link href="/dashboard/my-groups" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary mb-2">
-          <ArrowLeft className="h-4 w-4" /> Volver a Mis Grupos
+        <Link href="/dashboard" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary mb-2">
+          <ArrowLeft className="h-4 w-4" /> Volver a Mi Panel
         </Link>
         <h1 className="text-3xl font-bold font-headline">Grupo {group.id}</h1>
         <p className="text-muted-foreground">Capital de {formatCurrency(group.capital)} en {group.plazo} meses.</p>
@@ -256,3 +257,5 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
     </>
   );
 }
+
+    
