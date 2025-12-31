@@ -68,9 +68,21 @@ const cuotaSuscripcion = mesesFinanciacionSuscripcion > 0 ? totalSuscripcion / m
 const generateStaticAwards = (totalMembers: number, totalMonths: number): Award[][] => {
     // Create a shuffled list of unique member order numbers
     const memberOrderNumbers = Array.from({ length: totalMembers }, (_, i) => i + 1);
-    for (let i = memberOrderNumbers.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [memberOrderNumbers[i], memberOrderNumbers[j]] = [memberOrderNumbers[j], memberOrderNumbers[i]];
+
+    // Simple pseudo-random shuffle to ensure consistency between server and client
+    let currentIndex = memberOrderNumbers.length;
+    let seed = 12345; // A fixed seed for the pseudo-random number generator
+    
+    // While there remain elements to shuffle.
+    while (currentIndex !== 0) {
+        // Pick a remaining element.
+        seed = (seed * 9301 + 49297) % 233280;
+        const randomIndex = Math.floor(seed / 233280 * currentIndex);
+        currentIndex--;
+
+        // And swap it with the current element.
+        [memberOrderNumbers[currentIndex], memberOrderNumbers[randomIndex]] = [
+        memberOrderNumbers[randomIndex], memberOrderNumbers[currentIndex]];
     }
 
     const awards: Award[][] = [];
