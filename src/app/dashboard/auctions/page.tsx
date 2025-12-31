@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect } from "react";
-import { auctions } from "@/lib/data";
+import { auctions, installments as allInstallments } from "@/lib/data";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Clock, Tag, TrendingUp, Gavel, ArrowUp, Bot, BookText, AlertTriangle, Info } from "lucide-react";
@@ -174,15 +174,6 @@ export default function AuctionsPage() {
       resetDialog();
     }
   }
-  
-  const IVA = 1.21;
-  const calculateCuotaPromedio = (capital: number, plazo: number): number => {
-    const alicuotaPura = capital / plazo;
-    const gastosAdm = (alicuotaPura * 0.10) * IVA;
-    const seguroVidaPromedio = (capital * 0.0009) / 2; // Rough average
-    const derechoSuscripcionPromedio = ((capital * 0.03) * IVA) / plazo;
-    return alicuotaPura + gastosAdm + seguroVidaPromedio + derechoSuscripcionPromedio;
-  }
 
   return (
     <>
@@ -200,8 +191,10 @@ export default function AuctionsPage() {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         {auctions.map(auction => {
-          const cuotaPromedio = calculateCuotaPromedio(auction.capital, auction.plazo);
-          const totalCuotasEmitidas = cuotaPromedio * auction.cuotasPagadas;
+          const totalCuotasEmitidas = allInstallments
+            .slice(0, auction.cuotasPagadas)
+            .reduce((acc, installment) => acc + installment.total, 0);
+
           const precioBase = totalCuotasEmitidas * 0.5;
 
           const minBidIncrement = precioBase * 0.03;
