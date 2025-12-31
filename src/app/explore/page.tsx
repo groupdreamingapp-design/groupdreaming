@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { initialGroups } from "@/lib/data";
 import { GroupCard } from "@/components/app/group-card";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
@@ -64,46 +64,41 @@ export default function ExplorePage() {
     setFilters({ capital: [], plazo: [], cuota: [] });
   };
 
+  let processedGroups: Group[] = initialGroups.filter(g => g.status === 'Abierto');
 
-  const processedGroups: Group[] = useMemo(() => {
-    let availableGroups = initialGroups.filter(g => g.status === 'Abierto');
+  if (filters.capital.length > 0) {
+    processedGroups = processedGroups.filter(g => filters.capital.includes(g.capital));
+  }
+  if (filters.plazo.length > 0) {
+    processedGroups = processedGroups.filter(g => filters.plazo.includes(g.plazo));
+  }
+  if (filters.cuota.length > 0) {
+    processedGroups = processedGroups.filter(g => 
+      filters.cuota.some(range => g.cuotaPromedio >= range.min && g.cuotaPromedio <= range.max)
+    );
+  }
 
-    if (filters.capital.length > 0) {
-      availableGroups = availableGroups.filter(g => filters.capital.includes(g.capital));
-    }
-    if (filters.plazo.length > 0) {
-      availableGroups = availableGroups.filter(g => filters.plazo.includes(g.plazo));
-    }
-    if (filters.cuota.length > 0) {
-      availableGroups = availableGroups.filter(g => 
-        filters.cuota.some(range => g.cuotaPromedio >= range.min && g.cuotaPromedio <= range.max)
-      );
-    }
-
-    // Sorting logic
-    const sortedGroups = [...availableGroups].sort((a, b) => {
-        switch (sortKey) {
-            case 'capital_asc':
-                return a.capital - b.capital;
-            case 'capital_desc':
-                return b.capital - a.capital;
-            case 'plazo_asc':
-                return a.plazo - b.plazo;
-            case 'plazo_desc':
-                return b.plazo - a.plazo;
-            case 'cuota_asc':
-                return a.cuotaPromedio - b.cuotaPromedio;
-            case 'cuota_desc':
-                return b.cuotaPromedio - a.cuotaPromedio;
-            case 'miembros_faltantes':
-                return (a.totalMembers - a.membersCount) - (b.totalMembers - b.membersCount);
-            default:
-                return 0;
-        }
-    });
-
-    return sortedGroups;
-  }, [filters, sortKey]);
+  // Sorting logic
+  processedGroups.sort((a, b) => {
+      switch (sortKey) {
+          case 'capital_asc':
+              return a.capital - b.capital;
+          case 'capital_desc':
+              return b.capital - a.capital;
+          case 'plazo_asc':
+              return a.plazo - b.plazo;
+          case 'plazo_desc':
+              return b.plazo - a.plazo;
+          case 'cuota_asc':
+              return a.cuotaPromedio - b.cuotaPromedio;
+          case 'cuota_desc':
+              return b.cuotaPromedio - a.cuotaPromedio;
+          case 'miembros_faltantes':
+              return (a.totalMembers - a.membersCount) - (b.totalMembers - b.membersCount);
+          default:
+              return 0;
+      }
+  });
 
   const formatCurrency = (amount: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount);
 
