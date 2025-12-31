@@ -5,7 +5,7 @@ import { useMemo } from "react";
 import { user, transactions } from "@/lib/data"
 import { useGroups } from "@/hooks/use-groups";
 import { StatCard } from "@/components/app/stat-card"
-import { Repeat, Users, Wallet } from "lucide-react"
+import { Repeat, Wallet } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
@@ -62,10 +62,9 @@ export default function DashboardPage() {
   return (
     <>
       <h1 className="text-3xl font-bold font-headline">Hola, {user.name.split(' ')[0]}!</h1>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2">
         <StatCard title="Saldo Disponible" value={formatCurrency(availableBalance)} icon={Wallet} description="+20% que el mes pasado" />
         <StatCard title="Próxima Cuota" value={formatCurrency(615)} icon={Repeat} description="Vence en 15 días" />
-        <StatCard title="Grupos Activos" value={myGroups.filter(g => g.status === 'Activo' || g.status === 'Abierto').length.toString()} icon={Users} description={`${myGroups.length} en total`} />
       </div>
 
       <div className="grid gap-4">
