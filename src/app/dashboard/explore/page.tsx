@@ -199,7 +199,14 @@ export default function ExploreGroupsDashboardPage() {
         </Card>
       </Collapsible>
       
-      <div className="flex justify-end items-center mb-4">
+      <div className="flex justify-between items-center mb-4">
+        <div>
+          {!loading && (
+            <p className="text-sm text-muted-foreground">
+              {processedGroups.length} {processedGroups.length === 1 ? 'grupo encontrado' : 'grupos encontrados'}
+            </p>
+          )}
+        </div>
         <div className="flex items-center gap-2">
           <Label htmlFor="sort-by" className="text-sm">Ordenar por:</Label>
           <Select onValueChange={(value: SortKey) => setSortKey(value)} defaultValue={sortKey}>
