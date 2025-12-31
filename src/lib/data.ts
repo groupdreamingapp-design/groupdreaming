@@ -97,7 +97,7 @@ const alicuotaPura = capital / plazo;
 const gastosAdm = alicuotaPura * 0.10; // 10%
 const seguroVida = 13.34; // Placeholder fixed value for simplicity
 const totalSuscripcion = capital * 0.03;
-const mesesFinanciacionSuscripcion = Math.floor(plazo * 0.15);
+const mesesFinanciacionSuscripcion = Math.floor(plazo * 0.20); // UPDATED to 20%
 const cuotaSuscripcion = mesesFinanciacionSuscripcion > 0 ? totalSuscripcion / mesesFinanciacionSuscripcion : 0;
 
 const staticAwards: Award[][] = [
@@ -127,3 +127,31 @@ export const installments: Installment[] = Array.from({ length: 60 }, (_, i) => 
         awards: i < 5 ? staticAwards[i] : undefined,
     }
 });
+
+export const generateExampleInstallments = (capital: number, plazo: number): Installment[] => {
+    const alicuotaPura = capital / plazo;
+    const gastosAdm = alicuotaPura * 0.10; // 10%
+    const seguroVida = 13.34; // Placeholder fixed value
+    const totalSuscripcion = capital * 0.03;
+    const mesesFinanciacionSuscripcion = Math.floor(plazo * 0.20);
+    const cuotaSuscripcion = mesesFinanciacionSuscripcion > 0 ? totalSuscripcion / mesesFinanciacionSuscripcion : 0;
+
+    return Array.from({ length: plazo }, (_, i) => {
+        const derechoSuscripcion = i < mesesFinanciacionSuscripcion ? cuotaSuscripcion : 0;
+        const totalCuota = alicuotaPura + gastosAdm + seguroVida + derechoSuscripcion;
+
+        return {
+            id: `cuota-ex-${i + 1}`,
+            number: i + 1,
+            dueDate: `Mes ${i+1}`,
+            status: 'Futuro',
+            total: totalCuota,
+            breakdown: {
+                alicuotaPura,
+                gastosAdm,
+                seguroVida,
+                derechoSuscripcion: i < mesesFinanciacionSuscripcion ? derechoSuscripcion : undefined,
+            },
+        };
+    });
+};

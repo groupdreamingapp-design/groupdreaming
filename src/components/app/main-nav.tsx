@@ -21,7 +21,7 @@ export function MainNav({ isMobile = false }: MainNavProps) {
       icon: LayoutDashboard,
     },
     {
-      href: "/explore",
+      href: "/dashboard/explore",
       label: "Explorar Grupos",
       icon: Search,
     },

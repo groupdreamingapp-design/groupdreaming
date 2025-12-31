@@ -46,7 +46,7 @@ export default function LandingPage() {
         </Link>
         <nav className="hidden md:flex items-center gap-4">
           <Button variant="ghost" asChild>
-            <Link href="/explore">Explorar Grupos</Link>
+            <Link href="/dashboard/explore">Explorar Grupos</Link>
           </Button>
           <Button variant="ghost" asChild>
             <Link href="/login">Ingresar</Link>
@@ -57,7 +57,7 @@ export default function LandingPage() {
         </nav>
          <nav className="md:hidden flex items-center gap-2">
           <Button variant="ghost" size="sm" asChild>
-            <Link href="/explore">Explorar</Link>
+            <Link href="/dashboard/explore">Explorar</Link>
           </Button>
           <Button variant="outline" size="sm" asChild>
             <Link href="/login">Ingresar</Link>
@@ -221,5 +221,3 @@ export default function LandingPage() {
   );
 
 }
-
-    

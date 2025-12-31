@@ -26,8 +26,6 @@ export function GroupCard({ group, isPublic = false }: GroupCardProps) {
   const { icon: StatusIcon } = statusConfig[group.status];
   const formatCurrency = (amount: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
   const router = useRouter();
-  const { joinGroup } = useGroups();
-
 
   const progressValue = group.status === 'Abierto'
     ? (group.membersCount / group.totalMembers) * 100
@@ -42,21 +40,13 @@ export function GroupCard({ group, isPublic = false }: GroupCardProps) {
     ? `${group.monthsCompleted} de ${group.plazo} meses`
     : 'Grupo finalizado';
     
-  const handleJoinClick = () => {
-    if (isPublic) {
-        router.push('/register');
-    } else {
-      joinGroup(group.id);
-    }
-  };
-
-  const cardLink = isPublic ? '/register' : `/dashboard/group/${group.id}`;
+  const cardLink = group.userIsMember ? `/dashboard/group/${group.id}` : `/dashboard/group-public/${group.id}`;
 
   const renderAction = () => {
     if (isPublic) {
       return (
-        <Button size="sm" onClick={handleJoinClick} disabled={group.status !== 'Abierto'}>
-          Registrarse
+        <Button asChild size="sm">
+          <Link href="/register">Registrarse</Link>
         </Button>
       );
     }
@@ -72,8 +62,8 @@ export function GroupCard({ group, isPublic = false }: GroupCardProps) {
     }
 
     return (
-       <Button size="sm" onClick={handleJoinClick} disabled={group.status !== 'Abierto'}>
-          Unirse
+       <Button asChild size="sm" disabled={group.status !== 'Abierto'}>
+          <Link href={cardLink}>Unirse</Link>
         </Button>
     );
   }
