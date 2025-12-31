@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { ArrowLeft, Users, Clock, Scale, Users2, FileX2, CheckCircle, Ticket, HandCoins } from 'lucide-react';
 import Link from 'next/link';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 export default function GroupPublicDetailPage() {
   const params = useParams();
@@ -90,55 +91,50 @@ export default function GroupPublicDetailPage() {
               <CardDescription>Así se compone tu cuota mensual. Los valores son aproximados.</CardDescription>
             </CardHeader>
             <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Cuota</TableHead>
-                    <TableHead>Vencimiento</TableHead>
-                    <TableHead className="text-right">Total Aproximado</TableHead>
-                    <TableHead className="text-center">Detalle</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {exampleInstallments.slice(0, 12).map((inst: Installment) => (
-                    <TableRow key={inst.id}>
-                      <TableCell>{inst.number}</TableCell>
-                      <TableCell>{inst.dueDate}</TableCell>
-                      <TableCell className="text-right font-mono">{formatCurrency(inst.total)}</TableCell>
-                      <TableCell className="text-center">
-                        <Dialog>
-                          <DialogTrigger asChild>
-                            <Button variant="outline" size="sm">Ver Desglose</Button>
-                          </DialogTrigger>
-                          <DialogContent>
-                            <DialogHeader>
-                              <DialogTitle>Desglose de la Cuota #{inst.number}</DialogTitle>
-                            </DialogHeader>
-                            <div className="grid gap-2 text-sm">
-                                <div className="flex justify-between"><span>Alícuota Pura:</span><strong>{formatCurrency(inst.breakdown.alicuotaPura)}</strong></div>
-                                <div className="flex justify-between"><span>Gastos Adm (IVA incl.):</span><strong>{formatCurrency(inst.breakdown.gastosAdm)}</strong></div>
-                                {inst.breakdown.derechoSuscripcion && inst.breakdown.derechoSuscripcion > 0 ? (
-                                  <div className="flex justify-between"><span>Derecho Suscripción (IVA incl.):</span><strong>{formatCurrency(inst.breakdown.derechoSuscripcion)}</strong></div>
-                                ) : (
-                                    <div className="flex justify-between text-muted-foreground"><span>Derecho Suscripción:</span><strong>-</strong></div>
-                                )}
-                                <div className="flex justify-between"><span>Seguro de Vida:</span><strong>{formatCurrency(inst.breakdown.seguroVida)}</strong></div>
-                                <div className="flex justify-between font-bold text-base border-t pt-2 mt-2"><span>Total Estimado:</span><span>{formatCurrency(inst.total)}</span></div>
-                            </div>
-                          </DialogContent>
-                        </Dialog>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                   {exampleInstallments.length > 12 && (
+              <ScrollArea className="h-[400px]">
+                <Table>
+                  <TableHeader>
                     <TableRow>
-                        <TableCell colSpan={4} className="text-center text-muted-foreground">
-                            ... y {exampleInstallments.length - 12} cuotas más.
-                        </TableCell>
+                      <TableHead>Cuota</TableHead>
+                      <TableHead>Vencimiento</TableHead>
+                      <TableHead className="text-right">Total Aproximado</TableHead>
+                      <TableHead className="text-center">Detalle</TableHead>
                     </TableRow>
-                   )}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {exampleInstallments.map((inst: Installment) => (
+                      <TableRow key={inst.id}>
+                        <TableCell>{inst.number}</TableCell>
+                        <TableCell>{inst.dueDate}</TableCell>
+                        <TableCell className="text-right font-mono">{formatCurrency(inst.total)}</TableCell>
+                        <TableCell className="text-center">
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <Button variant="outline" size="sm">Ver Desglose</Button>
+                            </DialogTrigger>
+                            <DialogContent>
+                              <DialogHeader>
+                                <DialogTitle>Desglose de la Cuota #{inst.number}</DialogTitle>
+                              </DialogHeader>
+                              <div className="grid gap-2 text-sm">
+                                  <div className="flex justify-between"><span>Alícuota Pura:</span><strong>{formatCurrency(inst.breakdown.alicuotaPura)}</strong></div>
+                                  <div className="flex justify-between"><span>Gastos Adm (IVA incl.):</span><strong>{formatCurrency(inst.breakdown.gastosAdm)}</strong></div>
+                                  {inst.breakdown.derechoSuscripcion && inst.breakdown.derechoSuscripcion > 0 ? (
+                                    <div className="flex justify-between"><span>Derecho Suscripción (IVA incl.):</span><strong>{formatCurrency(inst.breakdown.derechoSuscripcion)}</strong></div>
+                                  ) : (
+                                      <div className="flex justify-between text-muted-foreground"><span>Derecho Suscripción:</span><strong>-</strong></div>
+                                  )}
+                                  <div className="flex justify-between"><span>Seguro de Vida:</span><strong>{formatCurrency(inst.breakdown.seguroVida)}</strong></div>
+                                  <div className="flex justify-between font-bold text-base border-t pt-2 mt-2"><span>Total Estimado:</span><span>{formatCurrency(inst.total)}</span></div>
+                              </div>
+                            </DialogContent>
+                          </Dialog>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </ScrollArea>
             </CardContent>
           </Card>
         </div>
