@@ -17,6 +17,7 @@ import { useGroups } from '@/hooks/use-groups';
 import { installments as allInstallments, initialGroups } from '@/lib/data';
 import { useMemo } from 'react';
 import { Separator } from '@/components/ui/separator';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 type GroupDetailClientProps = {
     groupId: string;
@@ -46,6 +47,7 @@ const generateStaticAwards = (groupId: string, totalMembers: number, totalMonths
     let potentialWinners = [...memberOrderNumbers];
     
     if (isAwarded) {
+        // Find and remove user to re-insert them at a specific spot
         const userIndex = potentialWinners.indexOf(userOrderNumber);
         if (userIndex > -1) {
             potentialWinners.splice(userIndex, 1);
@@ -55,18 +57,29 @@ const generateStaticAwards = (groupId: string, totalMembers: number, totalMonths
     potentialWinners = shuffle(potentialWinners);
     
     if (isAwarded) {
-        const userWinMonthIndex = 4; // Make the user win in month 5 (index 4)
-        potentialWinners.splice(userWinMonthIndex * 2, 0, userOrderNumber);
+        // Ensure user wins in one of the first few months if they are awarded
+        const userWinMonthIndex = 4; // e.g., month 5 (index 4)
+        const awardsPerMonth = 2;
+        const insertPosition = userWinMonthIndex * awardsPerMonth;
+        
+        // Remove the winner that was going to be there
+        if (potentialWinners.length > insertPosition) {
+             potentialWinners.splice(insertPosition, 1, userOrderNumber);
+        } else {
+             potentialWinners.push(userOrderNumber);
+        }
     }
     
     const awards: Award[][] = [];
+    let winnerPool = [...potentialWinners];
+    
     for (let i = 0; i < totalMonths; i++) {
         const monthAwards: Award[] = [];
-        if (potentialWinners.length > 0) {
-            monthAwards.push({ type: 'sorteo', orderNumber: potentialWinners.shift()! });
+        if (winnerPool.length > 0) {
+            monthAwards.push({ type: 'sorteo', orderNumber: winnerPool.shift()! });
         }
-        if (potentialWinners.length > 0) {
-            monthAwards.push({ type: 'licitacion', orderNumber: potentialWinners.shift()! });
+        if (winnerPool.length > 0) {
+            monthAwards.push({ type: 'licitacion', orderNumber: winnerPool.shift()! });
         }
         if (monthAwards.length > 0) {
             awards.push(monthAwards);
@@ -104,6 +117,7 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
 
   const installments = allInstallments.slice(0, group.plazo);
   const cuotasPagadas = group.monthsCompleted || 0;
+  const cuotasRestantes = group.plazo - cuotasPagadas;
 
   const formatCurrency = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD' }).format(amount);
   const formatCurrencyNoDecimals = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount);
@@ -179,7 +193,16 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                             <p className="text-sm text-muted-foreground">Tu oferta competirá con otros miembros. Si ganas, el monto se usa para cancelar las últimas cuotas de tu plan.</p>
                             <div className="grid w-full max-w-sm items-center gap-1.5">
                                 <Label htmlFor="cuotas-licitar">Cuotas a licitar (adelantar)</Label>
-                                <Input type="number" id="cuotas-licitar" placeholder="Ej: 10" />
+                                <Select>
+                                    <SelectTrigger id="cuotas-licitar">
+                                        <SelectValue placeholder="Selecciona la cantidad de cuotas" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {Array.from({ length: cuotasRestantes }, (_, i) => i + 1).map(num => (
+                                            <SelectItem key={num} value={String(num)}>{num} cuota{num > 1 && 's'}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
                             </div>
                             <div className="flex items-center space-x-2">
                               <Switch id="licitacion-automatica" />
@@ -204,7 +227,16 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                         <p className="text-sm text-muted-foreground">No compite por adjudicación, pero reduce el costo final de tu plan.</p>
                         <div className="grid w-full max-w-sm items-center gap-1.5">
                             <Label htmlFor="cuotas-adelantar">Cantidad de cuotas a adelantar</Label>
-                            <Input type="number" id="cuotas-adelantar" placeholder="Ej: 5" />
+                             <Select>
+                                <SelectTrigger id="cuotas-adelantar">
+                                    <SelectValue placeholder="Selecciona la cantidad de cuotas" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {Array.from({ length: cuotasRestantes }, (_, i) => i + 1).map(num => (
+                                        <SelectItem key={num} value={String(num)}>{num} cuota{num > 1 && 's'}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
                         </div>
                         <Card className="bg-muted/50">
                             <CardContent className="p-4 text-sm">
