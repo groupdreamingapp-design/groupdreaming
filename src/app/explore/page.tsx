@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { initialGroups } from "@/lib/data";
 import { GroupCard } from "@/components/app/group-card";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
@@ -71,7 +71,8 @@ export default function ExplorePage() {
     setFilters({ capital: [], plazo: [], cuota: [] });
   };
 
-  const processedGroups = useMemo(() => {
+  const processedGroups = (() => {
+    if (loading) return [];
     let filteredGroups: Group[] = groups.filter(g => g.status === 'Abierto');
 
     if (filters.capital.length > 0) {
@@ -109,7 +110,7 @@ export default function ExplorePage() {
     });
 
     return filteredGroups;
-  }, [groups, filters, sortKey]);
+  })();
 
   const formatCurrency = (amount: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount);
   const currentYear = new Date().getFullYear();
@@ -249,7 +250,6 @@ export default function ExplorePage() {
                   <GroupCard 
                     key={group.id} 
                     group={group} 
-                    showJoinButton={true} 
                     isPublic={true}
                   />
                 ))}

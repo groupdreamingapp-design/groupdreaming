@@ -8,11 +8,10 @@ import { Users, Clock, CheckCircle2, Lock, Hourglass, ArrowRight, Trophy } from 
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
+import { useGroups } from "@/hooks/use-groups";
 
 type GroupCardProps = {
   group: Group;
-  showJoinButton?: boolean;
-  onJoin?: () => void;
   isPublic?: boolean;
 };
 
@@ -23,10 +22,12 @@ const statusConfig = {
   Cerrado: { icon: Lock, color: "bg-gray-500", text: "text-gray-500" },
 };
 
-export function GroupCard({ group, showJoinButton = false, onJoin, isPublic = false }: GroupCardProps) {
+export function GroupCard({ group, isPublic = false }: GroupCardProps) {
   const { icon: StatusIcon } = statusConfig[group.status];
   const formatCurrency = (amount: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
   const router = useRouter();
+  const { joinGroup } = useGroups();
+
 
   const progressValue = group.status === 'Abierto'
     ? (group.membersCount / group.totalMembers) * 100
@@ -44,12 +45,38 @@ export function GroupCard({ group, showJoinButton = false, onJoin, isPublic = fa
   const handleJoinClick = () => {
     if (isPublic) {
         router.push('/register');
-    } else if (onJoin) {
-      onJoin();
+    } else {
+      joinGroup(group.id);
     }
   };
 
   const cardLink = isPublic ? '/register' : `/dashboard/group/${group.id}`;
+
+  const renderAction = () => {
+    if (isPublic) {
+      return (
+        <Button size="sm" onClick={handleJoinClick} disabled={group.status !== 'Abierto'}>
+          Registrarse
+        </Button>
+      );
+    }
+    
+    if (group.userIsMember) {
+      return (
+        <Button asChild variant="secondary" size="sm">
+          <Link href={cardLink}>
+            Ver Detalles <ArrowRight className="ml-2 h-4 w-4" />
+          </Link>
+        </Button>
+      );
+    }
+
+    return (
+       <Button size="sm" onClick={handleJoinClick} disabled={group.status !== 'Abierto'}>
+          Unirse
+        </Button>
+    );
+  }
 
   return (
     <Card className="flex flex-col">
@@ -100,17 +127,7 @@ export function GroupCard({ group, showJoinButton = false, onJoin, isPublic = fa
             <p className="text-xs text-muted-foreground">Cuota Promedio</p>
             <p className="font-bold text-base">{formatCurrency(group.cuotaPromedio)}</p>
         </div>
-        {showJoinButton ? (
-          <Button size="sm" disabled={group.status !== 'Abierto'} onClick={handleJoinClick}>
-            {isPublic ? 'Registrarse' : 'Unirse'}
-          </Button>
-        ) : (
-          <Button asChild variant="secondary" size="sm">
-            <Link href={cardLink}>
-              Ver Detalles <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-          </Button>
-        )}
+        {renderAction()}
       </CardFooter>
     </Card>
   );
