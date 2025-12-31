@@ -47,6 +47,7 @@ const generateStaticAwards = (groupId: string, totalMembers: number, totalMonths
     };
     
     let potentialWinners = [...memberOrderNumbers];
+    
     if (isAwarded) {
         const userIndex = potentialWinners.indexOf(userOrderNumber);
         if (userIndex > -1) {
