@@ -1,15 +1,38 @@
 
+'use client';
+
+import { useState } from "react";
 import { auctions } from "@/lib/data";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Clock, Tag, TrendingUp, Gavel, ArrowUp } from "lucide-react";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
 
 export default function AuctionsPage() {
+  const [offerAmount, setOfferAmount] = useState('');
+  const { toast } = useToast();
+
   const formatCurrency = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD' }).format(amount);
   
+  const handleConfirmOffer = (auctionTitle: string) => {
+    if (!offerAmount) {
+        toast({
+            variant: "destructive",
+            title: "Error en la oferta",
+            description: "Por favor, ingresa un monto para tu oferta.",
+        });
+        return;
+    }
+    toast({
+      title: "¡Oferta realizada con éxito!",
+      description: `Tu oferta de ${formatCurrency(Number(offerAmount))} por el plan ${auctionTitle} ha sido registrada.`,
+    });
+    setOfferAmount('');
+  };
+
   return (
     <>
       <div>
@@ -54,7 +77,7 @@ export default function AuctionsPage() {
                   </div>
                    <div className="flex items-center gap-2">
                     <Gavel className="h-4 w-4 text-muted-foreground" />
-                    <span>{auction.numberOfBids} ofertas</span>
+                    <span>{auction.numberOfBids} oferta{auction.numberOfBids !== 1 && 's'}</span>
                   </div>
                    <div className="flex items-center gap-2">
                     <Clock className="h-4 w-4 text-muted-foreground" />
@@ -81,12 +104,23 @@ export default function AuctionsPage() {
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="offer-amount">Tu Oferta (USD)</Label>
-                        <Input id="offer-amount" type="number" placeholder={formatCurrency(nextMinBid)} />
+                        <Input 
+                            id="offer-amount" 
+                            type="number" 
+                            placeholder={nextMinBid.toFixed(2)} 
+                            value={offerAmount}
+                            onChange={(e) => setOfferAmount(e.target.value)}
+                        />
                       </div>
                        <p className="text-xs text-muted-foreground">Si ganas la subasta, te comprometes a pagar el monto ofertado. Se aplicará una comisión del 2% (+IVA) sobre el valor final de la adjudicación.</p>
                     </div>
                     <DialogFooter>
-                      <Button type="submit">Confirmar Oferta</Button>
+                      <DialogClose asChild>
+                        <Button type="button" variant="secondary">Cancelar</Button>
+                      </DialogClose>
+                      <DialogClose asChild>
+                        <Button type="button" onClick={() => handleConfirmOffer(auction.groupId)}>Confirmar Oferta</Button>
+                      </DialogClose>
                     </DialogFooter>
                   </DialogContent>
                 </Dialog>
