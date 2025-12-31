@@ -10,9 +10,11 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export default function AuctionsPage() {
   const [offerAmount, setOfferAmount] = useState('');
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const { toast } = useToast();
 
   const formatCurrency = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD' }).format(amount);
@@ -26,12 +28,26 @@ export default function AuctionsPage() {
         });
         return;
     }
+    if (!termsAccepted) {
+        toast({
+            variant: "destructive",
+            title: "Términos y Condiciones",
+            description: "Debes aceptar los términos y condiciones para continuar.",
+        });
+        return;
+    }
     toast({
       title: "¡Oferta realizada con éxito!",
       description: `Tu oferta de ${formatCurrency(Number(offerAmount))} por el plan ${auctionTitle} ha sido registrada.`,
     });
     setOfferAmount('');
+    setTermsAccepted(false);
   };
+  
+  const resetDialog = () => {
+    setOfferAmount('');
+    setTermsAccepted(false);
+  }
 
   return (
     <>
@@ -86,7 +102,7 @@ export default function AuctionsPage() {
                 </div>
               </CardContent>
               <CardFooter className="flex-col items-stretch gap-2 pt-4">
-                <Dialog>
+                <Dialog onOpenChange={(open) => !open && resetDialog()}>
                   <DialogTrigger asChild>
                     <Button>Hacer una oferta</Button>
                   </DialogTrigger>
@@ -112,14 +128,30 @@ export default function AuctionsPage() {
                             onChange={(e) => setOfferAmount(e.target.value)}
                         />
                       </div>
-                       <p className="text-xs text-muted-foreground">Si ganas la subasta, te comprometes a pagar el monto ofertado. Se aplicará una comisión del 2% (+IVA) sobre el valor final de la adjudicación.</p>
+                       <div className="items-top flex space-x-2">
+                          <Checkbox id="terms" checked={termsAccepted} onCheckedChange={(checked) => setTermsAccepted(Boolean(checked))} />
+                          <div className="grid gap-1.5 leading-none">
+                            <Label htmlFor="terms" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                              Acepto los términos y condiciones
+                            </Label>
+                            <p className="text-xs text-muted-foreground">
+                              Si ganas la subasta, te comprometes a pagar el monto ofertado. Se aplicará una comisión del 2% (+IVA) sobre el valor final.
+                            </p>
+                          </div>
+                        </div>
                     </div>
                     <DialogFooter>
                       <DialogClose asChild>
                         <Button type="button" variant="secondary">Cancelar</Button>
                       </DialogClose>
                       <DialogClose asChild>
-                        <Button type="button" onClick={() => handleConfirmOffer(auction.groupId)}>Confirmar Oferta</Button>
+                        <Button 
+                          type="button" 
+                          onClick={() => handleConfirmOffer(auction.groupId)}
+                          disabled={!termsAccepted || !offerAmount}
+                        >
+                          Confirmar Oferta
+                        </Button>
                       </DialogClose>
                     </DialogFooter>
                   </DialogContent>
