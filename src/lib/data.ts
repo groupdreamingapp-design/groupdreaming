@@ -22,7 +22,7 @@ const calculateCuotaPromedio = (capital: number, plazo: number): number => {
 export const initialGroups: Group[] = [
     // Grupos del usuario (para mantener el estado de "Mis Grupos")
     { id: "ID-20240115-9998", capital: 15000, plazo: 48, cuotaPromedio: 345, membersCount: 96, totalMembers: 96, status: "Activo", monthsCompleted: 12, userIsMember: true, userIsAwarded: true },
-    { id: "ID-20230720-9999", capital: 15000, plazo: 36, cuotaPromedio: 455, membersCount: 72, totalMembers: 72, status: "Cerrado", monthsCompleted: 36, userIsMember: true, userIsAwarded: false, },
+    { id: "ID-20230720-9999", capital: 15000, plazo: 36, cuotaPromedio: 455, membersCount: 72, totalMembers: 72, status: "Cerrado", monthsCompleted: 36, userIsMember: true, userIsAwarded: true, },
 
     // Grupos Abiertos (Nuevos y variados)
     { id: "ID-20240801-5012", capital: 5000, plazo: 12, cuotaPromedio: calculateCuotaPromedio(5000, 12), membersCount: 5, totalMembers: 24, status: "Abierto", userIsMember: false, userIsAwarded: false },
@@ -73,7 +73,7 @@ const staticAwards: Award[][] = [
     [{ type: 'sorteo', orderNumber: 42 }, { type: 'licitacion', orderNumber: 2 }]
 ];
 
-export const installments: Installment[] = Array.from({ length: plazo }, (_, i) => {
+export const installments: Installment[] = Array.from({ length: 84 }, (_, i) => { // Increased length to satisfy all plans
     const saldoCapital = capital - (alicuotaPura * i);
     const seguroVida = saldoCapital * 0.0009; // 0.09% del saldo de capital
     const derechoSuscripcion = i < mesesFinanciacionSuscripcion ? cuotaSuscripcion : 0;
@@ -91,7 +91,7 @@ export const installments: Installment[] = Array.from({ length: plazo }, (_, i) 
             seguroVida: seguroVida,
             derechoSuscripcion: i < mesesFinanciacionSuscripcion ? derechoSuscripcion : undefined,
         },
-        awards: i < 5 ? staticAwards[i] : undefined,
+        awards: i < 5 ? staticAwards[i % staticAwards.length] : undefined,
     }
 });
 

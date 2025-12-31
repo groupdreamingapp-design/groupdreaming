@@ -24,9 +24,6 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
   const { groups } = useGroups();
   const group = groups.find(g => g.id === groupId);
 
-  // In a real app, this would be filtered by group, here we pass all of them for simplicity
-  const installments = allInstallments;
-
   if (!group) {
     return (
       <div className="flex flex-col items-center justify-center h-full text-center">
@@ -39,6 +36,9 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
       </div>
     );
   }
+
+  // Filter installments to only show the ones relevant for this group's term
+  const installments = allInstallments.slice(0, group.plazo);
 
   const formatCurrency = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD' }).format(amount);
   const formatCurrencyNoDecimals = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount);
@@ -256,6 +256,17 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                   </DialogContent>
                 </Dialog>
               </CardFooter>
+            </Card>
+          </div>
+        )}
+        
+        {isMember && group.status === 'Cerrado' && (
+          <div className="lg:col-span-3">
+            <Card>
+              <CardHeader>
+                <CardTitle>Plan Finalizado</CardTitle>
+                <CardDescription>Este grupo ha concluido. No hay más acciones disponibles.</CardDescription>
+              </CardHeader>
             </Card>
           </div>
         )}
