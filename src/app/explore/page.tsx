@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { initialGroups } from "@/lib/data";
 import { GroupCard } from "@/components/app/group-card";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
@@ -31,6 +31,8 @@ type SortKey = 'capital_asc' | 'capital_desc' | 'plazo_asc' | 'plazo_desc' | 'cu
 
 
 export default function ExplorePage() {
+  const [groups, setGroups] = useState<Group[]>([]);
+  const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({
     capital: [] as number[],
     plazo: [] as number[],
@@ -38,6 +40,11 @@ export default function ExplorePage() {
   });
   const [sortKey, setSortKey] = useState<SortKey>('miembros_faltantes');
 
+  useEffect(() => {
+    // Simulate client-side data fetching and processing
+    setGroups(initialGroups);
+    setLoading(false);
+  }, []);
 
   const handleFilterChange = (type: 'capital' | 'plazo', value: number) => {
     setFilters(prev => {
@@ -64,43 +71,48 @@ export default function ExplorePage() {
     setFilters({ capital: [], plazo: [], cuota: [] });
   };
 
-  let processedGroups: Group[] = initialGroups.filter(g => g.status === 'Abierto');
+  const processedGroups = useMemo(() => {
+    let filteredGroups: Group[] = groups.filter(g => g.status === 'Abierto');
 
-  if (filters.capital.length > 0) {
-    processedGroups = processedGroups.filter(g => filters.capital.includes(g.capital));
-  }
-  if (filters.plazo.length > 0) {
-    processedGroups = processedGroups.filter(g => filters.plazo.includes(g.plazo));
-  }
-  if (filters.cuota.length > 0) {
-    processedGroups = processedGroups.filter(g => 
-      filters.cuota.some(range => g.cuotaPromedio >= range.min && g.cuotaPromedio <= range.max)
-    );
-  }
+    if (filters.capital.length > 0) {
+      filteredGroups = filteredGroups.filter(g => filters.capital.includes(g.capital));
+    }
+    if (filters.plazo.length > 0) {
+      filteredGroups = filteredGroups.filter(g => filters.plazo.includes(g.plazo));
+    }
+    if (filters.cuota.length > 0) {
+      filteredGroups = filteredGroups.filter(g => 
+        filters.cuota.some(range => g.cuotaPromedio >= range.min && g.cuotaPromedio <= range.max)
+      );
+    }
+    
+    // Sorting logic
+    filteredGroups.sort((a, b) => {
+        switch (sortKey) {
+            case 'capital_asc':
+                return a.capital - b.capital;
+            case 'capital_desc':
+                return b.capital - a.capital;
+            case 'plazo_asc':
+                return a.plazo - b.plazo;
+            case 'plazo_desc':
+                return b.plazo - a.plazo;
+            case 'cuota_asc':
+                return a.cuotaPromedio - b.cuotaPromedio;
+            case 'cuota_desc':
+                return b.cuotaPromedio - a.cuotaPromedio;
+            case 'miembros_faltantes':
+                return (a.totalMembers - a.membersCount) - (b.totalMembers - b.membersCount);
+            default:
+                return 0;
+        }
+    });
 
-  // Sorting logic
-  processedGroups.sort((a, b) => {
-      switch (sortKey) {
-          case 'capital_asc':
-              return a.capital - b.capital;
-          case 'capital_desc':
-              return b.capital - a.capital;
-          case 'plazo_asc':
-              return a.plazo - b.plazo;
-          case 'plazo_desc':
-              return b.plazo - a.plazo;
-          case 'cuota_asc':
-              return a.cuotaPromedio - b.cuotaPromedio;
-          case 'cuota_desc':
-              return b.cuotaPromedio - a.cuotaPromedio;
-          case 'miembros_faltantes':
-              return (a.totalMembers - a.membersCount) - (b.totalMembers - b.membersCount);
-          default:
-              return 0;
-      }
-  });
+    return filteredGroups;
+  }, [groups, filters, sortKey]);
 
   const formatCurrency = (amount: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount);
+  const currentYear = new Date().getFullYear();
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -126,7 +138,6 @@ export default function ExplorePage() {
             <p className="text-muted-foreground">Encuentra el plan perfecto que se adapte a tus sueños.</p>
           </div>
 
-          {/* Filters Card */}
           <Collapsible className="mb-8">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
@@ -227,10 +238,12 @@ export default function ExplorePage() {
             </div>
           </div>
 
-
-          {/* Groups Grid */}
           <section>
-            {processedGroups.length > 0 ? (
+            {loading ? (
+                <div className="text-center py-16 text-muted-foreground col-span-full">
+                    <p>Cargando grupos...</p>
+                </div>
+            ) : processedGroups.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                 {processedGroups.map(group => (
                   <GroupCard 
@@ -253,11 +266,9 @@ export default function ExplorePage() {
 
       <footer className="bg-secondary/80 mt-12">
         <div className="container mx-auto px-4 py-8 text-center text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} Group Dreaming (Group Dreaming S.A.S.). Todos los derechos reservados.</p>
+          <p>&copy; {currentYear} Group Dreaming (Group Dreaming S.A.S.). Todos los derechos reservados.</p>
         </div>
       </footer>
     </div>
   );
 }
-
-    
