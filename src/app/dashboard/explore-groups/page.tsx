@@ -12,10 +12,9 @@ import { Separator } from "@/components/ui/separator";
 export default function ExploreGroupsPage() {
   const { groups, joinGroup } = useGroups();
   
-  // Show all groups, not just the open ones user is not a member of.
-  // The GroupCard component will handle disabling the "Join" button for non-open groups.
+  // Filter groups to show only those that are 'Open' and the user is not a member of.
   const availableGroups = useMemo(() => {
-    return groups;
+    return groups.filter(g => g.status === 'Abierto' && !g.userIsMember);
   }, [groups]);
 
   return (
@@ -63,7 +62,7 @@ export default function ExploreGroupsPage() {
             <GroupCard 
               key={group.id} 
               group={group} 
-              showJoinButton={!group.userIsMember} 
+              showJoinButton={true} 
               onJoin={() => joinGroup(group.id)} 
             />
           ))}
