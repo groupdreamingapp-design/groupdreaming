@@ -29,34 +29,6 @@ export default function DashboardPage() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <StatCard title="Saldo Disponible" value={formatCurrency(availableBalance)} icon={Wallet} description="+20% que el mes pasado" />
         <StatCard title="Próxima Cuota" value={formatCurrency(615)} icon={Repeat} description="Vence en 15 días" />
-        <StatCard title="Grupos Activos" value={activeGroups.length.toString()} icon={Users} description={`${myGroups.filter(g => g.userIsAwarded).length} adjudicado(s)`} />
-      </div>
-
-      <div className="grid gap-4">
-        <Card>
-          <CardHeader>
-            <CardTitle>Mis Grupos Activos</CardTitle>
-            <CardDescription>Un resumen de tus planes de ahorro colectivo activos.</CardDescription>
-          </CardHeader>
-          <CardContent>
-              {activeGroups.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-4">
-                      {activeGroups.map(group => (
-                          <GroupCard key={group.id} group={group} />
-                      ))}
-                  </div>
-              ) : (
-                  <div className="text-center py-16 text-muted-foreground flex flex-col items-center gap-4">
-                      <p>Aún no te has unido a ningún grupo.</p>
-                      <Button asChild>
-                        <Link href="/dashboard/explore">
-                          ¡Explora los grupos disponibles y empieza a cumplir tus sueños!
-                        </Link>
-                      </Button>
-                  </div>
-              )}
-          </CardContent>
-        </Card>
       </div>
 
       <div className="grid gap-4">
