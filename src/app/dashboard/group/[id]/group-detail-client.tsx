@@ -39,11 +39,12 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
 
   // Filter installments to only show the ones relevant for this group's term
   const installments = allInstallments.slice(0, group.plazo);
+  const cuotasPagadas = group.monthsCompleted || 0;
 
   const formatCurrency = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD' }).format(amount);
   const formatCurrencyNoDecimals = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount);
   const isMember = group.userIsMember;
-  const cuotasPagadas = 5;
+  
   const alicuotaPuraTotal = installments.length > 0 ? installments[0].breakdown.alicuotaPura : 0;
   const capitalAportadoPuro = cuotasPagadas * alicuotaPuraTotal;
 
@@ -113,51 +114,62 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {installments.map((inst) => (
-                    <TableRow key={inst.id}>
-                      <TableCell>{inst.number}</TableCell>
-                      <TableCell>{inst.dueDate}</TableCell>
-                      <TableCell>
-                        <Badge variant={inst.status === 'Pagado' ? 'default' : inst.status === 'Pendiente' ? 'secondary' : 'outline'}
-                          className={cn(
-                            inst.status === 'Pagado' && 'bg-green-500/20 text-green-700 border-green-500/30',
-                            inst.status === 'Pendiente' && 'bg-yellow-500/20 text-yellow-700 border-yellow-500/30',
-                          )}
-                        >{inst.status}</Badge>
-                      </TableCell>
-                       <TableCell className="flex items-center gap-2">
-                        {inst.awards?.map(award => (
-                          <span key={award.type} className="flex items-center gap-1 text-xs">
-                            {award.type === 'sorteo' && <Ticket className="h-4 w-4 text-blue-500" />}
-                            {award.type === 'licitacion' && <HandCoins className="h-4 w-4 text-orange-500" />}
-                            #{award.orderNumber}
-                          </span>
-                        ))}
-                      </TableCell>
-                      <TableCell className="text-right font-mono">{formatCurrency(inst.total)}</TableCell>
-                      <TableCell className="text-center">
-                        <Dialog>
-                          <DialogTrigger asChild>
-                            <Button variant="outline" size="sm">Ver Detalle</Button>
-                          </DialogTrigger>
-                          <DialogContent>
-                            <DialogHeader>
-                              <DialogTitle>Detalle de la Cuota #{inst.number}</DialogTitle>
-                            </DialogHeader>
-                            <div className="grid gap-2 text-sm">
-                                <div className="flex justify-between"><span>Alícuota Pura:</span><strong>{formatCurrency(inst.breakdown.alicuotaPura)}</strong></div>
-                                <div className="flex justify-between"><span>Gastos Adm (IVA incl.):</span><strong>{formatCurrency(inst.breakdown.gastosAdm)}</strong></div>
-                                {inst.breakdown.derechoSuscripcion && (
-                                  <div className="flex justify-between"><span>Derecho Suscripción (IVA incl.):</span><strong>{formatCurrency(inst.breakdown.derechoSuscripcion)}</strong></div>
-                                )}
-                                <div className="flex justify-between"><span>Seguro de Vida:</span><strong>{formatCurrency(inst.breakdown.seguroVida)}</strong></div>
-                                <div className="flex justify-between font-bold text-base border-t pt-2 mt-2"><span>Total:</span><span>{formatCurrency(inst.total)}</span></div>
-                            </div>
-                          </DialogContent>
-                        </Dialog>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  {installments.map((inst) => {
+                    let status: Installment['status'];
+                    if (inst.number <= cuotasPagadas) {
+                      status = 'Pagado';
+                    } else if (group.status === 'Activo' && inst.number === cuotasPagadas + 1) {
+                      status = 'Pendiente';
+                    } else {
+                      status = 'Futuro';
+                    }
+
+                    return (
+                      <TableRow key={inst.id}>
+                        <TableCell>{inst.number}</TableCell>
+                        <TableCell>{inst.dueDate}</TableCell>
+                        <TableCell>
+                          <Badge variant={status === 'Pagado' ? 'default' : status === 'Pendiente' ? 'secondary' : 'outline'}
+                            className={cn(
+                              status === 'Pagado' && 'bg-green-500/20 text-green-700 border-green-500/30',
+                              status === 'Pendiente' && 'bg-yellow-500/20 text-yellow-700 border-yellow-500/30',
+                            )}
+                          >{status}</Badge>
+                        </TableCell>
+                         <TableCell className="flex items-center gap-2">
+                          {inst.awards?.map(award => (
+                            <span key={award.type} className="flex items-center gap-1 text-xs">
+                              {award.type === 'sorteo' && <Ticket className="h-4 w-4 text-blue-500" />}
+                              {award.type === 'licitacion' && <HandCoins className="h-4 w-4 text-orange-500" />}
+                              #{award.orderNumber}
+                            </span>
+                          ))}
+                        </TableCell>
+                        <TableCell className="text-right font-mono">{formatCurrency(inst.total)}</TableCell>
+                        <TableCell className="text-center">
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <Button variant="outline" size="sm">Ver Detalle</Button>
+                            </DialogTrigger>
+                            <DialogContent>
+                              <DialogHeader>
+                                <DialogTitle>Detalle de la Cuota #{inst.number}</DialogTitle>
+                              </DialogHeader>
+                              <div className="grid gap-2 text-sm">
+                                  <div className="flex justify-between"><span>Alícuota Pura:</span><strong>{formatCurrency(inst.breakdown.alicuotaPura)}</strong></div>
+                                  <div className="flex justify-between"><span>Gastos Adm (IVA incl.):</span><strong>{formatCurrency(inst.breakdown.gastosAdm)}</strong></div>
+                                  {inst.breakdown.derechoSuscripcion && (
+                                    <div className="flex justify-between"><span>Derecho Suscripción (IVA incl.):</span><strong>{formatCurrency(inst.breakdown.derechoSuscripcion)}</strong></div>
+                                  )}
+                                  <div className="flex justify-between"><span>Seguro de Vida:</span><strong>{formatCurrency(inst.breakdown.seguroVida)}</strong></div>
+                                  <div className="flex justify-between font-bold text-base border-t pt-2 mt-2"><span>Total:</span><span>{formatCurrency(inst.total)}</span></div>
+                              </div>
+                            </DialogContent>
+                          </Dialog>
+                        </TableCell>
+                      </TableRow>
+                    )
+                  })}
                 </TableBody>
               </Table>
             </CardContent>
