@@ -50,9 +50,11 @@ export const transactions: Transaction[] = [
     { id: "txn-5", date: "2024-06-15", type: "Retiro", description: "Retiro a cuenta bancaria", amount: -2000, status: "Completado" },
 ];
 
+const getFutureDate = (hours: number) => new Date(Date.now() + hours * 60 * 60 * 1000).toISOString();
+
 export const auctions: Auction[] = [
-    { id: "auc-1", groupId: "ID-20240210-1138", capital: 30000, plazo: 60, cuotasPagadas: 15, precioMinimo: 7200, highestBid: 7520, endDate: "2024-07-28", numberOfBids: 1 },
-    { id: "auc-2", groupId: "ID-20240305-4815", capital: 15000, plazo: 36, cuotasPagadas: 20, precioMinimo: 8100, highestBid: 8100, endDate: "2024-07-29", numberOfBids: 0 },
+    { id: "auc-1", groupId: "ID-20240210-1138", capital: 30000, plazo: 60, cuotasPagadas: 15, precioMinimo: 7200, highestBid: 7520, endDate: getFutureDate(48), numberOfBids: 1 },
+    { id: "auc-2", groupId: "ID-20240305-4815", capital: 15000, plazo: 36, cuotasPagadas: 20, precioMinimo: 8100, highestBid: 8100, endDate: getFutureDate(24), numberOfBids: 0, isPostAdjudicacion: true },
 ]
 
 const capital = 20000;

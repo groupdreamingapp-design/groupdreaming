@@ -5,7 +5,7 @@ import { useState } from "react";
 import { auctions } from "@/lib/data";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Clock, Tag, TrendingUp, Gavel, ArrowUp, Bot, BookText } from "lucide-react";
+import { Clock, Tag, TrendingUp, Gavel, ArrowUp, Bot, BookText, AlertTriangle } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,6 +14,8 @@ import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { formatDistanceToNow } from 'date-fns';
+import { es } from 'date-fns/locale';
 
 export default function AuctionsPage() {
   const [offerAmount, setOfferAmount] = useState('');
@@ -132,6 +134,19 @@ export default function AuctionsPage() {
     }
   }
 
+  const getTimeRemaining = (endDate: string) => {
+    try {
+      const end = new Date(endDate);
+      const now = new Date();
+      if (end < now) {
+        return "Finalizada";
+      }
+      return formatDistanceToNow(end, { locale: es, addSuffix: true });
+    } catch (e) {
+      return "Fecha inválida";
+    }
+  };
+
 
   return (
     <>
@@ -155,6 +170,8 @@ export default function AuctionsPage() {
           const isManualOfferInvalid = !autoBidEnabled && (!offerAmount || Number(offerAmount) < nextMinBid);
           const isMaxBidInvalid = autoBidEnabled && (!maxBid || Number(maxBid) <= auction.highestBid);
           const isAutoIncrementInvalid = autoBidEnabled && (!autoIncrement || Number(autoIncrement) < minBidIncrement);
+          const timeRemaining = getTimeRemaining(auction.endDate);
+          const isUrgent = auction.isPostAdjudicacion;
           
           return (
             <Card key={auction.id} className="flex flex-col">
@@ -192,9 +209,12 @@ export default function AuctionsPage() {
                     <Gavel className="h-4 w-4 text-muted-foreground" />
                     <span>{auction.numberOfBids} oferta{auction.numberOfBids !== 1 && 's'}</span>
                   </div>
-                   <div className="flex items-center gap-2">
-                    <Clock className="h-4 w-4 text-muted-foreground" />
-                    <span>Termina en 48 horas</span>
+                   <div className={cn(
+                       "flex items-center gap-2",
+                       isUrgent && "text-orange-600 font-semibold"
+                       )}>
+                    {isUrgent ? <AlertTriangle className="h-4 w-4" /> : <Clock className="h-4 w-4 text-muted-foreground" />}
+                    <span>{isUrgent ? 'Cierre Urgente' : 'Termina'} {timeRemaining}</span>
                   </div>
                 </div>
               </CardContent>
