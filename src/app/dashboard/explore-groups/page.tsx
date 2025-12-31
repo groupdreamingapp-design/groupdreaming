@@ -12,9 +12,9 @@ import { Separator } from "@/components/ui/separator";
 export default function ExploreGroupsPage() {
   const { groups, joinGroup } = useGroups();
   
-  // Filter groups to show only those that are 'Open' and the user is not a member of.
+  // Filter groups to show only those that are 'Open'
   const availableGroups = useMemo(() => {
-    return groups.filter(g => g.status === 'Abierto' && !g.userIsMember);
+    return groups.filter(g => g.status === 'Abierto');
   }, [groups]);
 
   return (
