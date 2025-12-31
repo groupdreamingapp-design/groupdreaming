@@ -70,7 +70,9 @@ const staticAwards: Award[][] = [
     [{ type: 'sorteo', orderNumber: 11 }, { type: 'licitacion', orderNumber: 58 }],
     [{ type: 'sorteo', orderNumber: 7 }, { type: 'licitacion', orderNumber: 33 }],
     [{ type: 'sorteo', orderNumber: 54 }, { type: 'licitacion', orderNumber: 19 }],
-    [{ type: 'sorteo', orderNumber: 42 }, { type: 'licitacion', orderNumber: 2 }]
+    [{ type: 'sorteo', orderNumber: 42 }, { type: 'licitacion', orderNumber: 2 }],
+    [{ type: 'sorteo', orderNumber: 68 }, { type: 'licitacion', orderNumber: 1 }],
+    [{ type: 'sorteo', orderNumber: 3 }, { type: 'licitacion', orderNumber: 29 }],
 ];
 
 export const installments: Installment[] = Array.from({ length: 84 }, (_, i) => { // Increased length to satisfy all plans
@@ -78,12 +80,14 @@ export const installments: Installment[] = Array.from({ length: 84 }, (_, i) => 
     const seguroVida = saldoCapital * 0.0009; // 0.09% del saldo de capital
     const derechoSuscripcion = i < mesesFinanciacionSuscripcion ? cuotaSuscripcion : 0;
     const totalCuota = alicuotaPura + gastosAdm + seguroVida + derechoSuscripcion;
+    
+    const initialStatus = i < 5 ? 'Pagado' : i === 5 ? 'Pendiente' : 'Futuro';
 
     return {
         id: `cuota-${i + 1}`,
         number: i + 1,
         dueDate: `2024-${((i + 7) % 12) + 1}-10`,
-        status: i < 5 ? 'Pagado' : i === 5 ? 'Pendiente' : 'Futuro',
+        status: initialStatus,
         total: totalCuota,
         breakdown: {
             alicuotaPura: alicuotaPura,
@@ -91,7 +95,7 @@ export const installments: Installment[] = Array.from({ length: 84 }, (_, i) => 
             seguroVida: seguroVida,
             derechoSuscripcion: i < mesesFinanciacionSuscripcion ? derechoSuscripcion : undefined,
         },
-        awards: i < 5 ? staticAwards[i % staticAwards.length] : undefined,
+        awards: initialStatus === 'Pagado' ? staticAwards[i % staticAwards.length] : undefined,
     }
 });
 

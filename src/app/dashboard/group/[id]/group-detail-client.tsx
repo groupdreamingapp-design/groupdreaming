@@ -14,7 +14,7 @@ import { ArrowLeft, Users, Clock, Users2, Calendar, Gavel, HandCoins, Ticket, In
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { useGroups } from '@/hooks/use-groups';
-import { installments as allInstallments } from '@/lib/data';
+import { installments as allInstallments, initialGroups } from '@/lib/data';
 
 type GroupDetailClientProps = {
     groupId: string;
@@ -22,7 +22,10 @@ type GroupDetailClientProps = {
 
 export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
   const { groups } = useGroups();
-  const group = groups.find(g => g.id === groupId);
+  // Find group from initialGroups to get template info, then merge with dynamic state
+  const groupTemplate = initialGroups.find(g => g.id === groupId);
+  const dynamicGroupState = groups.find(g => g.id === groupId);
+  const group = dynamicGroupState ? { ...groupTemplate, ...dynamicGroupState } : undefined;
 
   if (!group) {
     return (
@@ -124,6 +127,9 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                       status = 'Futuro';
                     }
 
+                    const currentAwards = status === 'Pagado' ? allInstallments[inst.number - 1]?.awards : undefined;
+
+
                     return (
                       <TableRow key={inst.id}>
                         <TableCell>{inst.number}</TableCell>
@@ -137,7 +143,7 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                           >{status}</Badge>
                         </TableCell>
                          <TableCell className="flex items-center gap-2">
-                          {inst.awards?.map(award => (
+                          {currentAwards?.map(award => (
                             <span key={award.type} className="flex items-center gap-1 text-xs">
                               {award.type === 'sorteo' && <Ticket className="h-4 w-4 text-blue-500" />}
                               {award.type === 'licitacion' && <HandCoins className="h-4 w-4 text-orange-500" />}
