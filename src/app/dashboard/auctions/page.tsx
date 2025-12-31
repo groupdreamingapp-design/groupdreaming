@@ -13,6 +13,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
 
 export default function AuctionsPage() {
   const [offerAmount, setOfferAmount] = useState('');
@@ -96,8 +97,6 @@ export default function AuctionsPage() {
         });
     }
 
-    // This would typically close the dialog via its parent state, here we simulate by resetting our local state
-    // and assuming the Dialog's onOpenChange will be called.
     const closeButton = document.querySelector('[data-radix-dialog-close]') as HTMLElement;
     closeButton?.click();
     resetDialog();
@@ -123,7 +122,10 @@ export default function AuctionsPage() {
           const nextMinBid = auction.highestBid + minBidIncrement;
 
           const isManualOfferInvalid = !autoBidEnabled && (!offerAmount || Number(offerAmount) < nextMinBid);
-          const isAutoBidInvalid = autoBidEnabled && (!maxBid || !autoIncrement || Number(maxBid) <= auction.highestBid || Number(autoIncrement) < minBidIncrement);
+          const isMaxBidInvalid = autoBidEnabled && (!maxBid || Number(maxBid) <= auction.highestBid);
+          const isAutoIncrementInvalid = autoBidEnabled && (!autoIncrement || Number(autoIncrement) < minBidIncrement);
+          const isAutoBidInvalid = autoBidEnabled && (isMaxBidInvalid || isAutoIncrementInvalid);
+
           const isOfferDisabled = !termsAccepted || isManualOfferInvalid || isAutoBidInvalid;
 
           return (
@@ -209,6 +211,7 @@ export default function AuctionsPage() {
                                         value={maxBid}
                                         min={auction.highestBid + 0.01}
                                         onChange={(e) => setMaxBid(e.target.value)}
+                                        className={cn(isMaxBidInvalid && "border-red-500")}
                                     />
                                    </div>
                                    <div className="space-y-2">
@@ -220,6 +223,7 @@ export default function AuctionsPage() {
                                         value={autoIncrement}
                                         min={minBidIncrement}
                                         onChange={(e) => setAutoIncrement(e.target.value)}
+                                        className={cn(isAutoIncrementInvalid && "border-red-500")}
                                     />
                                    </div>
                                </div>
@@ -234,6 +238,7 @@ export default function AuctionsPage() {
                                     value={offerAmount}
                                     min={nextMinBid}
                                     onChange={(e) => setOfferAmount(e.target.value)}
+                                    className={cn(isManualOfferInvalid && offerAmount && "border-red-500")}
                                 />
                             </div>
                         )}
@@ -272,5 +277,3 @@ export default function AuctionsPage() {
     </>
   );
 }
-
-    
