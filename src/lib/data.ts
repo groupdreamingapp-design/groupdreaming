@@ -11,9 +11,9 @@ export const user: User = {
 export const groups: Group[] = [
   {
     id: "GR-001",
-    capital: 20000,
-    plazo: 60,
-    cuotaPromedio: 380,
+    capital: 20000, // Multiple of 5000, between 5k-50k
+    plazo: 60, // Multiple of 12, between 12-120
+    cuotaPromedio: 380, // Under 1000
     membersCount: 55,
     totalMembers: 120, // 60 * 2
     status: "Abierto",
@@ -22,10 +22,10 @@ export const groups: Group[] = [
   },
   {
     id: "GR-002",
-    capital: 10000,
-    plazo: 48,
-    cuotaPromedio: 235,
-    membersCount: 90, // Adjusted to be closer to total
+    capital: 15000, // Changed from 10000 to 15000
+    plazo: 48, // OK
+    cuotaPromedio: 345, // Recalculated
+    membersCount: 90,
     totalMembers: 96, // 48 * 2
     status: "Activo",
     monthsCompleted: 12,
@@ -34,9 +34,9 @@ export const groups: Group[] = [
   },
   {
     id: "GR-003",
-    capital: 50000,
-    plazo: 120,
-    cuotaPromedio: 460,
+    capital: 50000, // OK
+    plazo: 120, // OK
+    cuotaPromedio: 460, // OK
     membersCount: 112,
     totalMembers: 240, // 120 * 2
     status: "Abierto",
@@ -44,9 +44,9 @@ export const groups: Group[] = [
   },
   {
     id: "GR-004",
-    capital: 5000,
-    plazo: 24,
-    cuotaPromedio: 230,
+    capital: 10000, // Changed from 5000
+    plazo: 24, // OK
+    cuotaPromedio: 465, // Recalculated
     membersCount: 48,
     totalMembers: 48, // 24 * 2
     status: "Activo",
@@ -55,9 +55,9 @@ export const groups: Group[] = [
   },
   {
     id: "GR-005",
-    capital: 15000,
-    plazo: 36,
-    cuotaPromedio: 455,
+    capital: 15000, // OK
+    plazo: 36, // OK
+    cuotaPromedio: 455, // OK
     membersCount: 72,
     totalMembers: 72, // 36 * 2
     status: "Cerrado",
@@ -66,9 +66,9 @@ export const groups: Group[] = [
   },
   {
     id: "GR-006",
-    capital: 25000,
-    plazo: 72,
-    cuotaPromedio: 385,
+    capital: 25000, // OK
+    plazo: 72, // OK
+    cuotaPromedio: 385, // OK
     membersCount: 68,
     totalMembers: 144, // 72 * 2
     status: "Abierto",
@@ -86,7 +86,7 @@ export const transactions: Transaction[] = [
 
 export const auctions: Auction[] = [
     { id: "auc-1", groupId: "GR-007", capital: 30000, plazo: 60, cuotasPagadas: 15, precioMinimo: 7000, highestBid: 7250, endDate: "2024-07-28" },
-    { id: "auc-2", groupId: "GR-008", capital: 12000, plazo: 36, cuotasPagadas: 20, precioMinimo: 6500, highestBid: 6500, endDate: "2024-07-29" },
+    { id: "auc-2", groupId: "GR-008", capital: 15000, plazo: 36, cuotasPagadas: 20, precioMinimo: 6500, highestBid: 6500, endDate: "2024-07-29" },
 ]
 
 // Assuming GR-001 is the context for these installments
