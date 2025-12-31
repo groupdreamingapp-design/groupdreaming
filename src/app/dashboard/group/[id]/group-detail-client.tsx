@@ -57,28 +57,21 @@ const generateStaticAwards = (groupId: string, totalMembers: number, totalMonths
     potentialWinners = shuffle(potentialWinners);
     
     if (isAwarded) {
-        const userWinMonthIndex = 4;
+        const userWinMonthIndex = 4; // Make the user win in month 5 (index 4)
         potentialWinners.splice(userWinMonthIndex * 2, 0, userOrderNumber);
     }
     
     const awards: Award[][] = [];
     for (let i = 0; i < totalMonths; i++) {
-        if (potentialWinners.length < 2) {
-             break;
-        };
-
-        const sorteoWinner = potentialWinners.shift()!;
-        let licitacionWinner = potentialWinners.shift()!;
-       
-        if(licitacionWinner) {
-            awards.push([
-                { type: 'sorteo', orderNumber: sorteoWinner },
-                { type: 'licitacion', orderNumber: licitacionWinner }
-            ]);
-        } else {
-            awards.push([
-                { type: 'sorteo', orderNumber: sorteoWinner }
-            ]);
+        const monthAwards: Award[] = [];
+        if (potentialWinners.length > 0) {
+            monthAwards.push({ type: 'sorteo', orderNumber: potentialWinners.shift()! });
+        }
+        if (potentialWinners.length > 0) {
+            monthAwards.push({ type: 'licitacion', orderNumber: potentialWinners.shift()! });
+        }
+        if (monthAwards.length > 0) {
+            awards.push(monthAwards);
         }
     }
 
@@ -308,7 +301,7 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                           >{status}</Badge>
                         </TableCell>
                          <TableCell className="flex items-center gap-2">
-                          {currentAwards?.map(award => (
+                           {currentAwards?.map(award => (
                             <span key={`${award.type}-${award.orderNumber}`} className="flex items-center gap-1 text-xs">
                               {award.type === 'sorteo' && <Ticket className="h-4 w-4 text-blue-500" />}
                               {award.type === 'licitacion' && <HandCoins className="h-4 w-4 text-orange-500" />}
