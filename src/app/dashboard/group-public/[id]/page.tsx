@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { ArrowLeft, Users, Clock, Scale, Users2, FileX2, CheckCircle } from 'lucide-react';
+import { ArrowLeft, Users, Clock, Scale, Users2, FileX2, CheckCircle, Ticket, HandCoins } from 'lucide-react';
 import Link from 'next/link';
 
 export default function GroupPublicDetailPage() {
@@ -50,8 +50,8 @@ export default function GroupPublicDetailPage() {
         </Link>
         <div className="flex justify-between items-start">
             <div>
-                <h1 className="text-3xl font-bold font-headline">Detalle del Grupo {group.id}</h1>
-                <p className="text-muted-foreground">Capital de {formatCurrency(group.capital)} en {group.plazo} meses.</p>
+                <h1 className="text-3xl font-bold font-headline">{formatCurrency(group.capital)}</h1>
+                <p className="text-muted-foreground">en {group.plazo} meses (Grupo {group.id})</p>
             </div>
             <Button onClick={handleJoinGroup} size="lg">
                 <CheckCircle className="mr-2" /> Unirme a este grupo
@@ -69,8 +69,17 @@ export default function GroupPublicDetailPage() {
                 <CardContent className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                     <div className="flex items-center gap-2"><Users className="h-4 w-4 text-primary" /><span>Miembros: <strong>{group.membersCount}/{group.totalMembers}</strong></span></div>
                     <div className="flex items-center gap-2"><Clock className="h-4 w-4 text-primary" /><span>Plazo: <strong>{group.plazo} meses</strong></span></div>
-                    <div className="flex items-center gap-2"><Scale className="h-4 w-4 text-primary" /><span>Cuota Promedio: <strong>~{formatCurrency(group.cuotaPromedio)}</strong></span></div>
-                    <div className="flex items-center gap-2"><Users2 className="h-4 w-4 text-primary" /><span>Adjudicaciones: <strong>2 por mes</strong></span></div>
+                    <div className="flex items-center gap-2"><Scale className="h-4 w-4 text-primary" /><span>Cuota Promedio: <strong>{formatCurrency(group.cuotaPromedio)}</strong></span></div>
+                    <div className="flex items-center gap-2">
+                      <Users2 className="h-4 w-4 text-primary" />
+                      <span>Adjudicaciones:</span>
+                      <strong className="flex items-center gap-1.5">
+                        1<Ticket className="h-4 w-4 text-blue-500" />
+                        <span className="sr-only">Sorteo</span>
+                        + 1<HandCoins className="h-4 w-4 text-orange-500" />
+                        <span className="sr-only">Licitación</span>
+                      </strong>
+                    </div>
                 </CardContent>
             </Card>
         </div>
