@@ -53,7 +53,7 @@ const getFutureDate = (hours: number) => new Date(Date.now() + hours * 60 * 60 *
 
 export const auctions: Omit<Auction, 'precioBase'>[] = [
     { id: "auc-1", groupId: "ID-20240210-1138", orderNumber: 15, capital: 30000, plazo: 60, cuotasPagadas: 15, highestBid: 7520, endDate: getFutureDate(48), numberOfBids: 1 },
-    { id: "auc-2", groupId: "ID-20240305-4815", orderNumber: 42, capital: 15000, plazo: 36, cuotasPagadas: 20, highestBid: 4166, endDate: getFutureDate(24), numberOfBids: 0, isPostAdjudicacion: true },
+    { id: "auc-2", groupId: "ID-20240305-4815", orderNumber: 42, capital: 15000, plazo: 36, cuotasPagadas: 20, highestBid: 4166.67, endDate: getFutureDate(24), numberOfBids: 0, isPostAdjudicacion: true },
 ]
 
 const capital = 20000;
@@ -65,7 +65,7 @@ const totalSuscripcion = (capital * 0.03) * IVA; // 3% + IVA
 const mesesFinanciacionSuscripcion = Math.floor(plazo * 0.20);
 const cuotaSuscripcion = mesesFinanciacionSuscripcion > 0 ? totalSuscripcion / mesesFinanciacionSuscripcion : 0;
 
-const staticAwards: Award[][] = [
+export const staticAwards: Award[][] = [
     [{ type: 'sorteo', orderNumber: 23 }, { type: 'licitacion', orderNumber: 45 }],
     [{ type: 'sorteo', orderNumber: 11 }, { type: 'licitacion', orderNumber: 58 }],
     [{ type: 'sorteo', orderNumber: 7 }, { type: 'licitacion', orderNumber: 33 }],
@@ -81,13 +81,11 @@ export const installments: Installment[] = Array.from({ length: 84 }, (_, i) => 
     const derechoSuscripcion = i < mesesFinanciacionSuscripcion ? cuotaSuscripcion : 0;
     const totalCuota = alicuotaPura + gastosAdm + seguroVida + derechoSuscripcion;
     
-    const initialStatus = i < 5 ? 'Pagado' : i === 5 ? 'Pendiente' : 'Futuro';
-
     return {
         id: `cuota-${i + 1}`,
         number: i + 1,
         dueDate: `2024-${((i + 7) % 12) + 1}-10`,
-        status: initialStatus,
+        status: 'Futuro',
         total: totalCuota,
         breakdown: {
             alicuotaPura: alicuotaPura,
@@ -95,7 +93,6 @@ export const installments: Installment[] = Array.from({ length: 84 }, (_, i) => 
             seguroVida: seguroVida,
             derechoSuscripcion: i < mesesFinanciacionSuscripcion ? derechoSuscripcion : undefined,
         },
-        awards: initialStatus === 'Pagado' ? staticAwards[i % staticAwards.length] : undefined,
     }
 });
 
