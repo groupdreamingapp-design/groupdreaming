@@ -23,8 +23,8 @@ const generateInitialGroups = (): Group[] => {
       // Approximate formula for cuotaPromedio based on previous data
       const alicuotaPura = capital / plazo;
       const gastosAdm = (alicuotaPura * 0.10) * IVA;
-      const seguroVida = 13; // Approximation
-      const cuotaPromedio = alicuotaPura + gastosAdm + seguroVida;
+      const seguroVidaPromedio = (capital * 0.09 / 100) / 2; // Approximation of average insurance cost
+      const cuotaPromedio = alicuotaPura + gastosAdm + seguroVidaPromedio;
 
       if (cuotaPromedio <= 1000) {
         const totalMembers = plazo * 2;
@@ -97,7 +97,6 @@ const plazo = 60;
 
 const alicuotaPura = capital / plazo;
 const gastosAdm = (alicuotaPura * 0.10) * IVA; // 10% + IVA
-const seguroVida = 13.34; // Placeholder fixed value for simplicity
 const totalSuscripcion = (capital * 0.03) * IVA; // 3% + IVA
 const mesesFinanciacionSuscripcion = Math.floor(plazo * 0.20);
 const cuotaSuscripcion = mesesFinanciacionSuscripcion > 0 ? totalSuscripcion / mesesFinanciacionSuscripcion : 0;
@@ -110,7 +109,9 @@ const staticAwards: Award[][] = [
     [{ type: 'sorteo', orderNumber: 42 }, { type: 'licitacion', orderNumber: 2 }]
 ];
 
-export const installments: Installment[] = Array.from({ length: 60 }, (_, i) => {
+export const installments: Installment[] = Array.from({ length: plazo }, (_, i) => {
+    const saldoCapital = capital - (alicuotaPura * i);
+    const seguroVida = saldoCapital * 0.0009; // 0.09% del saldo de capital
     const derechoSuscripcion = i < mesesFinanciacionSuscripcion ? cuotaSuscripcion : 0;
     const totalCuota = alicuotaPura + gastosAdm + seguroVida + derechoSuscripcion;
 
@@ -133,12 +134,13 @@ export const installments: Installment[] = Array.from({ length: 60 }, (_, i) => 
 export const generateExampleInstallments = (capital: number, plazo: number): Installment[] => {
     const alicuotaPura = capital / plazo;
     const gastosAdm = (alicuotaPura * 0.10) * IVA; // 10% + IVA
-    const seguroVida = 13.34; // Placeholder fixed value
     const totalSuscripcion = (capital * 0.03) * IVA; // 3% + IVA
     const mesesFinanciacionSuscripcion = Math.floor(plazo * 0.20);
     const cuotaSuscripcion = mesesFinanciacionSuscripcion > 0 ? totalSuscripcion / mesesFinanciacionSuscripcion : 0;
 
     return Array.from({ length: plazo }, (_, i) => {
+        const saldoCapital = capital - (alicuotaPura * i);
+        const seguroVida = saldoCapital * 0.0009; // 0.09% del saldo de capital
         const derechoSuscripcion = i < mesesFinanciacionSuscripcion ? cuotaSuscripcion : 0;
         const totalCuota = alicuotaPura + gastosAdm + seguroVida + derechoSuscripcion;
 
