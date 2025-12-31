@@ -324,6 +324,11 @@ export default function AuctionsPage() {
                             <p className="text-xs text-muted-foreground">
                               Si ganas la subasta, te comprometes a pagar el monto ofertado. Se aplicará una comisión del 2% (+IVA) sobre el valor final.
                             </p>
+                             {!hasReadRules && (
+                                <p className="text-xs text-amber-600 font-semibold">
+                                Debes hacer clic en 'Ver Reglamento' para poder aceptar los términos.
+                                </p>
+                            )}
                           </div>
                         </div>
                     </div>
