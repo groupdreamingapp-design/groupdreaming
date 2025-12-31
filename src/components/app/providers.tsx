@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, ReactNode } from 'react';
+import { useState, useCallback, ReactNode, useEffect, useRef } from 'react';
 import { initialGroups } from '@/lib/data';
 import type { Group } from '@/lib/types';
 import { GroupsContext } from '@/hooks/use-groups';
@@ -24,8 +24,22 @@ function generateNewGroup(templateGroup: Group): Group {
 
 export function GroupsProvider({ children }: { children: ReactNode }) {
   const [groups, setGroups] = useState<Group[]>(initialGroups);
+  const myGroupsCountRef = useRef(groups.filter(g => g.userIsMember).length);
+  const lastJoinedGroupRef = useRef<Group | null>(null);
+
+  useEffect(() => {
+    const currentMyGroups = groups.filter(g => g.userIsMember);
+    if (currentMyGroups.length > myGroupsCountRef.current && lastJoinedGroupRef.current) {
+      toast({
+        title: "¡Felicitaciones!",
+        description: `Te has unido al grupo ${lastJoinedGroupRef.current.id}.`,
+      });
+    }
+    myGroupsCountRef.current = currentMyGroups.length;
+  }, [groups]);
 
   const joinGroup = useCallback((groupId: string) => {
+    let joinedGroup: Group | null = null;
     setGroups(currentGroups => {
       let newGroups = [...currentGroups];
       const groupIndex = newGroups.findIndex(g => g.id === groupId);
@@ -54,14 +68,14 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
       }
       
       newGroups[groupIndex] = groupToJoin;
+      joinedGroup = groupToJoin;
       
-      toast({
-        title: "¡Felicitaciones!",
-        description: `Te has unido al grupo ${groupToJoin.id}.`,
-      });
-
       return newGroups;
     });
+
+    if (joinedGroup) {
+        lastJoinedGroupRef.current = joinedGroup;
+    }
   }, []);
 
   return (
