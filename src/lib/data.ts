@@ -1,4 +1,4 @@
-import type { Group, User, Transaction, Auction, SavingsGoal, Installment, Award } from './types';
+import type { Group, User, Transaction, Auction, Installment, Award } from './types';
 import { PlaceHolderImages } from './placeholder-images';
 
 export const user: User = {
@@ -6,14 +6,6 @@ export const user: User = {
   name: 'Juan Perez',
   email: 'juan.perez@example.com',
   avatarUrl: PlaceHolderImages.find(img => img.id === 'user-avatar-1')?.imageUrl || '',
-};
-
-export const savingsGoal: SavingsGoal = {
-    name: "Auto 0km",
-    targetAmount: 25000,
-    currentAmount: 8500,
-    imageUrl: PlaceHolderImages.find(img => img.id === 'goal-car')?.imageUrl || '',
-    imageHint: PlaceHolderImages.find(img => img.id === 'goal-car')?.imageHint || 'new car',
 };
 
 export const groups: Group[] = [

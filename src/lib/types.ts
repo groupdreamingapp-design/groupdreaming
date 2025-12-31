@@ -42,14 +42,6 @@ export type Auction = {
   endDate: string;
 };
 
-export type SavingsGoal = {
-  name: string;
-  targetAmount: number;
-  currentAmount: number;
-  imageUrl: string;
-  imageHint: string;
-}
-
 export type InstallmentStatus = "Pagado" | "Pendiente" | "Vencido" | "Futuro";
 
 export type AwardType = "sorteo" | "licitacion";
