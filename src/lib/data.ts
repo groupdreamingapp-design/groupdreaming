@@ -10,7 +10,7 @@ export const user: User = {
 };
 
 const capitalOptions = [5000, 10000, 15000, 20000, 25000];
-const plazoOptions = [12, 24, 36, 48, 60, 72, 84, 96, 108, 120];
+const plazoOptions = [12, 24, 36, 48, 60, 72, 84];
 
 const IVA = 1.21;
 
@@ -23,7 +23,7 @@ const generateInitialGroups = (): Group[] => {
       // Approximate formula for cuotaPromedio based on previous data
       const alicuotaPura = capital / plazo;
       const gastosAdm = (alicuotaPura * 0.10) * IVA;
-      const seguroVidaPromedio = (capital * 0.09 / 100) / 2; // Approximation of average insurance cost
+      const seguroVidaPromedio = (capital * 0.0009) / 2; // Approximation of average insurance cost
       const cuotaPromedio = alicuotaPura + gastosAdm + seguroVidaPromedio;
 
       if (cuotaPromedio <= 1000) {
