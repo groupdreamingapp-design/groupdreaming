@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useCallback, ReactNode, useEffect, useRef } from 'react';
@@ -7,8 +8,13 @@ import { GroupsContext } from '@/hooks/use-groups';
 import { toast } from '@/hooks/use-toast';
 
 function generateNewGroup(templateGroup: Group): Group {
-    const newIdNumber = parseInt(templateGroup.id.split('-')[1]) + Math.floor(Math.random() * 10) + 1;
-    const newId = `GR-${String(newIdNumber).padStart(3, '0')}`;
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    const dateString = `${year}${month}${day}`;
+    const randomNumbers = String(Math.floor(Math.random() * 10000)).padStart(4, '0');
+    const newId = `ID-${dateString}-${randomNumbers}`;
     
     return {
       // Copy only the template properties, not the state
