@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { auctions } from "@/lib/data";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Clock, Tag, TrendingUp, Gavel, ArrowUp, Bot, BookText, AlertTriangle } from "lucide-react";
+import { Clock, Tag, TrendingUp, Gavel, ArrowUp, Bot, BookText, AlertTriangle, Info } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -199,7 +199,7 @@ export default function AuctionsPage() {
           return (
             <Card key={auction.id} className="flex flex-col">
               <CardHeader>
-                <CardDescription>Subasta del plan {auction.groupId}</CardDescription>
+                <CardDescription>Subasta del plan {auction.groupId} (Orden #{auction.orderNumber})</CardDescription>
                 <CardTitle className="text-2xl">{formatCurrencyNoDecimals(auction.capital)} en {auction.plazo} meses</CardTitle>
               </CardHeader>
               <CardContent className="flex-grow space-y-4">

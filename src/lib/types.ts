@@ -35,6 +35,7 @@ export type Transaction = {
 export type Auction = {
   id: string;
   groupId: string;
+  orderNumber: number;
   capital: number;
   plazo: number;
   cuotasPagadas: number;

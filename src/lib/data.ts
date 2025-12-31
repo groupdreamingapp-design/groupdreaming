@@ -20,6 +20,10 @@ const calculateCuotaPromedio = (capital: number, plazo: number): number => {
 }
 
 export const initialGroups: Group[] = [
+    // Grupos del usuario (para mantener el estado de "Mis Grupos")
+    { id: "ID-20240115-9998", capital: 15000, plazo: 48, cuotaPromedio: 345, membersCount: 96, totalMembers: 96, status: "Activo", monthsCompleted: 12, userIsMember: true, userIsAwarded: true },
+    { id: "ID-20230720-9999", capital: 15000, plazo: 36, cuotaPromedio: 455, membersCount: 72, totalMembers: 72, status: "Cerrado", monthsCompleted: 36, userIsMember: true, userIsAwarded: false, },
+
     // Grupos Abiertos (Nuevos y variados)
     { id: "ID-20240801-5012", capital: 5000, plazo: 12, cuotaPromedio: calculateCuotaPromedio(5000, 12), membersCount: 5, totalMembers: 24, status: "Abierto", userIsMember: false, userIsAwarded: false },
     { id: "ID-20240801-5024", capital: 5000, plazo: 24, cuotaPromedio: calculateCuotaPromedio(5000, 24), membersCount: 12, totalMembers: 48, status: "Abierto", userIsMember: false, userIsAwarded: false },
@@ -35,11 +39,6 @@ export const initialGroups: Group[] = [
     { id: "ID-20240801-2548", capital: 25000, plazo: 48, cuotaPromedio: calculateCuotaPromedio(25000, 48), membersCount: 90, totalMembers: 96, status: "Abierto", userIsMember: false, userIsAwarded: false },
     { id: "ID-20240801-2560", capital: 25000, plazo: 60, cuotaPromedio: calculateCuotaPromedio(25000, 60), membersCount: 110, totalMembers: 120, status: "Abierto", userIsMember: false, userIsAwarded: false },
     { id: "ID-20240801-2572", capital: 25000, plazo: 72, cuotaPromedio: calculateCuotaPromedio(25000, 72), membersCount: 40, totalMembers: 144, status: "Abierto", userIsMember: false, userIsAwarded: false },
-    { id: "ID-20240801-2584", capital: 25000, plazo: 84, cuotaPromedio: calculateCuotaPromedio(25000, 84), membersCount: 1, totalMembers: 168, status: "Abierto", userIsMember: false, userIsAwarded: false },
-
-    // Grupos del usuario (para mantener el estado de "Mis Grupos")
-    { id: "ID-20240115-9998", capital: 15000, plazo: 48, cuotaPromedio: 345, membersCount: 96, totalMembers: 96, status: "Activo", monthsCompleted: 12, userIsMember: true, userIsAwarded: true },
-    { id: "ID-20230720-9999", capital: 15000, plazo: 36, cuotaPromedio: 455, membersCount: 72, totalMembers: 72, status: "Cerrado", monthsCompleted: 36, userIsMember: true, userIsAwarded: false, }
 ];
 
 export const transactions: Transaction[] = [
@@ -53,8 +52,8 @@ export const transactions: Transaction[] = [
 const getFutureDate = (hours: number) => new Date(Date.now() + hours * 60 * 60 * 1000).toISOString();
 
 export const auctions: Auction[] = [
-    { id: "auc-1", groupId: "ID-20240210-1138", capital: 30000, plazo: 60, cuotasPagadas: 15, precioMinimo: 7200, highestBid: 7520, endDate: getFutureDate(48), numberOfBids: 1 },
-    { id: "auc-2", groupId: "ID-20240305-4815", capital: 15000, plazo: 36, cuotasPagadas: 20, precioMinimo: 8100, highestBid: 8100, endDate: getFutureDate(24), numberOfBids: 0, isPostAdjudicacion: true },
+    { id: "auc-1", groupId: "ID-20240210-1138", orderNumber: 15, capital: 30000, plazo: 60, cuotasPagadas: 15, precioMinimo: 7200, highestBid: 7520, endDate: getFutureDate(48), numberOfBids: 1 },
+    { id: "auc-2", groupId: "ID-20240305-4815", orderNumber: 42, capital: 15000, plazo: 36, cuotasPagadas: 20, precioMinimo: 8100, highestBid: 8100, endDate: getFutureDate(24), numberOfBids: 0, isPostAdjudicacion: true },
 ]
 
 const capital = 20000;
