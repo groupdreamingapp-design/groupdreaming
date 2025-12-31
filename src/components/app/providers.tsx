@@ -11,13 +11,14 @@ function generateNewGroup(templateGroup: Group): Group {
     const newId = `GR-${String(newIdNumber).padStart(3, '0')}`;
     
     return {
-        ...templateGroup,
-        id: newId,
-        membersCount: 0,
-        status: 'Abierto',
-        userIsMember: false,
-        userIsAwarded: false,
-        monthsCompleted: 0,
+      // Copy only the template properties, not the state
+      ...templateGroup,
+      id: newId,
+      membersCount: 0,
+      status: 'Abierto',
+      userIsMember: false,
+      userIsAwarded: false,
+      monthsCompleted: 0,
     };
 }
 
@@ -53,11 +54,17 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
                         }
                         return g;
                     });
+                    
+                    const groupExists = newGroups.some(g => g.id === pendingGroup.id && g.status === 'Activo');
+                    
+                    if (groupExists) {
+                         toast({
+                            title: "¡Grupo Activado!",
+                            description: `El grupo ${pendingGroup.id} ha completado sus validaciones y ya está activo.`,
+                        });
+                    }
+
                     return newGroups;
-                });
-                toast({
-                    title: "¡Grupo Activado!",
-                    description: `El grupo ${pendingGroup.id} ha completado sus validaciones y ya está activo.`,
                 });
             }, 5000); // Simulate 5 second processing time
 
