@@ -40,7 +40,7 @@ export default function LandingPage() {
 
   const rules = [
     { title: "Costos de Ingreso y Mantenimiento", content: "Derecho de Suscripción: 3% + IVA. Gastos Administrativos Mensuales: 10% + IVA sobre la alícuota pura. Seguro de Vida Mensual: 0.09% sobre el saldo de capital pendiente." },
-    { title: "Adjudicación y Garantías", content: "Plazos estrictos para aceptación (48hs), presentación de garantías (72hs hábiles) e integración de capital por licitación (24hs) para asegurar la fluidez del sistema." },
+    { title: "Adjudicación y Presentación de Garantías", content: "Tras resultar adjudicado (por sorteo o licitación), el miembro tiene 48hs corridas para aceptar, 72hs hábiles para presentar garantías y 24hs para integrar el capital (en caso de licitación). El incumplimiento de estos plazos puede resultar en la pérdida del derecho de adjudicación." },
     { title: "Gestión de Mora", content: "El incumplimiento en los pagos lleva a la suspensión de derechos y, eventualmente, a la subasta forzosa del plan para proteger al grupo." },
     { title: "Subasta de Planes (Mercado Secundario)", content: "Ofrece una vía de salida flexible, permitiendo vender tu plan a otros inversores de forma segura y regulada por la plataforma." },
     { title: "Política de Baja de Plan", content: "Posibilidad de rescindir el contrato para planes no adjudicados, con retención del capital hasta la finalización del grupo y una penalidad por rescisión." },
@@ -230,3 +230,5 @@ export default function LandingPage() {
   );
 
 }
+
+    
