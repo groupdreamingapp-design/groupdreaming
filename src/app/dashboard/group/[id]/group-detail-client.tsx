@@ -41,6 +41,7 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
   }
 
   const formatCurrency = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD' }).format(amount);
+  const formatCurrencyNoDecimals = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount);
   const isMember = group.userIsMember;
   const cuotasPagadas = 5;
   const alicuotaPuraTotal = installments.length > 0 ? installments[0].breakdown.alicuotaPura : 0;
@@ -57,7 +58,7 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
         <Link href="/dashboard" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary mb-2">
           <ArrowLeft className="h-4 w-4" /> Volver a Mi Panel
         </Link>
-        <h1 className="text-3xl font-bold font-headline">{formatCurrency(group.capital)}</h1>
+        <h1 className="text-3xl font-bold font-headline">{formatCurrencyNoDecimals(group.capital)}</h1>
         <p className="text-muted-foreground">en {group.plazo} meses (Grupo {group.id})</p>
       </div>
 

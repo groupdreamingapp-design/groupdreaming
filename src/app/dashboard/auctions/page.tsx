@@ -155,7 +155,7 @@ export default function AuctionsPage() {
             <Card key={auction.id} className="flex flex-col">
               <CardHeader>
                 <CardDescription>Plan del {auction.groupId}</CardDescription>
-                <CardTitle className="text-2xl">{formatCurrency(auction.capital)} en {auction.plazo} meses</CardTitle>
+                <CardTitle className="text-2xl">{new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(auction.capital)} en {auction.plazo} meses</CardTitle>
               </CardHeader>
               <CardContent className="flex-grow space-y-4">
                 <div className="p-3 rounded-lg bg-muted/50 space-y-2">

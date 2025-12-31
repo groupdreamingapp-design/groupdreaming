@@ -23,7 +23,7 @@ const statusConfig = {
 
 export function GroupCard({ group, isPublic = false }: GroupCardProps) {
   const { icon: StatusIcon } = statusConfig[group.status];
-  const formatCurrency = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD' }).format(amount);
+  const formatCurrency = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount);
   const router = useRouter();
 
   const progressValue = group.status === 'Abierto'

@@ -36,6 +36,7 @@ export default function GroupPublicDetailPage() {
   const exampleInstallments = generateExampleInstallments(group.capital, group.plazo);
 
   const formatCurrency = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD' }).format(amount);
+  const formatCurrencyNoDecimals = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount);
   
   const handleJoinGroup = () => {
     joinGroup(group.id);
@@ -50,7 +51,7 @@ export default function GroupPublicDetailPage() {
         </Link>
         <div className="flex justify-between items-start">
             <div>
-                <h1 className="text-3xl font-bold font-headline">{formatCurrency(group.capital)}</h1>
+                <h1 className="text-3xl font-bold font-headline">{formatCurrencyNoDecimals(group.capital)}</h1>
                 <p className="text-muted-foreground">en {group.plazo} meses (Grupo {group.id})</p>
             </div>
             <Button onClick={handleJoinGroup} size="lg">
