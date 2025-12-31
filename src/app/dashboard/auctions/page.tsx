@@ -22,6 +22,9 @@ export default function AuctionsPage() {
   const [maxBid, setMaxBid] = useState('');
   const [autoIncrement, setAutoIncrement] = useState('');
   const { toast } = useToast();
+  
+  // State to control dialog visibility manually
+  const [openDialogs, setOpenDialogs] = useState<Record<string, boolean>>({});
 
   const formatCurrency = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD' }).format(amount);
   
@@ -96,9 +99,8 @@ export default function AuctionsPage() {
           description: `Tu oferta de ${formatCurrency(Number(offerAmount))} por el plan ${auction.groupId} ha sido registrada.`,
         });
     }
-
-    const closeButton = document.querySelector('[data-radix-dialog-close-button="true"]') as HTMLElement;
-    closeButton?.click();
+    
+    setOpenDialogs(prev => ({ ...prev, [auction.id]: false }));
     resetDialog();
   };
   
@@ -109,6 +111,14 @@ export default function AuctionsPage() {
     setMaxBid('');
     setAutoIncrement('');
   }
+
+  const handleOpenChange = (auctionId: string, open: boolean) => {
+    setOpenDialogs(prev => ({ ...prev, [auctionId]: open }));
+    if (!open) {
+      resetDialog();
+    }
+  }
+
 
   return (
     <>
@@ -168,7 +178,7 @@ export default function AuctionsPage() {
                 </div>
               </CardContent>
               <CardFooter className="flex-col items-stretch gap-2 pt-4">
-                <Dialog onOpenChange={(open) => !open && resetDialog()}>
+                <Dialog open={openDialogs[auction.id] || false} onOpenChange={(open) => handleOpenChange(auction.id, open)}>
                   <DialogTrigger asChild>
                     <Button>Hacer una oferta</Button>
                   </DialogTrigger>
@@ -253,15 +263,13 @@ export default function AuctionsPage() {
                       <DialogClose asChild>
                         <Button type="button" variant="secondary" data-radix-dialog-close-button="true">Cancelar</Button>
                       </DialogClose>
+                     <Button 
+                        type="button" 
+                        onClick={() => handleConfirmOffer(auction)}
+                      >
+                        Confirmar Oferta
+                      </Button>
                     </DialogFooter>
-                     <div className="flex justify-end pt-4">
-                        <Button 
-                          type="button" 
-                          onClick={() => handleConfirmOffer(auction)}
-                        >
-                          Confirmar Oferta
-                        </Button>
-                      </div>
                   </DialogContent>
                 </Dialog>
               </CardFooter>
