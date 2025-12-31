@@ -17,7 +17,7 @@ export function MainNav({ isMobile = false }: MainNavProps) {
   const routes = [
     {
       href: "/dashboard",
-      label: "Dashboard",
+      label: "Mi Panel",
       icon: LayoutDashboard,
     },
     {
@@ -65,4 +65,5 @@ export function MainNav({ isMobile = false }: MainNavProps) {
   )
 }
 
+    
     
