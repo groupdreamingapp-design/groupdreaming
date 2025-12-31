@@ -88,7 +88,7 @@ export const transactions: Transaction[] = [
 
 export const auctions: Auction[] = [
     { id: "auc-1", groupId: "GR-007", capital: 30000, plazo: 60, cuotasPagadas: 15, precioMinimo: 7000, highestBid: 7250, endDate: "2024-07-28", numberOfBids: 8 },
-    { id: "auc-2", groupId: "GR-008", capital: 15000, plazo: 36, cuotasPagadas: 20, precioMinimo: 6500, highestBid: 6500, endDate: "2024-07-29", numberOfBids: 3 },
+    { id: "auc-2", groupId: "GR-008", capital: 15000, plazo: 36, cuotasPagadas: 20, precioMinimo: 6500, highestBid: 6500, endDate: "2024-07-29", numberOfBids: 1 },
 ]
 
 // Assuming GR-001 is the context for these installments
