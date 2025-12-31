@@ -41,6 +41,7 @@ export type Auction = {
   precioMinimo: number;
   highestBid: number;
   endDate: string;
+  numberOfBids: number;
 };
 
 export type InstallmentStatus = "Pagado" | "Pendiente" | "Vencido" | "Futuro";
