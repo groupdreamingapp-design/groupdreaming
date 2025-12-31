@@ -64,51 +64,6 @@ export function GroupCard({ group, isPublic = false }: GroupCardProps) {
     }
     
     if (group.userIsMember) {
-        if (group.status === "Activo" || group.status === "Cerrado") {
-            return (
-                 <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="secondary" size="sm">
-                            Acciones <MoreVertical className="ml-2 h-4 w-4" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuItem onSelect={() => router.push(cardLink)}>
-                            <ArrowRight className="mr-2 h-4 w-4" />
-                            Ver Detalles
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        {group.status === "Activo" && !group.userIsAwarded && (
-                            <>
-                                <DropdownMenuItem onSelect={() => alert(`Acción 'Licitar' para el grupo ${group.id}`)}>
-                                    <Gavel className="mr-2 h-4 w-4" />
-                                    <span>Licitar</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onSelect={() => alert(`Acción 'Subastar' para el grupo ${group.id}`)}>
-                                    <Hand className="mr-2 h-4 w-4" />
-                                    <span>Subastar Plan</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem className="text-red-600 focus:text-red-600 focus:bg-red-50" onSelect={() => alert(`Acción 'Dar de Baja' para el grupo ${group.id}`)}>
-                                    <FileX2 className="mr-2 h-4 w-4" />
-                                    <span>Dar de Baja</span>
-                                </DropdownMenuItem>
-                            </>
-                        )}
-                        {group.status === "Activo" && group.userIsAwarded && (
-                             <DropdownMenuItem onSelect={() => alert(`Acción 'Subastar' para el grupo ${group.id}`)}>
-                                <Hand className="mr-2 h-4 w-4" />
-                                <span>Subastar Plan</span>
-                            </DropdownMenuItem>
-                        )}
-                         {group.status === "Cerrado" && (
-                            <DropdownMenuItem disabled>
-                                No hay acciones disponibles
-                            </DropdownMenuItem>
-                         )}
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            )
-        }
         return (
             <Button asChild variant="secondary" size="sm">
                 <Link href={cardLink}>
