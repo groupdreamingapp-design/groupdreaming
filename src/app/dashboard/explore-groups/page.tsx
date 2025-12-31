@@ -1,3 +1,4 @@
+
 import { groups } from "@/lib/data";
 import { GroupCard } from "@/components/app/group-card";
 import { Card, CardContent } from "@/components/ui/card";
@@ -46,7 +47,7 @@ export default function ExploreGroupsPage() {
       </Card>
       <Separator />
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        {groups.filter(g => !g.userIsMember).map(group => (
+        {groups.filter(g => g.status === 'Abierto' && !g.userIsMember).map(group => (
           <GroupCard key={group.id} group={group} showJoinButton={true} />
         ))}
       </div>
