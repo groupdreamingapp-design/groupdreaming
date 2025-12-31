@@ -1,4 +1,3 @@
-
 'use client';
 
 import type { Group, Installment } from '@/lib/types';
@@ -13,13 +12,20 @@ import { Switch } from '@/components/ui/switch';
 import { ArrowLeft, Users, Clock, Users2, Calendar, Gavel, HandCoins, Ticket, Info, Trophy, FileX2, TrendingUp, Hand, Scale } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
+import { useParams } from 'next/navigation';
+import { useGroups } from '@/hooks/use-groups';
+import { installments as allInstallments } from '@/lib/data';
 
-type GroupDetailClientProps = {
-    group: Group | undefined;
-    installments: Installment[];
-};
 
-export function GroupDetailClient({ group, installments }: GroupDetailClientProps) {
+export default function GroupDetailPage() {
+  const params = useParams();
+  const { groups } = useGroups();
+  
+  const groupId = typeof params.id === 'string' ? params.id : '';
+  const group = groups.find(g => g.id === groupId);
+  
+  // In a real app, this would be filtered by group, here we pass all of them for simplicity
+  const installments = allInstallments;
 
   if (!group) {
     return (
@@ -27,7 +33,7 @@ export function GroupDetailClient({ group, installments }: GroupDetailClientProp
         <h1 className="text-2xl font-bold">Grupo no encontrado</h1>
         <p className="text-muted-foreground">El grupo que buscas no existe o fue eliminado.</p>
         <Button asChild className="mt-4">
-          <Link href="/dashboard/explore-groups">Explorar otros grupos</Link>
+          <Link href="/dashboard/explore">Explorar otros grupos</Link>
         </Button>
       </div>
     );
@@ -251,5 +257,3 @@ export function GroupDetailClient({ group, installments }: GroupDetailClientProp
     </>
   );
 }
-
-    
