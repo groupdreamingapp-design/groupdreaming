@@ -5,7 +5,7 @@ import { useState } from "react";
 import { auctions } from "@/lib/data";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Clock, Tag, TrendingUp, Gavel, ArrowUp, Bot } from "lucide-react";
+import { Clock, Tag, TrendingUp, Gavel, ArrowUp, Bot, BookText } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,6 +13,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 export default function AuctionsPage() {
   const [offerAmount, setOfferAmount] = useState('');
@@ -25,6 +26,7 @@ export default function AuctionsPage() {
   const [openDialogs, setOpenDialogs] = useState<Record<string, boolean>>({});
 
   const formatCurrency = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD' }).format(amount);
+  const formatCurrencyNoDecimals = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount);
   
   const validateOffer = (auction: (typeof auctions)[0]) => {
     const minBidIncrement = auction.precioMinimo * 0.03;
@@ -100,10 +102,6 @@ export default function AuctionsPage() {
         return;
     }
     
-    if (!validateOffer(auction)) {
-        return;
-    }
-
     if (autoBidEnabled) {
         toast({
             title: "¡Oferta automática configurada!",
@@ -116,8 +114,7 @@ export default function AuctionsPage() {
         });
     }
     
-    setOpenDialogs(prev => ({ ...prev, [auction.id]: false }));
-    resetDialog();
+    handleOpenChange(auction.id, false);
   };
   
   const resetDialog = () => {
@@ -138,9 +135,17 @@ export default function AuctionsPage() {
 
   return (
     <>
-      <div>
-        <h1 className="text-3xl font-bold font-headline">Subastas (Mercado Secundario)</h1>
-        <p className="text-muted-foreground">Adquiere planes avanzados y acorta tu camino a la adjudicación.</p>
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold font-headline">Subastas (Mercado Secundario)</h1>
+          <p className="text-muted-foreground">Adquiere planes avanzados y acorta tu camino a la adjudicación.</p>
+        </div>
+        <Button asChild variant="outline">
+          <Link href="/dashboard/auctions/rules">
+            <BookText className="mr-2 h-4 w-4" />
+            Ver Reglamento
+          </Link>
+        </Button>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         {auctions.map(auction => {
@@ -155,7 +160,7 @@ export default function AuctionsPage() {
             <Card key={auction.id} className="flex flex-col">
               <CardHeader>
                 <CardDescription>Plan del {auction.groupId}</CardDescription>
-                <CardTitle className="text-2xl">{new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(auction.capital)} en {auction.plazo} meses</CardTitle>
+                <CardTitle className="text-2xl">{formatCurrencyNoDecimals(auction.capital)} en {auction.plazo} meses</CardTitle>
               </CardHeader>
               <CardContent className="flex-grow space-y-4">
                 <div className="p-3 rounded-lg bg-muted/50 space-y-2">
