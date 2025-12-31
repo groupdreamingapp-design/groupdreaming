@@ -16,6 +16,7 @@ import Link from 'next/link';
 import { useGroups } from '@/hooks/use-groups';
 import { installments as allInstallments, initialGroups } from '@/lib/data';
 import { useMemo } from 'react';
+import { Separator } from '@/components/ui/separator';
 
 type GroupDetailClientProps = {
     groupId: string;
@@ -164,7 +165,7 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                 </div>
               </CardContent>
               {isMember && !group.userIsAwarded && group.status === 'Activo' && (
-                <CardFooter className="flex-wrap gap-2">
+                 <CardFooter className="flex-wrap gap-2">
                   {/* Licitar */}
                   <Dialog>
                     <DialogTrigger asChild><Button size="sm"><Gavel className="mr-2 h-4 w-4" /> Licitar</Button></DialogTrigger>
