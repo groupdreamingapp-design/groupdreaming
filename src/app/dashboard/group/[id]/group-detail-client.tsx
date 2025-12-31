@@ -224,7 +224,7 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                            <div className="flex justify-between font-bold border-t pt-2"><span>Precio Base Sugerido:</span><strong>{formatCurrency(capitalAportado)}</strong></div>
                            <hr/>
                            <div className="flex justify-between text-green-700"><span>Liquidación Mínima a Recibir:</span><strong>{formatCurrency(capitalAportado * 0.98)}</strong></div>
-                           <p className="text-xs text-muted-foreground">(Se descuenta una comisión del 2% por la operación)</p>
+                           <p className="text-xs text-muted-foreground">(Se descuenta una comisión del 2% + IVA sobre la operación)</p>
                         </Card>
                     </div>
                     <DialogFooter>

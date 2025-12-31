@@ -39,11 +39,30 @@ export default function LandingPage() {
   ];
 
   const rules = [
-    { title: "Costos de Ingreso y Mantenimiento", content: "Derecho de Suscripción: 3% + IVA. Gastos Administrativos Mensuales: 10% + IVA sobre la alícuota pura. Seguro de Vida Mensual: 0.09% sobre el saldo de capital pendiente." },
-    { title: "Adjudicación y Presentación de Garantías", content: "Tras resultar adjudicado (por sorteo o licitación), el miembro tiene 48hs corridas para aceptar, 72hs hábiles para presentar garantías y 24hs para integrar el capital (en caso de licitación). El incumplimiento de estos plazos puede resultar en la pérdida del derecho de adjudicación." },
-    { title: "Gestión de Mora", content: "El incumplimiento en los pagos lleva a la suspensión de derechos y, eventualmente, a la subasta forzosa del plan para proteger al grupo." },
-    { title: "Subasta de Planes (Mercado Secundario)", content: "Ofrece una vía de salida flexible, permitiendo vender tu plan a otros inversores de forma segura y regulada por la plataforma." },
-    { title: "Política de Baja de Plan", content: "Posibilidad de rescindir el contrato para planes no adjudicados, con retención del capital hasta la finalización del grupo y una penalidad por rescisión." },
+    { 
+      title: "Costos de Ingreso y Mantenimiento", 
+      content: "Derecho de Suscripción: 3% + IVA sobre el capital, financiado en el primer 20% de las cuotas. Gastos Administrativos Mensuales: 10% + IVA sobre la alícuota pura. Seguro de Vida Mensual: 0.09% sobre el saldo de capital pendiente." 
+    },
+    { 
+      title: "Adjudicación y Presentación de Garantías", 
+      content: "Tras ser adjudicado, tienes 48hs para aceptar, 72hs hábiles para presentar garantías y 24hs para integrar el capital (si licitaste). El incumplimiento de plazos puede resultar en la pérdida del derecho de adjudicación del mes." 
+    },
+    {
+      title: "Incumplimiento de Licitación Ganadora",
+      content: "Si ganas una licitación y no integras el monto, se aplica una multa del 2% + IVA sobre la oferta y quedas inhabilitado para licitar por 5 meses. La multa se descontará de tu futura adjudicación o liquidación final."
+    },
+    { 
+      title: "Gestión de Mora y Consecuencias", 
+      content: "A los 15 días de mora, se suspenden tus derechos de participación. Con 3 cuotas impagas, tu plan será subastado forzosamente para cubrir la deuda." 
+    },
+    { 
+      title: "Subasta de Planes (Mercado Secundario)", 
+      content: "Puedes vender tu plan. La plataforma garantiza la compra al precio mínimo si no hay ofertas. El comprador adquiere el plan libre de deudas y asume una comisión del 2% + IVA que se descontará de su futura adjudicación." 
+    },
+    {
+      title: "Política de Baja de Plan",
+      content: "Puedes solicitar la baja de un plan no adjudicado. Se te devolverá el capital aportado al finalizar el plazo original del grupo, descontando una penalidad por rescisión."
+    }
   ];
 
   return (
