@@ -85,6 +85,7 @@ export default function AuctionsPage() {
       }
     }
 
+    // Si todas las validaciones pasan, se muestra el toast y se cierra el diálogo.
     if (autoBidEnabled) {
         toast({
             title: "¡Oferta automática configurada!",
