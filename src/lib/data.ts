@@ -14,13 +14,21 @@ const plazoOptions = [12, 24, 36, 48, 60, 72, 84];
 
 const IVA = 1.21;
 
+const generateId = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    const dateString = `${year}${month}${day}`;
+    const randomNumbers = String(Math.floor(Math.random() * 10000)).padStart(4, '0');
+    return `ID-${dateString}-${randomNumbers}`;
+};
+
 const generateInitialGroups = (): Group[] => {
   const groups: Group[] = [];
-  let idCounter = 1;
 
   for (const capital of capitalOptions) {
     for (const plazo of plazoOptions) {
-      // Approximate formula for cuotaPromedio based on previous data
       const alicuotaPura = capital / plazo;
       const gastosAdm = (alicuotaPura * 0.10) * IVA;
       const seguroVidaPromedio = (capital * 0.0009) / 2; // Approximation of average insurance cost
@@ -30,8 +38,14 @@ const generateInitialGroups = (): Group[] => {
         const totalMembers = plazo * 2;
         // Use a deterministic method to set initial members to avoid hydration errors
         const membersCount = (capital + plazo) % Math.max(1, Math.floor(totalMembers * 0.5));
+        
+        let newId;
+        do {
+            newId = generateId();
+        } while (groups.some(g => g.id === newId));
+
         groups.push({
-          id: `GR-${String(idCounter++).padStart(3, '0')}`,
+          id: newId,
           capital,
           plazo,
           cuotaPromedio,
@@ -47,7 +61,7 @@ const generateInitialGroups = (): Group[] => {
 
   // Add a couple of non-open groups for the user's dashboard
   groups.push({
-    id: "GR-998",
+    id: "ID-20240115-9998",
     capital: 15000,
     plazo: 48,
     cuotaPromedio: 345,
@@ -60,7 +74,7 @@ const generateInitialGroups = (): Group[] => {
   });
 
    groups.push({
-    id: "GR-999",
+    id: "ID-20230720-9999",
     capital: 15000,
     plazo: 36,
     cuotaPromedio: 455,
