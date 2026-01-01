@@ -24,7 +24,7 @@ export const initialGroups: Group[] = [
     { id: "ID-20240115-9998", capital: 15000, plazo: 48, cuotaPromedio: 345, membersCount: 96, totalMembers: 96, status: "Activo", monthsCompleted: 12, userIsMember: true, userIsAwarded: true },
     { id: "ID-20230720-9999", capital: 15000, plazo: 36, cuotaPromedio: 455, membersCount: 72, totalMembers: 72, status: "Cerrado", monthsCompleted: 36, userIsMember: true, userIsAwarded: true, },
     { id: "ID-20240510-8888", capital: 20000, plazo: 60, cuotaPromedio: calculateCuotaPromedio(20000, 60), membersCount: 120, totalMembers: 120, status: "Activo", monthsCompleted: 5, userIsMember: true, userIsAwarded: false },
-    { id: "ID-20231101-7777", capital: 10000, plazo: 24, cuotaPromedio: calculateCuotaPromedio(10000, 24), membersCount: 48, totalMembers: 48, status: "Activo", monthsCompleted: 4, userIsMember: true, userIsAwarded: false }, // Overdue group
+    { id: "ID-20231101-7777", capital: 10000, plazo: 24, cuotaPromedio: calculateCuotaPromedio(10000, 24), membersCount: 48, totalMembers: 48, status: "Activo", monthsCompleted: 4, userIsMember: true, userIsAwarded: false },
 
 
     // Grupos Abiertos (Nuevos y variados)
@@ -69,11 +69,12 @@ const totalSuscripcion = (capital * 0.03) * IVA; // 3% + IVA
 const mesesFinanciacionSuscripcion = Math.floor(plazo * 0.20);
 const cuotaSuscripcion = mesesFinanciacionSuscripcion > 0 ? totalSuscripcion / mesesFinanciacionSuscripcion : 0;
 
-const generateDueDate = (index: number) => {
-    const today = new Date();
-    const pastDate = new Date(today.setMonth(today.getMonth() - (4 - index)));
-    return pastDate.toISOString().split('T')[0];
-}
+const fixedPastDates = [
+    "2024-04-10",
+    "2024-05-10",
+    "2024-06-10",
+    "2024-07-10",
+];
 
 export const installments: Installment[] = Array.from({ length: 84 }, (_, i) => { // Increased length to satisfy all plans
     const saldoCapital = capital - (alicuotaPura * i);
@@ -81,8 +82,8 @@ export const installments: Installment[] = Array.from({ length: 84 }, (_, i) => 
     const derechoSuscripcion = i < mesesFinanciacionSuscripcion ? cuotaSuscripcion : 0;
     const totalCuota = alicuotaPura + gastosAdm + seguroVida + derechoSuscripcion;
     
-    // Simulate some past due dates for the overdue group example
-    const dueDate = i < 4 ? generateDueDate(i) : `2024-${((i + 7) % 12) + 1}-10`;
+    // Use fixed past dates for the overdue group example to avoid hydration errors
+    const dueDate = i < 4 ? fixedPastDates[i] : `2024-${String(((i + 7) % 12) + 1).padStart(2,'0')}-10`;
 
     return {
         id: `cuota-${i + 1}`,
