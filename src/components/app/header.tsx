@@ -3,6 +3,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { MainNav } from "./main-nav"
 import { Menu } from "lucide-react"
 import { Logo } from "../icons"
+import Link from "next/link"
 
 export function Header() {
   return (
@@ -19,10 +20,10 @@ export function Header() {
         </SheetTrigger>
         <SheetContent side="left">
           <nav className="grid gap-6 text-lg font-medium">
-            <div className="flex items-center gap-2 text-lg font-semibold mb-4">
+            <Link href="/" className="flex items-center gap-2 text-lg font-semibold mb-4">
               <Logo className="h-8 w-8 text-primary" />
               <span className="text-xl font-bold">Group Dreaming</span>
-            </div>
+            </Link>
             <MainNav isMobile={true} />
           </nav>
         </SheetContent>
