@@ -10,6 +10,7 @@ import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Logo } from '@/components/icons';
 import { useState, useEffect } from "react";
+import { user } from "@/lib/data";
 
 const heroImage = PlaceHolderImages.find((img) => img.id === 'hero-family');
 const goalImages = [
@@ -20,9 +21,15 @@ const goalImages = [
 
 export default function LandingPage() {
   const [currentYear, setCurrentYear] = useState<number | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     setCurrentYear(new Date().getFullYear());
+    // Simulate checking user session. In a real app, you'd use a proper auth hook.
+    // For this example, we'll assume the user is logged in if the 'user' object exists.
+    if (user && user.id) {
+        setIsLoggedIn(true);
+    }
   }, []);
 
 
@@ -83,23 +90,41 @@ export default function LandingPage() {
           <span className="text-xl font-bold text-foreground">Group Dreaming</span>
         </Link>
         <nav className="hidden md:flex items-center gap-4">
-          <Button variant="ghost" asChild>
-            <Link href="/dashboard/explore">Explorar Grupos</Link>
-          </Button>
-          <Button variant="ghost" asChild>
-            <Link href="/login">Ingresar</Link>
-          </Button>
-          <Button asChild>
-            <Link href="/register">Comenzar Ahora</Link>
-          </Button>
+          {isLoggedIn ? (
+            <>
+              <Button variant="ghost" asChild>
+                <Link href="/dashboard">Ir a mi Panel</Link>
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button variant="ghost" asChild>
+                <Link href="/dashboard/explore">Explorar Grupos</Link>
+              </Button>
+              <Button variant="ghost" asChild>
+                <Link href="/login">Ingresar</Link>
+              </Button>
+              <Button asChild>
+                <Link href="/register">Comenzar Ahora</Link>
+              </Button>
+            </>
+          )}
         </nav>
          <nav className="md:hidden flex items-center gap-2">
-          <Button variant="ghost" size="sm" asChild>
-            <Link href="/dashboard/explore">Explorar</Link>
-          </Button>
-          <Button variant="outline" size="sm" asChild>
-            <Link href="/login">Ingresar</Link>
-          </Button>
+          {isLoggedIn ? (
+             <Button asChild size="sm">
+                <Link href="/dashboard">Mi Panel</Link>
+              </Button>
+          ) : (
+            <>
+              <Button variant="ghost" size="sm" asChild>
+                <Link href="/dashboard/explore">Explorar</Link>
+              </Button>
+              <Button variant="outline" size="sm" asChild>
+                <Link href="/login">Ingresar</Link>
+              </Button>
+            </>
+          )}
         </nav>
       </header>
 
@@ -126,7 +151,7 @@ export default function LandingPage() {
             </p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
               <Button size="lg" asChild>
-                <Link href="/register">
+                <Link href={isLoggedIn ? "/dashboard/explore" : "/register"}>
                   Únete a un Grupo <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
@@ -259,3 +284,5 @@ export default function LandingPage() {
   );
 
 }
+
+    
