@@ -15,7 +15,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { format } from "date-fns";
+import { format, parseISO } from "date-fns";
 import type { DateRange } from "react-day-picker";
 
 type TransactionTypeFilter = 'todos' | 'ingreso' | 'egreso';
@@ -28,7 +28,7 @@ export default function WalletPage() {
   const availableBalance = transactions.reduce((acc, tx) => acc + tx.amount, 0);
 
   const filteredTransactions = transactions.filter(tx => {
-    const transactionDate = new Date(tx.date);
+    const transactionDate = parseISO(tx.date);
     
     // Filter by type
     if (typeFilter === 'ingreso' && tx.amount <= 0) return false;
@@ -188,7 +188,7 @@ export default function WalletPage() {
             <TableBody>
               {filteredTransactions.length > 0 ? filteredTransactions.map(tx => (
                 <TableRow key={tx.id}>
-                  <TableCell>{format(new Date(tx.date), "dd/MM/yyyy")}</TableCell>
+                  <TableCell>{format(parseISO(tx.date), "dd/MM/yyyy")}</TableCell>
                   <TableCell>
                     <Badge variant={tx.amount > 0 ? "outline" : "secondary"} className={cn(
                       tx.amount > 0 && "border-green-500/50 text-green-700",
