@@ -14,6 +14,7 @@ import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const Countdown = ({ endDate, isUrgent }: { endDate: string, isUrgent?: boolean }) => {
   const [timeLeft, setTimeLeft] = useState<string>('');
@@ -250,9 +251,27 @@ export default function AuctionsPage() {
               </CardContent>
               <CardFooter className="flex-col items-stretch gap-2 pt-4">
                 <Dialog open={openDialogs[auction.id] || false} onOpenChange={(open) => handleOpenChange(auction.id, open)}>
-                  <DialogTrigger asChild>
-                    <Button>Hacer una oferta</Button>
-                  </DialogTrigger>
+                   <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="w-full">
+                          <Button 
+                            className="w-full"
+                            onClick={() => !auction.isMine && handleOpenChange(auction.id, true)} 
+                            disabled={auction.isMine}
+                           >
+                            Hacer una oferta
+                          </Button>
+                        </div>
+                      </TooltipTrigger>
+                      {auction.isMine && (
+                        <TooltipContent>
+                          <p>No puedes ofertar en tu propio plan.</p>
+                        </TooltipContent>
+                      )}
+                    </Tooltip>
+                  </TooltipProvider>
+
                   <DialogContent>
                     <DialogHeader>
                       <DialogTitle>Hacer una oferta por el plan {auction.groupId}</DialogTitle>

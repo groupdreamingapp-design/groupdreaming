@@ -45,6 +45,7 @@ export type Auction = {
   endDate: string;
   numberOfBids: number;
   isPostAdjudicacion?: boolean;
+  isMine?: boolean;
 };
 
 export type InstallmentStatus = "Pagado" | "Pendiente" | "Vencido" | "Futuro";
@@ -70,4 +71,3 @@ export type Installment = {
   };
   awards?: Award[];
 };
-
