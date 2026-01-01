@@ -359,7 +359,11 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                     if (inst.number <= cuotasPagadas) {
                       status = 'Pagado';
                     } else if (group.status === 'Subastado') {
-                        status = dueDate < today ? 'Vencido' : 'Futuro';
+                        if (dueDate < today) {
+                          status = 'Vencido';
+                        } else {
+                          status = 'Futuro';
+                        }
                     } else if (dueDate < today) {
                         status = 'Vencido';
                     } else if (inst.number === cuotasPagadas + 1) {

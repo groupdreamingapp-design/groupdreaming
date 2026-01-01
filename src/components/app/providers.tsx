@@ -120,25 +120,17 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
 }, [groups]);
 
 
-  // Effect to show toast when a group is auctioned or sold
+  // Effect to show toast when a group is auctioned
   useEffect(() => {
     const prevGroups = prevGroupsRef.current;
     groups.forEach(currentGroup => {
         const prevGroup = prevGroups.find(p => p.id === currentGroup.id);
         if (prevGroup) {
-            // Toast for forced auction
             if (prevGroup.status === 'Activo' && currentGroup.status === 'Subastado') {
                 toast({
                     variant: "destructive",
                     title: "Plan en Subasta Forzosa",
                     description: `Tu plan ${currentGroup.id} ha sido puesto en subasta por tener 2 o más cuotas vencidas.`,
-                });
-            }
-            // Toast for sold auction
-            if (prevGroup.userIsMember && !currentGroup.userIsMember && prevGroup.status === 'Subastado') {
-                 toast({
-                    title: "¡Subasta Finalizada!",
-                    description: `Tu plan ${currentGroup.id} ha sido vendido con éxito en el mercado secundario.`,
                 });
             }
         }
@@ -147,7 +139,7 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
     prevGroupsRef.current = groups;
   }, [groups]);
   
-    // Effect to simulate a sold auction
+    // Effect to simulate a sold auction and show toast
     useEffect(() => {
         const soldAuctionSimulator = setTimeout(() => {
             setGroups(currentGroups => {
@@ -155,7 +147,6 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
                 const groupExistedAndWasAuctioned = currentGroups.some(g => g.id === groupToSellId && g.userIsMember && g.status === 'Subastado');
 
                 if (groupExistedAndWasAuctioned) {
-                    // Just update the state, the other useEffect will handle the toast
                     return currentGroups.map(g => g.id === groupToSellId ? { ...g, userIsMember: false } : g);
                 }
                 return currentGroups;
@@ -163,6 +154,20 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
         }, 15000); // Simulate selling after 15 seconds
 
         return () => clearTimeout(soldAuctionSimulator);
+    }, []);
+
+    useEffect(() => {
+        const prevGroups = prevGroupsRef.current;
+        groups.forEach(currentGroup => {
+            const prevGroup = prevGroups.find(p => p.id === currentGroup.id);
+            if (prevGroup && prevGroup.userIsMember && !currentGroup.userIsMember && prevGroup.status === 'Subastado') {
+                toast({
+                    title: "¡Subasta Finalizada!",
+                    description: `Tu plan ${currentGroup.id} ha sido vendido con éxito en el mercado secundario.`,
+                });
+            }
+        });
+        prevGroupsRef.current = groups;
     }, [groups]);
 
 
