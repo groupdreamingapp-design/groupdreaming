@@ -5,7 +5,7 @@ import { useMemo } from "react";
 import { user, transactions } from "@/lib/data"
 import { useGroups } from "@/hooks/use-groups";
 import { StatCard } from "@/components/app/stat-card"
-import { Repeat, Wallet } from "lucide-react"
+import { Repeat, Wallet, PieChart } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
@@ -14,6 +14,8 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import type { Group } from "@/lib/types";
+
+const MAX_CAPITAL = 100000;
 
 export default function DashboardPage() {
   const { groups } = useGroups();
@@ -25,6 +27,15 @@ export default function DashboardPage() {
     const statusOrder = { "Activo": 1, "Abierto": 2, "Pendiente": 3, "Cerrado": 4 };
     return statusOrder[a.status] - statusOrder[b.status];
   }), [groups]);
+
+  const subscribedCapital = useMemo(() => {
+    return groups
+        .filter(g => g.userIsMember && (g.status === 'Activo' || g.status === 'Pendiente' || g.status === 'Abierto'))
+        .reduce((acc, g) => acc + g.capital, 0);
+  }, [groups]);
+
+  const availableToSubscribe = MAX_CAPITAL - subscribedCapital;
+
 
   const getProgress = (group: Group) => {
     if (group.status === 'Activo' && group.monthsCompleted) {
@@ -62,9 +73,10 @@ export default function DashboardPage() {
   return (
     <>
       <h1 className="text-3xl font-bold font-headline">Hola, {user.name.split(' ')[0]}!</h1>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <StatCard title="Saldo Disponible" value={formatCurrency(availableBalance)} icon={Wallet} description="+20% que el mes pasado" />
         <StatCard title="Próxima Cuota" value={formatCurrency(615)} icon={Repeat} description="Vence en 15 días" />
+        <StatCard title="Cupo de Capital" value={formatCurrency(availableToSubscribe)} icon={PieChart} description={`Total: ${formatCurrency(MAX_CAPITAL)}`} />
       </div>
 
       <div className="grid gap-4">
