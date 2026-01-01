@@ -76,7 +76,17 @@ export const generateInstallments = (capital: number, plazo: number, activationD
         const derechoSuscripcion = i < mesesFinanciacionSuscripcion ? cuotaSuscripcion : 0;
         const totalCuota = alicuotaPura + gastosAdm + seguroVida + derechoSuscripcion;
         
-        const dueDate = addMonths(startDate, i + 1);
+        let dueDate = addMonths(startDate, i + 1);
+
+        // Ensure due date is the same day of the month as activation, or last day if not possible
+        const activationDay = startDate.getDate();
+        const lastDayOfNextMonth = lastDayOfMonth(dueDate).getDate();
+        if (activationDay > lastDayOfNextMonth) {
+            dueDate = setDate(dueDate, lastDayOfNextMonth);
+        } else {
+            dueDate = setDate(dueDate, activationDay);
+        }
+
 
         return {
             id: `cuota-${i + 1}`,
