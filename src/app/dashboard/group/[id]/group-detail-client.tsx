@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import type { Group, Installment, Award } from '@/lib/types';
@@ -110,7 +109,7 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
 
   const installments = useMemo(() => {
     if (!group) return [];
-    if (group.status === 'Activo' && group.activationDate) {
+    if ((group.status === 'Activo' || group.status === 'Subastado') && group.activationDate) {
       return generateInstallments(group.capital, group.plazo, group.activationDate);
     }
     if (group.status === 'Abierto' || group.status === 'Pendiente') {
@@ -184,18 +183,15 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
   const isPlanActive = group.status === 'Activo';
   
   const pendingInstallmentIndex = useMemo(() => {
-    if (!isPlanActive) return -1;
+    if (!isPlanActive && group.status !== 'Subastado') return -1;
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-
     return installments.findIndex(inst => {
-      const isPaid = inst.number <= cuotasPagadas;
-      if (isPaid) return false;
-
-      const dueDate = parseISO(inst.dueDate);
-      return !isBefore(dueDate, today);
+        const isPaid = inst.number <= cuotasPagadas;
+        const dueDate = parseISO(inst.dueDate);
+        return !isPaid && !isBefore(dueDate, today);
     });
-  }, [installments, cuotasPagadas, isPlanActive]);
+  }, [installments, cuotasPagadas, isPlanActive, group.status]);
 
   return (
     <>
@@ -240,7 +236,7 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
           </Card>
         </div>
         
-        {isMember && (group.status === 'Activo' || group.status === 'Abierto' || group.status === 'Pendiente') && (
+        {isMember && (group.status === 'Activo') && (
            <div className="lg:col-span-3">
              <Card>
                <CardHeader>
@@ -379,122 +375,124 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
              </Card>
            </div>
          )}
-        
-        {(isPlanActive || group.status === 'Abierto' || group.status === 'Pendiente') && (
-        <div className="lg:col-span-3">
-          <Card>
-            <CardHeader>
-              <CardTitle>Plan de Cuotas {isPlanActive ? '' : '(Ejemplo)'}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Cuota</TableHead>
-                    <TableHead>Vencimiento</TableHead>
-                    <TableHead>Estado</TableHead>
-                    <TableHead>Info Adjudicación</TableHead>
-                    <TableHead className="text-right">Total</TableHead>
-                    <TableHead className="text-center">Acción</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {installments.map((inst, index) => {
-                    let status: Installment['status'] = 'Futuro';
-                    const dueDate = parseISO(inst.dueDate);
-                    const today = new Date();
-                    today.setHours(0, 0, 0, 0);
 
-                    if (isPlanActive) {
-                        const isPaid = inst.number <= cuotasPagadas;
-                        if (isBefore(dueDate, today)) {
-                            status = isPaid ? 'Pagado' : 'Vencido';
-                        } else { // Due date is today or in the future
-                            if (isPaid) { // Paid in advance
-                                status = 'Pagado';
-                            } else if (index === pendingInstallmentIndex) {
-                                status = 'Pendiente';
-                            } else {
-                                status = 'Futuro';
-                            }
-                        }
-                    }
-                    
-                    const currentAwards = (isPlanActive && inst.number >= 2 && (cuotasPagadas >= inst.number - 1 || isBefore(dueDate, addDays(today, 5)))) ? groupAwards[inst.number - 2] : undefined;
-                    const awardDate = (isPlanActive && currentAwards) ? format(addDays(dueDate, 5), 'dd/MM/yyyy') : undefined;
-
-                    return (
-                      <TableRow key={inst.id}>
-                        <TableCell>{inst.number}</TableCell>
-                        <TableCell>{formatDate(inst.dueDate)}</TableCell>
-                        <TableCell>
-                          <Badge variant={status === 'Pagado' ? 'default' : status === 'Pendiente' ? 'secondary' : status === 'Vencido' ? 'destructive' : 'outline'}
-                            className={cn(
-                              status === 'Pagado' && 'bg-green-500/20 text-green-700 border-green-500/30',
-                              status === 'Pendiente' && 'bg-yellow-500/20 text-yellow-700 border-yellow-500/30',
-                              status === 'Vencido' && 'bg-red-500/20 text-red-700 border-red-500/30',
-                            )}
-                          >{status}</Badge>
-                        </TableCell>
-                         <TableCell className="text-xs text-muted-foreground">
-                            {awardDate && inst.number >= 2 && (
-                                <div className="flex items-center gap-2">
-                                     <CalendarCheck className="h-4 w-4" />
-                                     <span>{awardDate}</span>
-                                </div>
-                            )}
-                            <div className="flex items-center gap-3 mt-1">
-                               {currentAwards?.map(award => (
-                                <div key={`${award.type}-${award.orderNumber}`} className="flex items-center gap-1">
-                                  {award.type === 'sorteo' && <Ticket className="h-4 w-4 text-blue-500" />}
-                                  {award.type === 'licitacion' && <HandCoins className="h-4 w-4 text-orange-500" />}
-                                  <span>#{award.orderNumber}</span>
-                                </div>
-                              ))}
-                            </div>
-                        </TableCell>
-                        <TableCell className="text-right font-mono">{formatCurrency(inst.total)}</TableCell>
-                        <TableCell className="text-center">
-                          <Dialog>
-                            <DialogTrigger asChild>
-                              <Button variant="outline" size="sm">Ver Detalle</Button>
-                            </DialogTrigger>
-                            <DialogContent>
-                              <DialogHeader>
-                                <DialogTitle>Detalle de la Cuota #{inst.number}</DialogTitle>
-                              </DialogHeader>
-                              <div className="grid gap-2 text-sm">
-                                  <div className="flex justify-between"><span>Alícuota Pura:</span><strong>{formatCurrency(inst.breakdown.alicuotaPura)}</strong></div>
-                                  <div className="flex justify-between"><span>Gastos Adm (IVA incl.):</span><strong>{formatCurrency(inst.breakdown.gastosAdm)}</strong></div>
-                                  {inst.breakdown.derechoSuscripcion && (
-                                    <div className="flex justify-between"><span>Derecho Suscripción (IVA incl.):</span><strong>{formatCurrency(inst.breakdown.derechoSuscripcion)}</strong></div>
-                                  )}
-                                  <div className="flex justify-between"><span>Seguro de Vida:</span><strong>{formatCurrency(inst.breakdown.seguroVida)}</strong></div>
-                                  <div className="flex justify-between font-bold text-base border-t pt-2 mt-2"><span>Total:</span><span>{formatCurrency(inst.total)}</span></div>
-                              </div>
-                            </DialogContent>
-                          </Dialog>
-                        </TableCell>
-                      </TableRow>
-                    )
-                  })}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        </div>
-        )}
-
-        {isMember && (group.status === 'Cerrado' || group.status === 'Subastado') && (
+        {(group.status === 'Abierto' || group.status === 'Pendiente' || group.status === 'Activo' || group.status === 'Subastado') && (
           <div className="lg:col-span-3">
             <Card>
               <CardHeader>
-                <CardTitle>Plan {group.status === 'Cerrado' ? 'Finalizado' : 'en Subasta'}</CardTitle>
+                <CardTitle>Plan de Cuotas { (group.status === 'Abierto' || group.status === 'Pendiente') ? '(Ejemplo)' : ''}</CardTitle>
+                {group.status === 'Subastado' && (
+                    <CardDescription className="!text-orange-600 font-semibold">
+                        Este plan está en el mercado secundario. Las acciones se gestionan desde la sección de Subastas.
+                    </CardDescription>
+                )}
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Cuota</TableHead>
+                      <TableHead>Vencimiento</TableHead>
+                      <TableHead>Estado</TableHead>
+                      <TableHead>Info Adjudicación</TableHead>
+                      <TableHead className="text-right">Total</TableHead>
+                      <TableHead className="text-center">Acción</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {installments.map((inst, index) => {
+                      let status: Installment['status'] = 'Futuro';
+                      const dueDate = parseISO(inst.dueDate);
+                      const today = new Date();
+                      today.setHours(0, 0, 0, 0);
+
+                      if (group.status === 'Activo' || group.status === 'Subastado') {
+                          const isPaid = inst.number <= cuotasPagadas;
+                          if (isBefore(dueDate, today)) {
+                              status = isPaid ? 'Pagado' : 'Vencido';
+                          } else { // Due date is today or in the future
+                              if (isPaid) {
+                                  status = 'Pagado';
+                              } else if (index === pendingInstallmentIndex) {
+                                  status = 'Pendiente';
+                              } else {
+                                  status = 'Futuro';
+                              }
+                          }
+                      }
+                      
+                      const currentAwards = (isPlanActive && inst.number >= 2 && (cuotasPagadas >= inst.number - 1 || isBefore(dueDate, addDays(today, 5)))) ? groupAwards[inst.number - 2] : undefined;
+                      const awardDate = (isPlanActive && currentAwards) ? format(addDays(dueDate, 5), 'dd/MM/yyyy') : undefined;
+
+                      return (
+                        <TableRow key={inst.id}>
+                          <TableCell>{inst.number}</TableCell>
+                          <TableCell>{formatDate(inst.dueDate)}</TableCell>
+                          <TableCell>
+                            <Badge variant={status === 'Pagado' ? 'default' : status === 'Pendiente' ? 'secondary' : status === 'Vencido' ? 'destructive' : 'outline'}
+                              className={cn(
+                                status === 'Pagado' && 'bg-green-500/20 text-green-700 border-green-500/30',
+                                status === 'Pendiente' && 'bg-yellow-500/20 text-yellow-700 border-yellow-500/30',
+                                status === 'Vencido' && 'bg-red-500/20 text-red-700 border-red-500/30',
+                              )}
+                            >{status}</Badge>
+                          </TableCell>
+                           <TableCell className="text-xs text-muted-foreground">
+                              {awardDate && inst.number >= 2 && (
+                                  <div className="flex items-center gap-2">
+                                       <CalendarCheck className="h-4 w-4" />
+                                       <span>{awardDate}</span>
+                                  </div>
+                              )}
+                              <div className="flex items-center gap-3 mt-1">
+                                 {currentAwards?.map(award => (
+                                  <div key={`${award.type}-${award.orderNumber}`} className="flex items-center gap-1">
+                                    {award.type === 'sorteo' && <Ticket className="h-4 w-4 text-blue-500" />}
+                                    {award.type === 'licitacion' && <HandCoins className="h-4 w-4 text-orange-500" />}
+                                    <span>#{award.orderNumber}</span>
+                                  </div>
+                                ))}
+                              </div>
+                          </TableCell>
+                          <TableCell className="text-right font-mono">{formatCurrency(inst.total)}</TableCell>
+                          <TableCell className="text-center">
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <Button variant="outline" size="sm">Ver Detalle</Button>
+                              </DialogTrigger>
+                              <DialogContent>
+                                <DialogHeader>
+                                  <DialogTitle>Detalle de la Cuota #{inst.number}</DialogTitle>
+                                </DialogHeader>
+                                <div className="grid gap-2 text-sm">
+                                    <div className="flex justify-between"><span>Alícuota Pura:</span><strong>{formatCurrency(inst.breakdown.alicuotaPura)}</strong></div>
+                                    <div className="flex justify-between"><span>Gastos Adm (IVA incl.):</span><strong>{formatCurrency(inst.breakdown.gastosAdm)}</strong></div>
+                                    {inst.breakdown.derechoSuscripcion && (
+                                      <div className="flex justify-between"><span>Derecho Suscripción (IVA incl.):</span><strong>{formatCurrency(inst.breakdown.derechoSuscripcion)}</strong></div>
+                                    )}
+                                    <div className="flex justify-between"><span>Seguro de Vida:</span><strong>{formatCurrency(inst.breakdown.seguroVida)}</strong></div>
+                                    <div className="flex justify-between font-bold text-base border-t pt-2 mt-2"><span>Total:</span><span>{formatCurrency(inst.total)}</span></div>
+                                </div>
+                              </DialogContent>
+                            </Dialog>
+                          </TableCell>
+                        </TableRow>
+                      )
+                    })}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
+        {isMember && group.status === 'Cerrado' && (
+          <div className="lg:col-span-3">
+            <Card>
+              <CardHeader>
+                <CardTitle>Plan Finalizado</CardTitle>
                 <CardDescription>
-                    {group.status === 'Cerrado' 
-                        ? 'Este grupo ha concluido. No hay más acciones disponibles.' 
-                        : 'Este plan está en el mercado secundario. Las acciones se gestionan desde la sección de Subastas.'
-                    }
+                  Este grupo ha concluido. No hay más acciones disponibles.
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -504,3 +502,5 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
     </>
   );
 }
+
+    
