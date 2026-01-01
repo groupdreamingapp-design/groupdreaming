@@ -181,8 +181,8 @@ function generateNewGroup(templateGroup: Group): Group {
     const month = String(today.getMonth() + 1).padStart(2, '0');
     const day = String(today.getDate()).padStart(2, '0');
     const dateString = `${year}${month}${day}`;
-    const randomNumbers = String(Math.floor(Math.random() * 9000) + 1000); // 4-digit random number
-    const newId = `ID-${dateString}-${randomNumbers}`;
+    const sequentialNumber = String(groupCounter++).padStart(4, '0');
+    const newId = `ID-${dateString}-${sequentialNumber}`;
     
     return {
       // Copy only the template properties, not the state
@@ -206,6 +206,7 @@ function generateNewGroup(templateGroup: Group): Group {
     
 
     
+
 
 
 
