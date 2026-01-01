@@ -40,7 +40,7 @@ for (const capital of capitalOptions) {
 
         if (cuotaPromedio <= 1000) {
             const sequentialNumber = String(groupCounter++).padStart(4, '0');
-            const newId = `ID-20260101-${sequentialNumber}`;
+            const newId = `ID-${dateString}-${sequentialNumber}`;
 
             let totalMembers;
             if (plazo <= 24) totalMembers = 48;
@@ -66,25 +66,25 @@ for (const capital of capitalOptions) {
 
 
 // Add the active group that started in the past
-const futureGroupCapital = 15000;
-const futureGroupPlazo = 24;
-const futureActivationDate = new Date('2025-06-05T00:00:00Z');
+const activeGroupCapital = 15000;
+const activeGroupPlazo = 24;
+const activeActivationDate = new Date('2025-06-05T00:00:00Z');
 const today = new Date('2026-01-01T00:00:00Z');
-const futureMonthsCompleted = differenceInMonths(today, futureActivationDate);
+const activeMonthsCompleted = differenceInMonths(today, activeActivationDate);
 
 
 generatedGroups.push({
     id: 'ID-20250602-1001',
-    capital: futureGroupCapital,
-    plazo: futureGroupPlazo,
-    cuotaPromedio: calculateCuotaPromedio(futureGroupCapital, futureGroupPlazo),
+    capital: activeGroupCapital,
+    plazo: activeGroupPlazo,
+    cuotaPromedio: calculateCuotaPromedio(activeGroupCapital, activeGroupPlazo),
     membersCount: 48,
     totalMembers: 48,
     status: 'Activo',
     userIsMember: true,
     userIsAwarded: false,
-    monthsCompleted: futureMonthsCompleted > 0 ? futureMonthsCompleted : 0,
-    activationDate: futureActivationDate.toISOString(),
+    monthsCompleted: activeMonthsCompleted > 0 ? activeMonthsCompleted : 0,
+    activationDate: activeActivationDate.toISOString(),
 });
 
 
@@ -206,6 +206,7 @@ function generateNewGroup(templateGroup: Group): Group {
     
 
     
+
 
 
 
