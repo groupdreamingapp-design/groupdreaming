@@ -19,11 +19,11 @@ const contractClauses = [
     },
     {
         title: "CUARTA: DERECHOS Y OBLIGACIONES DE LA ADMINISTRADORA",
-        content: "LA ADMINISTRADORA se obliga a: gestionar los fondos, realizar los actos de adjudicación con transparencia, entregar los capitales a los adjudicatarios en los plazos estipulados y administrar el Mercado Secundario. Tiene derecho a percibir los Gastos Administrativos y comisiones por los servicios prestados."
+        content: "LA ADMINISTRADORA se obliga a: a) Gestionar los fondos de los grupos de manera diligente y transparente. b) Realizar mensualmente los actos de adjudicación por sorteo y licitación. c) Entregar los capitales a los suscriptores adjudicados en los plazos estipulados, previa constitución de las garantías correspondientes. d) Administrar el Mercado Secundario (Subastas), garantizando un proceso justo y transparente. Esto incluye: publicar los planes que los suscriptores ofrezcan, establecer el precio base (50% del total de cuotas puras emitidas), y liquidar el monto al vendedor descontando deudas y la comisión del 2% (+IVA). e) Si un plan en subasta no recibe ofertas, LA ADMINISTRADORA lo absorberá, utilizando sus propios fondos para realizar una oferta de licitación en el mes siguiente y así garantizar la liquidación al vendedor."
     },
     {
         title: "QUINTA: DERECHOS Y OBLIGACIONES DEL SUSCRIPTOR",
-        content: "EL SUSCRIPTOR se obliga a pagar puntualmente las cuotas. Tiene derecho a participar de los actos de adjudicación, licitar, ceder su plan en el Mercado Secundario (subasta) o solicitar la baja. En caso de ser adjudicado, se compromete a seguir pagando las cuotas restantes hasta la finalización del plazo del grupo."
+        content: "EL SUSCRIPTOR se obliga a: a) Pagar puntualmente las cuotas mensuales. b) En caso de ser adjudicado, constituir las garantías requeridas por LA ADMINISTRADORA y continuar pagando las cuotas restantes. EL SUSCRIPTOR tiene derecho a: c) Participar de los actos de adjudicación si su cuota está al día. d) Ceder su plan en el Mercado Secundario (subastar) a partir de la 3ra cuota paga. e) Solicitar la baja voluntaria del plan. f) Como comprador en una subasta, al ganar y pagar, asume todos los derechos y obligaciones del plan, incluyendo los pagos futuros. La comisión de compra (2% +IVA) se descuenta del capital al momento de su adjudicación. Un plan adquirido en subasta no puede volver a ser subastado."
     },
     {
         title: "SEXTA: GARANTÍAS DE ADJUDICACIÓN",
@@ -31,7 +31,7 @@ const contractClauses = [
     },
     {
         title: "SÉPTIMA: FINALIZACIÓN DEL CONTRATO, INCUMPLIMIENTO Y BAJA",
-        content: "El contrato finalizará de pleno derecho al vencimiento del plazo del grupo, una vez que todas las cuotas hayan sido abonadas y el capital adjudicado haya sido entregado. Por otro lado, la falta de pago de dos (2) o más cuotas consecutivas o alternadas facultará a LA ADMINISTRADORA a declarar la rescisión del contrato. Si el plan fue adquirido en el mercado secundario, se procederá a una 'Baja Forzosa'. Si es un plan original, se procederá a una 'Subasta Forzosa'. La baja voluntaria implica la devolución del capital puro aportado al final del ciclo del grupo, descontando las penalidades correspondientes."
+        content: "El contrato finalizará de pleno derecho al vencimiento del plazo del grupo, una vez que todas las cuotas hayan sido abonadas y el capital adjudicado haya sido entregado. La falta de pago de dos (2) o más cuotas facultará a LA ADMINISTRADORA a declarar la rescisión. Si es un plan original, se procederá a una 'Subasta Forzosa'. Si fue adquirido en subasta, se procederá a una 'Baja Forzosa'. La baja voluntaria implica la devolución del capital puro aportado al final del ciclo del grupo, con las penalidades correspondientes. Si el ganador de una subasta no integra el capital en 24hs, será multado (10% +IVA sobre su oferta) y el plan se volverá a subastar."
     },
     {
         title: "OCTAVA: MONEDA Y TIPO DE CAMBIO",
