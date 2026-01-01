@@ -52,29 +52,27 @@ export const initialGroups: Group[] = [
 ];
 
 export const transactions: Transaction[] = [
-    // Enero 2024: Depósito y primera cuota de plan ID-20240115-9998
     { id: "txn-1", date: "2024-01-10", type: "Depósito", description: "Depósito inicial vía transferencia", amount: 5000, status: "Completado" },
+    
+    // Pagos del Plan Activo ID-20240115-9998 (6 cuotas)
     { id: "txn-2", date: "2024-02-15", type: "Pago de Cuota", description: "Cuota 1/48, Plan ID-20240115-9998", amount: -345, status: "Completado" },
-    
-    // Marzo 2024: Pago de cuota
     { id: "txn-3", date: "2024-03-15", type: "Pago de Cuota", description: "Cuota 2/48, Plan ID-20240115-9998", amount: -345, status: "Completado" },
-
-    // Abril 2024: Pago de cuota y pago de cuota de plan nuevo
-    { id: "txn-4", date: "2024-04-10", type: "Pago de Cuota", description: "Cuota 1/60, Plan ID-20240510-8888", amount: -370, status: "Completado" },
     { id: "txn-5", date: "2024-04-15", type: "Pago de Cuota", description: "Cuota 3/48, Plan ID-20240115-9998", amount: -345, status: "Completado" },
-    
-    // Mayo 2024: Pago de cuota y pago de cuota de plan nuevo
-    { id: "txn-6", date: "2024-05-10", type: "Pago de Cuota", description: "Cuota 2/60, Plan ID-20240510-8888", amount: -370, status: "Completado" },
     { id: "txn-7", date: "2024-05-15", type: "Pago de Cuota", description: "Cuota 4/48, Plan ID-20240115-9998", amount: -345, status: "Completado" },
-
-    // Junio 2024: Pago de cuota y liquidación del plan cerrado
-    { id: "txn-8", date: "2024-06-10", type: "Liquidación", description: "Capital adjudicado del plan ID-20230720-9999", amount: 15000, status: "Completado" },
     { id: "txn-9", date: "2024-06-15", type: "Pago de Cuota", description: "Cuota 5/48, Plan ID-20240115-9998", amount: -345, status: "Completado" },
-
-    // Julio 2024: Pago de cuota y retiro de fondos
     { id: "txn-10", date: "2024-07-15", type: "Pago de Cuota", description: "Cuota 6/48, Plan ID-20240115-9998", amount: -345, status: "Completado" },
+
+    // Pagos del Plan en Subasta ID-20240510-8888 (2 cuotas)
+    { id: "txn-4", date: "2024-04-10", type: "Pago de Cuota", description: "Cuota 1/60, Plan ID-20240510-8888", amount: -370, status: "Completado" },
+    { id: "txn-6", date: "2024-05-10", type: "Pago de Cuota", description: "Cuota 2/60, Plan ID-20240510-8888", amount: -370, status: "Completado" },
+    
+    // Liquidación del Plan Cerrado ID-20230720-9999
+    { id: "txn-8", date: "2023-08-01", type: "Liquidación", description: "Capital adjudicado del plan ID-20230720-9999", amount: 15000, status: "Completado" },
+
+    // Retiro de fondos
     { id: "txn-11", date: "2024-07-20", type: "Retiro", description: "Retiro a cuenta bancaria", amount: -10000, status: "Completado" },
-];
+].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
 
 const getFutureDate = (hours: number) => new Date(Date.now() + hours * 60 * 60 * 1000).toISOString();
 
