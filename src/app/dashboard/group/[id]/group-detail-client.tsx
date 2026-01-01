@@ -96,7 +96,7 @@ const generateStaticAwards = (group: Group): Award[][] => {
 
 // Component to safely format dates on the client side, avoiding hydration mismatch.
 function ClientFormattedDate({ dateString, formatString }: { dateString: string, formatString: string }) {
-  const [formattedDate, setFormattedDate] = useState(dateString);
+  const [formattedDate, setFormattedDate] = useState(dateString.split('T')[0]);
 
   useEffect(() => {
     // This effect runs only on the client, after hydration.
@@ -112,7 +112,7 @@ function ClientFormattedDate({ dateString, formatString }: { dateString: string,
 
   // Initially, render the raw date string on the server and during hydration.
   // The useEffect will then format it on the client.
-  return <>{formattedDate.startsWith('20') ? formattedDate.split('T')[0] : formattedDate}</>;
+  return <>{formattedDate}</>;
 }
 
 
@@ -305,7 +305,7 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                                  <CardContent className="p-4 text-sm space-y-1">
                                      <p>Pagarías (valor puro): <strong>{formatCurrency(advanceSavings.totalToPay)}</strong></p>
                                      <p>En lugar de (valor final): <span className='line-through'>{formatCurrency(advanceSavings.totalOriginal)}</span></p>
-                                     <p className="text-green-600 font-semibold">¡Ahorras {formatCurrency(advanceSavings.totalSaving)} en gastos y seguros!</p>
+                                     <p className="text-green-600 font-semibold">¡Ahorras {formatCurrency(advanceSavings.totalSaving)} en gastos administrativos y seguros!</p>
                                  </CardContent>
                              </Card>
                          ) : (
@@ -359,7 +359,7 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                                  <Card className="bg-muted/50">
                                      <CardContent className="p-4 text-sm space-y-1">
                                          <p>Monto de la oferta (valor puro): <strong>{formatCurrency(bidSavings.totalToPay)}</strong></p>
-                                         <p>Ahorro estimado en gastos: <span className="text-green-600 font-semibold">{formatCurrency(bidSavings.totalSaving)}</span></p>
+                                         <p>Ahorro estimado (gastos adm. y seguros): <span className="text-green-600 font-semibold">{formatCurrency(bidSavings.totalSaving)}</span></p>
                                      </CardContent>
                                  </Card>
                              ) : (
