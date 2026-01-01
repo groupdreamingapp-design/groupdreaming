@@ -47,6 +47,7 @@ export type Auction = {
   numberOfBids: number;
   isPostAdjudicacion?: boolean;
   isMine?: boolean;
+  activationDate?: string;
 };
 
 export type InstallmentStatus = "Pagado" | "Pendiente" | "Vencido" | "Futuro";
