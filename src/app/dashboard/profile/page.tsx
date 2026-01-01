@@ -53,7 +53,7 @@ const interestOptions = [
     { id: 'businessFunds', label: 'Fondos de Comercio', icon: Store },
 ] as const;
 
-export default function ProfileSetupPage() {
+export default function ProfileSetup() {
     const [isSubmitted, setIsSubmitted] = useState(false);
     const { toast } = useToast();
     const { control, handleSubmit, watch, formState: { errors } } = useForm<ProfileForm>({

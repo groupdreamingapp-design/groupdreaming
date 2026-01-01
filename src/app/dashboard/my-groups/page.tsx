@@ -10,7 +10,7 @@ import Link from "next/link";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Group, GroupStatus } from "@/lib/types";
 
-export default function MyGroupsPage() {
+export default function MyGroups() {
   const { groups } = useGroups();
   const [activeTab, setActiveTab] = useState<GroupStatus | "Todos">("Todos");
 

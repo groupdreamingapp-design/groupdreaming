@@ -40,7 +40,7 @@ const benefits = [
     }
 ];
 
-export default function BenefitsPage() {
+export default function Benefits() {
     return (
         <>
             <div className="mb-6">

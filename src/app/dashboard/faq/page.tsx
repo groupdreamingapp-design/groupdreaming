@@ -39,7 +39,7 @@ const faqData = [
     }
 ];
 
-export default function FaqPage() {
+export default function Faq() {
     const [searchTerm, setSearchTerm] = useState('');
 
     const filteredFaqs = faqData.filter(item => 

@@ -62,7 +62,7 @@ const Countdown = ({ endDate, isUrgent }: { endDate: string, isUrgent?: boolean 
 };
 
 
-export default function AuctionsPage() {
+export default function Auctions() {
   const [offerAmount, setOfferAmount] = useState('');
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [autoBidEnabled, setAutoBidEnabled] = useState(false);

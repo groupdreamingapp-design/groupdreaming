@@ -19,7 +19,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 type TransactionTypeFilter = 'todos' | 'ingreso' | 'egreso';
 
-export default function WalletPage() {
+export default function Wallet() {
   const [typeFilter, setTypeFilter] = useState<TransactionTypeFilter>('todos');
   const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
 

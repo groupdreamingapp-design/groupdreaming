@@ -19,7 +19,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 
-export default function GroupPublicDetailPage() {
+export default function GroupPublicDetail() {
   const params = useParams();
   const router = useRouter();
   const { groups, joinGroup } = useGroups();

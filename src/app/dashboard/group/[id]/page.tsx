@@ -5,6 +5,6 @@ type GroupDetailPageProps = {
   params: { id: string };
 };
 
-export default function GroupDetailPage({ params }: GroupDetailPageProps) {
+export default function GroupDetail({ params }: GroupDetailPageProps) {
   return <GroupDetailClient groupId={params.id} />;
 }

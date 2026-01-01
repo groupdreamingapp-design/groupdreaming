@@ -28,7 +28,7 @@ const cuotaRanges = [
 type SortKey = 'capital_asc' | 'capital_desc' | 'plazo_asc' | 'plazo_desc' | 'cuota_asc' | 'cuota_desc' | 'miembros_faltantes';
 
 
-export default function ExploreGroupsDashboardPage() {
+export default function ExploreGroups() {
   const [groups, setGroups] = useState<Group[]>([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({

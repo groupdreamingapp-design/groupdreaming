@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { ArrowLeft, Banknote, Briefcase, PiggyBank, Plus, ArrowDown, Users, Calendar, Target, Award, CheckCircle, Hand } from "lucide-react";
 import Link from "next/link";
 
-export default function TransparencyPage() {
+export default function Transparency() {
     return (
         <>
             <div className="mb-6">

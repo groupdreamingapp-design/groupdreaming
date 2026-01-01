@@ -41,7 +41,7 @@ const rulesConfig = [
     }
 ];
 
-export default function AuctionRulesPage() {
+export default function AuctionRules() {
     return (
         <>
             <div className="mb-6">

@@ -55,7 +55,7 @@ const contractClauses = [
     }
 ];
 
-export default function ContractPage() {
+export default function Contract() {
     return (
         <>
             <div className="mb-6">

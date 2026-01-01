@@ -17,7 +17,7 @@ import { Separator } from "@/components/ui/separator";
 
 const MAX_CAPITAL = 100000;
 
-export default function DashboardPage() {
+export default function Dashboard() {
   const { groups } = useGroups();
   const formatCurrency = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount);
 

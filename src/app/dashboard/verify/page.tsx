@@ -56,7 +56,7 @@ const verificationSchema = z.object({
 
 type VerificationForm = z.infer<typeof verificationSchema>;
 
-export default function VerificationPage() {
+export default function Verification() {
     const { isVerified, setIsVerified } = useUserNav();
     const router = useRouter();
     const { toast } = useToast();
