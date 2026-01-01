@@ -68,21 +68,22 @@ const generateStaticAwards = (group: Group): Award[][] => {
     
     const awards: Award[][] = [];
     let winnerPool = [...potentialWinners];
-    const regularAwardsPerMonth = 2;
-
+    
     for (let i = 0; i < group.plazo; i++) {
         const monthAwards: Award[] = [];
         const remainingMonths = group.plazo - i;
         const remainingWinners = winnerPool.length;
         
-        let awardsThisMonth = regularAwardsPerMonth;
+        // Default to 2 awards per month
+        let awardsThisMonth = 2;
         
         // If remaining winners can't be covered by 2 awards/month, increase to 4
-        if (remainingWinners > 0 && remainingWinners <= (remainingMonths * 4) && remainingWinners > (remainingMonths * 2) ) {
-            awardsThisMonth = 4;
+        if (remainingWinners > 0 && (remainingWinners / remainingMonths > 2)) {
+             awardsThisMonth = 4;
         }
 
         for(let j = 0; j < awardsThisMonth && winnerPool.length > 0; j++) {
+            // Alternate between 'sorteo' and 'licitacion'
             const awardType = j % 2 === 0 ? 'sorteo' : 'licitacion';
             monthAwards.push({ type: awardType, orderNumber: winnerPool.shift()! });
         }
@@ -186,6 +187,7 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
     if (group.status !== 'Activo') return -1;
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+    // Find the first installment that is not paid and is due on or after today
     return realInstallments.findIndex(inst => {
       const dueDate = parseISO(inst.dueDate);
       const isPaid = inst.number <= cuotasPagadas;
@@ -413,6 +415,8 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                         } else if (index === nextPendingInstallmentIndex) {
                             status = 'Pendiente';
                         }
+                    } else if (group.status === 'Abierto' || group.status === 'Pendiente') {
+                        status = 'Futuro';
                     }
 
                     if (group.status === 'Subastado' && status !== 'Pagado' && status !== 'Vencido') {
@@ -437,7 +441,7 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                           >{status}</Badge>
                         </TableCell>
                          <TableCell className="text-xs text-muted-foreground">
-                            {awardDate && (
+                            {awardDate && inst.number >= 2 && (
                                 <div className="flex items-center gap-2">
                                      <CalendarCheck className="h-4 w-4" />
                                      <span>{awardDate}</span>
