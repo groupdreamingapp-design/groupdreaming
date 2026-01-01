@@ -7,7 +7,7 @@ import { initialGroups, installments as allInstallments } from '@/lib/data';
 import type { Group } from '@/lib/types';
 import { GroupsContext } from '@/hooks/use-groups';
 import { toast } from '@/hooks/use-toast';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 
 function generateNewGroup(templateGroup: Group): Group {
     const today = new Date();
@@ -62,7 +62,7 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
                             return { 
                                 ...g, 
                                 status: 'Activo',
-                                activationDate: format(new Date(), 'yyyy-MM-dd')
+                                activationDate: new Date().toISOString()
                             };
                         }
                         return g;
@@ -95,19 +95,17 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
                 if (group.userIsMember && group.status === 'Activo' && !group.userIsAwarded) {
                     const today = new Date();
                     const overdueInstallments = allInstallments
-                        .slice(group.monthsCompleted, group.plazo)
+                        .slice(0, group.plazo)
                         .filter(inst => {
-                            const dueDate = new Date(inst.dueDate);
+                            if (inst.number <= (group.monthsCompleted || 0)) return false; // Already paid
+                            const dueDate = parseISO(inst.dueDate);
                             const diffTime = today.getTime() - dueDate.getTime();
                             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                            // Is overdue if due date has passed
-                            return diffDays > 0;
+                            return diffDays > 0; // Is overdue if due date has passed
                         });
                     
-                    // The logic here is simplified: if the number of installments with a past due date
-                    // is >= 2, we consider it has 2 overdue installments.
                     if (overdueInstallments.length >= 2) {
-                        const secondOverdueDate = new Date(overdueInstallments[1].dueDate);
+                        const secondOverdueDate = parseISO(overdueInstallments[1].dueDate);
                         const diffTime = today.getTime() - secondOverdueDate.getTime();
                         const diffHours = Math.ceil(diffTime / (1000 * 60 * 60));
                         

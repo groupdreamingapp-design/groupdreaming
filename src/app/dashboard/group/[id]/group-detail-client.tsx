@@ -353,7 +353,7 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                     
                     if (inst.number <= cuotasPagadas) {
                       status = 'Pagado';
-                    } else if (dueDate < today) {
+                    } else if (dueDate < today && group.status !== 'Subastado') {
                         status = 'Vencido';
                     } else if (group.status === 'Activo' && inst.number === cuotasPagadas + 1) {
                       status = 'Pendiente';
@@ -425,12 +425,17 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
           </Card>
         </div>
 
-        {isMember && group.status === 'Cerrado' && (
+        {isMember && (group.status === 'Cerrado' || group.status === 'Subastado') && (
           <div className="lg:col-span-3">
             <Card>
               <CardHeader>
-                <CardTitle>Plan Finalizado</CardTitle>
-                <CardDescription>Este grupo ha concluido. No hay más acciones disponibles.</CardDescription>
+                <CardTitle>Plan {group.status === 'Cerrado' ? 'Finalizado' : 'en Subasta'}</CardTitle>
+                <CardDescription>
+                    {group.status === 'Cerrado' 
+                        ? 'Este grupo ha concluido. No hay más acciones disponibles.' 
+                        : 'Este plan está en el mercado secundario. Las acciones se gestionan desde la sección de Subastas.'
+                    }
+                </CardDescription>
               </CardHeader>
             </Card>
           </div>
