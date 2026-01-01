@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { format, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { useState, useEffect } from "react";
 
 type GroupCardProps = {
   group: Group;
@@ -29,7 +30,15 @@ const statusConfig = {
 export function GroupCard({ group, isPublic = false }: GroupCardProps) {
   const { icon: StatusIcon } = statusConfig[group.status];
   const formatCurrency = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount);
-  const formatDate = (dateString: string) => format(parseISO(dateString), 'dd/MM/yy');
+  
+  const [formattedActivationDate, setFormattedActivationDate] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (group.activationDate) {
+      const date = parseISO(group.activationDate);
+      setFormattedActivationDate(format(date, 'dd/MM/yy'));
+    }
+  }, [group.activationDate]);
 
 
   const progressValue = group.status === 'Abierto'
@@ -135,7 +144,7 @@ export function GroupCard({ group, isPublic = false }: GroupCardProps) {
                {group.activationDate && (
                 <div className="flex items-center gap-2">
                   <CalendarCheck className="h-4 w-4 text-muted-foreground" />
-                  <span>Activo desde: {formatDate(group.activationDate)}</span>
+                  <span>Activo desde: {formattedActivationDate || '...'}</span>
                 </div>
               )}
             </div>
