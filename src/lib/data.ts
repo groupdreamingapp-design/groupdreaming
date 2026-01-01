@@ -24,8 +24,8 @@ const calculateCuotaPromedio = (capital: number, plazo: number): number => {
 export const initialGroups: Group[] = [
     { id: "ID-20240115-9998", capital: 15000, plazo: 48, cuotaPromedio: 345, membersCount: 96, totalMembers: 96, status: "Activo", monthsCompleted: 23, userIsMember: true, userIsAwarded: false, activationDate: '2024-01-15T12:00:00Z' },
     { id: "ID-20230720-9999", capital: 15000, plazo: 36, cuotaPromedio: 455, membersCount: 72, totalMembers: 72, status: "Cerrado", monthsCompleted: 36, userIsMember: true, userIsAwarded: true, activationDate: '2023-07-20T12:00:00Z' },
-    { id: "ID-20240510-8888", capital: 20000, plazo: 60, cuotaPromedio: calculateCuotaPromedio(20000, 60), membersCount: 120, totalMembers: 120, status: "Activo", monthsCompleted: 5, userIsMember: true, userIsAwarded: false, activationDate: '2024-05-15T12:00:00Z' },
-    { id: "ID-20231101-7777", capital: 10000, plazo: 24, cuotaPromedio: calculateCuotaPromedio(10000, 24), membersCount: 48, totalMembers: 48, status: "Activo", monthsCompleted: 19, userIsMember: true, userIsAwarded: false, activationDate: '2023-11-01T12:00:00Z' },
+    { id: "ID-20240510-8888", capital: 20000, plazo: 60, cuotaPromedio: calculateCuotaPromedio(20000, 60), membersCount: 120, totalMembers: 120, status: "Subastado", monthsCompleted: 5, userIsMember: true, userIsAwarded: false, activationDate: '2023-11-15T12:00:00Z' },
+    { id: "ID-20231101-7777", capital: 10000, plazo: 24, cuotaPromedio: calculateCuotaPromedio(10000, 24), membersCount: 48, totalMembers: 48, status: "Subastado", monthsCompleted: 19, userIsMember: true, userIsAwarded: false, activationDate: '2023-11-01T12:00:00Z' },
     { id: "ID-20240801-1024", capital: 10000, plazo: 24, cuotaPromedio: calculateCuotaPromedio(10000, 24), membersCount: 29, totalMembers: 48, status: "Abierto", userIsMember: true, userIsAwarded: false },
 
 
@@ -59,6 +59,7 @@ export let auctions: Omit<Auction, 'precioBase'>[] = [
     { id: "auc-1", groupId: "ID-20240210-1138", orderNumber: 15, capital: 30000, plazo: 60, cuotasPagadas: 15, highestBid: 7520, endDate: getFutureDate(48), numberOfBids: 1 },
     { id: "auc-2", groupId: "ID-20240305-4815", orderNumber: 42, capital: 15000, plazo: 36, cuotasPagadas: 20, highestBid: 4166.67, endDate: getFutureDate(24), numberOfBids: 0, isPostAdjudicacion: true },
     { id: "auc-3", groupId: "ID-20231101-7777", orderNumber: 23, capital: 10000, plazo: 24, cuotasPagadas: 19, highestBid: 7800, endDate: getFutureDate(72), numberOfBids: 5 },
+    { id: "auc-4", groupId: "ID-20240510-8888", orderNumber: 88, capital: 20000, plazo: 60, cuotasPagadas: 5, highestBid: 0, endDate: getFutureDate(96), numberOfBids: 0 },
 ];
 
 export const generateInstallments = (capital: number, plazo: number, activationDate: string): Installment[] => {
@@ -134,7 +135,4 @@ export const generateExampleInstallments = (capital: number, plazo: number): Ins
     });
 };
 
-
-
-
-
+    
