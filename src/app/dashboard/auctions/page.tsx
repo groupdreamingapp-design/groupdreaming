@@ -195,7 +195,7 @@ export default function AuctionsPage() {
             .slice(0, auction.cuotasPagadas)
             .reduce((acc, installment) => acc + installment.total, 0);
 
-          const precioBase = totalCuotasEmitidas * 0.5;
+          const precioBase = Math.max(totalCuotasEmitidas * 0.5, auction.highestBid);
 
           const minBidIncrement = precioBase * 0.03;
           const nextMinBid = auction.highestBid + minBidIncrement;
