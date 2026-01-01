@@ -27,7 +27,7 @@ const contractClauses = [
     },
     {
         title: "SEXTA: GARANTÍAS DE ADJUDICACIÓN",
-        content: "Al momento de resultar adjudicado y previo a la entrega del capital, EL SUSCRIPTOR deberá constituir una garantía a satisfacción de LA ADMINISTRADORA para asegurar el cumplimiento del pago de las cuotas restantes. La garantía requerida será determinada por LA ADMINISTRADORA en función del análisis de riesgo crediticio, el saldo deudor y el plazo restante del plan. Las garantías aceptadas podrán ser, a modo enunciativo: a) presentación de uno o más recibos de sueldo que demuestren solvencia suficiente, b) una garantía propietaria de un inmueble, c) la contratación de un seguro de caución a cargo de EL SUSCRIPTOR."
+        content: "Al momento de resultar adjudicado y previo a la entrega del capital, EL SUSCRIPTOR deberá constituir una garantía a satisfacción de LA ADMINISTRADORA para asegurar el cumplimiento del pago de las cuotas restantes. La garantía requerida será determinada por LA ADMINISTRADORA en función del análisis de riesgo crediticio (incluyendo, pero no limitado a, scoring crediticio y reportes de Veraz), el saldo deudor y el plazo restante del plan. Las garantías aceptadas podrán ser, a modo enunciativo: a) presentación de uno o más recibos de sueldo que demuestren solvencia suficiente, b) una garantía propietaria de un inmueble, c) la contratación de un seguro de caución a cargo de EL SUSCRIPTOR."
     },
     {
         title: "SÉPTIMA: FINALIZACIÓN DEL CONTRATO, INCUMPLIMIENTO Y BAJA",
