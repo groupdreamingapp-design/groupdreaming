@@ -48,6 +48,10 @@ const contractClauses = [
     {
         title: "UNDÉCIMA: ACEPTACIÓN",
         content: "EL SUSCRIPTOR, al hacer clic en el botón 'Confirmar y Unirme' o acción equivalente en la plataforma y habiendo tildado la casilla de aceptación, manifiesta su consentimiento y aceptación expresa, incondicional e irrevocable de todos y cada uno de los términos y condiciones establecidos en el presente Contrato de Adhesión, perfeccionándose el vínculo contractual entre las partes."
+    },
+    {
+        title: "DUODÉCIMA: ANEXO DE BENEFICIOS",
+        content: "LA ADMINISTRADORA podrá ofrecer programas de beneficios y recompensas a los suscriptores. Los términos, condiciones, vigencia y funcionamiento de dichos programas se detallarán en la sección 'Beneficios' de la plataforma, la cual se considera un anexo al presente contrato. LA ADMINISTRADORA se reserva el derecho de modificar o discontinuar dichos programas, comunicándolo de forma fehaciente. La participación en los mismos es opcional y está sujeta al cumplimiento de las bases y condiciones específicas de cada uno."
     }
 ];
 

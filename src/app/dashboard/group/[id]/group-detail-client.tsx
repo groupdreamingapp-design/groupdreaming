@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { ArrowLeft, Users, Clock, Users2, Calendar, Gavel, HandCoins, Ticket, Info, Trophy, FileX2, TrendingUp, Hand, Scale, CalendarCheck } from 'lucide-react';
+import { ArrowLeft, Users, Clock, Users2, Calendar, Gavel, HandCoins, Ticket, Info, Trophy, FileX2, TrendingUp, Hand, Scale, CalendarCheck, Gift, Check, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { useGroups } from '@/hooks/use-groups';
@@ -61,7 +61,8 @@ const generateStaticAwards = (group: Group): Award[][] => {
     
     if (group.userIsAwarded) {
         const awardsPerMonth = 2;
-        const insertPosition = 4 * awardsPerMonth; 
+        const awardMonthIndex = Math.floor(group.plazo * 0.85); // Awarded in the last part of the plan for the demo
+        const insertPosition = awardMonthIndex * awardsPerMonth;
         
         potentialWinners.splice(insertPosition, 0, userOrderNumber);
     }
@@ -163,6 +164,20 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
     if (!group || !group.activationDate) return [];
     return generateInstallments(group.capital, group.plazo, group.activationDate);
   }, [group?.capital, group?.plazo, group?.activationDate]);
+
+  const awardMonth = groupAwards.flat().find(a => a.orderNumber === 42) 
+    ? groupAwards.findIndex(monthAwards => monthAwards.some(a => a.orderNumber === 42)) + 1 
+    : undefined;
+
+  const benefitThresholdMonth = Math.floor(group.plazo * 0.8);
+  const isEligibleForBenefit = group.userIsAwarded && awardMonth && awardMonth > benefitThresholdMonth;
+  const hasNoOverduePayments = useMemo(() => {
+      if(!group.activationDate) return true;
+      const groupInstallments = generateInstallments(group.capital, group.plazo, group.activationDate);
+      const today = new Date();
+      return !groupInstallments.some(inst => inst.number <= cuotasPagadas && isBefore(parseISO(inst.dueDate), today));
+  }, [group, cuotasPagadas]);
+
   
   const alicuotaPuraTotal = realInstallments.length > 0 ? realInstallments[0].breakdown.alicuotaPura : (group.capital / group.plazo);
   const capitalAportadoPuro = cuotasPagadas * alicuotaPuraTotal;
@@ -261,7 +276,7 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                 <div className="flex items-center gap-2"><HandCoins className="h-4 w-4 text-primary" /><span>Capital Aportado (Puro): <strong>{formatCurrency(capitalAportadoPuro)}</strong></span></div>
                 <div className="flex items-center gap-2">
                     {group.userIsAwarded ? <Trophy className="h-4 w-4 text-yellow-500" /> : <Calendar className="h-4 w-4 text-primary" />}
-                    <span>Adjudicación: {group.userIsAwarded ? <strong className="text-green-600">Adjudicado</strong> : <strong>Pendiente</strong>}</span>
+                    <span>Adjudicación: {group.userIsAwarded ? <strong className="text-green-600">Adjudicado (Mes {awardMonth})</strong> : <strong>Pendiente</strong>}</span>
                 </div>
               </CardContent>
             </Card>
@@ -279,6 +294,43 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
             </CardContent>
           </Card>
         </div>
+
+        {isEligibleForBenefit && (
+            <div className="lg:col-span-3">
+                 <Card className="bg-green-500/10 border-green-500">
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2 text-green-800"><Gift className="h-6 w-6"/> ¡Beneficio "Los últimos serán los primeros"!</CardTitle>
+                        <CardDescription className="text-green-700">Felicitaciones, has sido adjudicado en la recta final y cumples con las condiciones para acceder a este beneficio.</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                         <div>
+                            <h4 className="font-semibold mb-2">Requisitos Cumplidos:</h4>
+                            <ul className="text-sm space-y-2">
+                                <li className="flex items-center gap-2">
+                                    {isEligibleForBenefit ? <Check className="h-4 w-4 text-green-600" /> : <X className="h-4 w-4 text-red-600" />}
+                                    <span>Adjudicado en el último 20% del plan (mes {awardMonth} de {group.plazo}).</span>
+                                </li>
+                                <li className="flex items-center gap-2">
+                                    {hasNoOverduePayments ? <Check className="h-4 w-4 text-green-600" /> : <X className="h-4 w-4 text-red-600" />}
+                                    <span>Sin cuotas vencidas durante el plan.</span>
+                                </li>
+                                 <li className="flex items-center gap-2">
+                                    <Check className="h-4 w-4 text-green-600" /> 
+                                    <span>No se rechazaron actos de adjudicación.</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 className="font-semibold mb-2">Tus Recompensas:</h4>
+                             <ul className="text-sm space-y-2">
+                                <li className="flex items-center gap-2"><Check className="h-4 w-4 text-green-600"/> 50% de reintegro del Derecho de Suscripción de este plan.</li>
+                                <li className="flex items-center gap-2"><Check className="h-4 w-4 text-green-600"/> 50% de descuento en el Derecho de Suscripción de tu próximo plan.</li>
+                            </ul>
+                        </div>
+                    </CardContent>
+                </Card>
+            </div>
+        )}
         
          {isMember && isPlanActive && (
            <div className="lg:col-span-3">
@@ -541,7 +593,7 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                                   <div key={`${award.type}-${award.orderNumber}`} className="flex items-center gap-1">
                                     {award.type === 'sorteo' && <Ticket className="h-4 w-4 text-blue-500" />}
                                     {award.type === 'licitacion' && <HandCoins className="h-4 w-4 text-orange-500" />}
-                                    <span>#{award.orderNumber}</span>
+                                    <span className={cn(award.orderNumber === 42 && "font-bold text-primary")}>#{award.orderNumber}</span>
                                   </div>
                                 ))}
                               </div>
