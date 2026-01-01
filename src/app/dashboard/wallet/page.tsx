@@ -15,7 +15,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { format, parseISO } from "date-fns";
+import { format, parseISO, startOfDay, endOfDay } from "date-fns";
 import type { DateRange } from "react-day-picker";
 
 type TransactionTypeFilter = 'todos' | 'ingreso' | 'egreso';
@@ -34,12 +34,13 @@ export default function WalletPage() {
     if (typeFilter === 'ingreso' && tx.amount <= 0) return false;
     if (typeFilter === 'egreso' && tx.amount > 0) return false;
 
-    // Filter by date
-    if (dateRange?.from && transactionDate < dateRange.from) return false;
-    // When a single day is selected, `to` is undefined. We should include that day.
-    if (dateRange?.to && transactionDate > dateRange.to) return false;
-    if (dateRange?.from && !dateRange.to && transactionDate.toDateString() !== dateRange.from.toDateString()) return false;
-
+    // Filter by date range
+    if (dateRange?.from) {
+        if (transactionDate < startOfDay(dateRange.from)) return false;
+    }
+    if (dateRange?.to) {
+        if (transactionDate > endOfDay(dateRange.to)) return false;
+    }
 
     return true;
   });
