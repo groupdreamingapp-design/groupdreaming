@@ -15,7 +15,7 @@ import { ArrowLeft, Users, Clock, Users2, Calendar, Gavel, HandCoins, Ticket, In
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { useGroups } from '@/hooks/use-groups';
-import { generateInstallments, generateExampleInstallments, initialGroups } from '@/lib/data';
+import { generateInstallments, generateExampleInstallments } from '@/lib/data';
 import { useMemo, useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from '@/components/ui/separator';
@@ -50,14 +50,7 @@ const generateStaticAwards = (group: Group): Award[][] => {
     
     let potentialWinners = [...memberOrderNumbers];
     
-    if (group.userIsAwarded) {
-        const userIndex = potentialWinners.indexOf(userOrderNumber);
-        if (userIndex > -1) {
-            potentialWinners.splice(userIndex, 1);
-        }
-    }
-    
-    if (group.status === 'Subastado') {
+    if (group.userIsAwarded || group.status === 'Subastado') {
         const userIndex = potentialWinners.indexOf(userOrderNumber);
         if (userIndex > -1) {
             potentialWinners.splice(userIndex, 1);
@@ -94,13 +87,11 @@ const generateStaticAwards = (group: Group): Award[][] => {
 
 
 export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
-  const { groups } = useGroups();
+  const { groups, joinGroup } = useGroups();
   const [cuotasToAdvance, setCuotasToAdvance] = useState<number>(0);
   const [cuotasToBid, setCuotasToBid] = useState<number>(0);
 
-  const groupTemplate = initialGroups.find(g => g.id === groupId);
-  const dynamicGroupState = groups.find(g => g.id === groupId);
-  const group = dynamicGroupState ? { ...groupTemplate, ...dynamicGroupState } : groupTemplate;
+  const group = useMemo(() => groups.find(g => g.id === groupId), [groups, groupId]);
   
   const groupAwards = useMemo(() => {
     if (!group) return [];
@@ -116,7 +107,7 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
       return generateExampleInstallments(group.capital, group.plazo);
     }
     return [];
-  }, [group?.capital, group?.plazo, group?.activationDate, group?.status]);
+  }, [group]);
 
 
   if (!group) {
@@ -419,7 +410,7 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                     }
                     
                     const isMonthPast = isPlanActive && isBefore(dueDate, today);
-                    const currentAwards = (isMonthPast && (cuotasPagadas >= inst.number - 1)) ? groupAwards[inst.number - 1] : undefined;
+                    const currentAwards = (isMonthPast && inst.number >= 2 && (cuotasPagadas >= inst.number - 1)) ? groupAwards[inst.number - 1] : undefined;
                     const awardDate = (isPlanActive && currentAwards) ? format(addDays(dueDate, 5), 'dd/MM/yyyy') : undefined;
 
                     return (
