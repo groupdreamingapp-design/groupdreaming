@@ -35,6 +35,7 @@ const MAX_CAPITAL = 100000;
 
 export function GroupsProvider({ children }: { children: ReactNode }) {
   const [groups, setGroups] = useState<Group[]>(initialGroups);
+  const { toast } = useToast();
   const myGroupsCountRef = useRef(groups.filter(g => g.userIsMember).length);
   const lastJoinedGroupRef = useRef<Group | null>(null);
   const prevGroupsRef = useRef<Group[]>(groups);
@@ -48,7 +49,7 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
       });
     }
     myGroupsCountRef.current = currentMyGroups.length;
-  }, [groups]);
+  }, [groups, toast]);
 
   // Effect to simulate group activation
   useEffect(() => {
@@ -85,7 +86,7 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
             return () => clearTimeout(timer);
         }
     });
-  }, [groups]);
+  }, [groups, toast]);
 
   // Effect to check for overdue payments and force auction
  
@@ -132,7 +133,7 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
     checkOverdue(); // Initial check
 
     return () => clearInterval(timer);
-}, [groups]);
+}, []);
 
 
 
@@ -153,7 +154,7 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
     });
     
     prevGroupsRef.current = groups;
-  }, [groups]);
+  }, [groups, toast]);
   
     // Effect to simulate a sold auction and show toast
     useEffect(() => {
@@ -184,7 +185,7 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
             }
         });
         prevGroupsRef.current = groups;
-    }, [groups]);
+    }, [groups, toast]);
 
 
   const joinGroup = useCallback((groupId: string) => {
@@ -240,7 +241,7 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
     if (joinedGroup) {
         lastJoinedGroupRef.current = joinedGroup;
     }
-  }, [groups]);
+  }, [toast]);
 
   const formatCurrency = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount);
 
