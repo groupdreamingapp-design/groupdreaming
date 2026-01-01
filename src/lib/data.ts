@@ -1,7 +1,7 @@
 
 import type { Group, User, Transaction, Auction, Installment, Award } from './types';
 import { PlaceHolderImages } from './placeholder-images';
-import { format, addMonths, setDate, addDays } from 'date-fns';
+import { format, addMonths, setDate, addDays, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
 
 export const user: User = {
@@ -58,6 +58,7 @@ const getFutureDate = (hours: number) => new Date(Date.now() + hours * 60 * 60 *
 export let auctions: Omit<Auction, 'precioBase'>[] = [
     { id: "auc-1", groupId: "ID-20240210-1138", orderNumber: 15, capital: 30000, plazo: 60, cuotasPagadas: 15, highestBid: 7520, endDate: getFutureDate(48), numberOfBids: 1 },
     { id: "auc-2", groupId: "ID-20240305-4815", orderNumber: 42, capital: 15000, plazo: 36, cuotasPagadas: 20, highestBid: 4166.67, endDate: getFutureDate(24), numberOfBids: 0, isPostAdjudicacion: true },
+    { id: "auc-3", groupId: "ID-20231101-7777", orderNumber: 23, capital: 10000, plazo: 24, cuotasPagadas: 4, highestBid: 1000, endDate: getFutureDate(72), numberOfBids: 0 },
 ];
 
 const capital = 20000;
@@ -69,18 +70,13 @@ const totalSuscripcion = (capital * 0.03) * IVA; // 3% + IVA
 const mesesFinanciacionSuscripcion = Math.floor(plazo * 0.20);
 const cuotaSuscripcion = mesesFinanciacionSuscripcion > 0 ? totalSuscripcion / mesesFinanciacionSuscripcion : 0;
 
-// Generate consistent due dates based on a fixed start date
-const generateDueDates = (count: number, startMonthOffset: number): Date[] => {
-    const today = new Date();
-    const startDate = setDate(addMonths(today, startMonthOffset), 10);
+// Use a static date to prevent hydration errors.
+const generateDueDates = (count: number): Date[] => {
+    const startDate = new Date('2024-01-10T12:00:00Z');
     return Array.from({ length: count }, (_, i) => addMonths(startDate, i));
 };
 
-// We generate dates for the overdue example starting 4 months ago
-const pastDueDates = generateDueDates(84, -4); 
-
-// We generate dates for "normal" plans starting 1 month in the future
-const futureDueDates = generateDueDates(84, 1); 
+const dueDates = generateDueDates(84);
 
 export const installments: Installment[] = Array.from({ length: 84 }, (_, i) => {
     const saldoCapital = capital - (alicuotaPura * i);
@@ -88,8 +84,7 @@ export const installments: Installment[] = Array.from({ length: 84 }, (_, i) => 
     const derechoSuscripcion = i < mesesFinanciacionSuscripcion ? cuotaSuscripcion : 0;
     const totalCuota = alicuotaPura + gastosAdm + seguroVida + derechoSuscripcion;
     
-    // We use a different set of dates for the overdue plan example
-    const dueDate = pastDueDates[i];
+    const dueDate = dueDates[i];
 
     return {
         id: `cuota-${i + 1}`,
@@ -135,3 +130,5 @@ export const generateExampleInstallments = (capital: number, plazo: number): Ins
         };
     });
 };
+
+    
