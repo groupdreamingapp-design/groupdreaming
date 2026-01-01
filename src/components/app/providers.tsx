@@ -193,14 +193,14 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
         if (!groupToJoin) return currentGroups;
 
         const subscribedCapital = currentGroups
-            .filter(g => g.userIsMember && g.status === 'Activo')
+            .filter(g => g.userIsMember && (g.status === 'Activo' || g.status === 'Abierto' || g.status === 'Pendiente'))
             .reduce((acc, g) => acc + g.capital, 0);
 
         if (subscribedCapital + groupToJoin.capital > MAX_CAPITAL) {
             toast({
                 variant: "destructive",
                 title: "Límite de Capital Excedido",
-                description: `Has alcanzado tu límite de suscripción de ${MAX_CAPITAL.toLocaleString()} USD. Contacta a la administración para solicitar un aumento.`,
+                description: `No puedes unirte. Con este grupo, tu capital suscrito excedería el límite de ${formatCurrency(MAX_CAPITAL)}. Solicita un aumento a la administración.`,
             });
             return currentGroups;
         }
@@ -238,7 +238,9 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
     if (joinedGroup) {
         lastJoinedGroupRef.current = joinedGroup;
     }
-  }, []);
+  }, [groups]);
+
+  const formatCurrency = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount);
 
   return (
     <GroupsContext.Provider value={{ groups, joinGroup }}>

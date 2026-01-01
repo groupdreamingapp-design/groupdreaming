@@ -24,13 +24,13 @@ export default function DashboardPage() {
   const availableBalance = transactions.reduce((acc, tx) => acc + tx.amount, 0);
 
   const myGroups = useMemo(() => groups.filter(g => g.userIsMember).sort((a, b) => {
-    const statusOrder = { "Activo": 1, "Abierto": 2, "Pendiente": 3, "Cerrado": 4 };
+    const statusOrder = { "Activo": 1, "Abierto": 2, "Pendiente": 3, "Subastado": 4, "Cerrado": 5 };
     return statusOrder[a.status] - statusOrder[b.status];
   }), [groups]);
 
   const subscribedCapital = useMemo(() => {
     return groups
-        .filter(g => g.userIsMember && g.status === 'Activo')
+        .filter(g => g.userIsMember && (g.status === 'Activo' || g.status === 'Abierto' || g.status === 'Pendiente'))
         .reduce((acc, g) => acc + g.capital, 0);
   }, [groups]);
 
@@ -65,6 +65,7 @@ export default function DashboardPage() {
       case "Activo": return "default";
       case "Abierto": return "secondary";
       case "Pendiente": return "outline";
+      case "Subastado": return "destructive";
       case "Cerrado": return "destructive";
       default: return "default";
     }
@@ -81,7 +82,7 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="grid md:grid-cols-3 gap-6">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col gap-4">
                 <div className="flex items-center gap-4">
                   <Wallet className="h-8 w-8 text-muted-foreground" />
                   <div>
@@ -91,7 +92,7 @@ export default function DashboardPage() {
                   </div>
                 </div>
               </div>
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col gap-4">
                  <div className="flex items-center gap-4">
                   <Repeat className="h-8 w-8 text-muted-foreground" />
                   <div>
@@ -101,7 +102,7 @@ export default function DashboardPage() {
                   </div>
                 </div>
               </div>
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col gap-4">
                  <div className="flex items-center gap-4">
                   <PieChart className="h-8 w-8 text-muted-foreground" />
                   <div>
@@ -153,6 +154,7 @@ export default function DashboardPage() {
                                         group.status === 'Activo' && 'bg-green-500/20 text-green-700 border-green-500/30',
                                         group.status === 'Abierto' && 'bg-blue-500/20 text-blue-700 border-blue-500/30',
                                         group.status === 'Pendiente' && 'bg-yellow-500/20 text-yellow-700 border-yellow-500/30',
+                                        group.status === 'Subastado' && 'bg-orange-500/20 text-orange-700 border-orange-500/30',
                                     )}
                                     >{group.status}</Badge>
                                 </TableCell>
