@@ -169,6 +169,15 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
   const advanceSavings = calculateSavings(cuotasToAdvance);
   const bidSavings = calculateSavings(cuotasToBid);
 
+  const nextPendingInstallmentIndex = useMemo(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return installments.findIndex(inst => {
+      const dueDate = parseISO(inst.dueDate);
+      return inst.number > cuotasPagadas && !isBefore(dueDate, today);
+    });
+  }, [installments, cuotasPagadas]);
+
   return (
     <>
       <div className="mb-4">
@@ -362,35 +371,30 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {installments.map((inst) => {
+                  {installments.map((inst, index) => {
                     const today = new Date();
-                    today.setHours(0, 0, 0, 0); // Normalize today to the start of the day
+                    today.setHours(0, 0, 0, 0); 
                     const dueDate = parseISO(inst.dueDate);
 
                     let status: Installment['status'];
 
                     if (group.userIsAwarded) {
-                        status = isBefore(dueDate, today) ? 'Pagado' : inst.number === cuotasPagadas + 1 ? 'Pendiente' : 'Futuro';
+                        status = isBefore(dueDate, today) ? 'Pagado' : (index === nextPendingInstallmentIndex ? 'Pendiente' : 'Futuro');
                     } else if (inst.number <= cuotasPagadas) {
                         status = 'Pagado';
                     } else if (isBefore(dueDate, today)) {
                         status = 'Vencido';
-                    } else if (inst.number === cuotasPagadas + 1) {
+                    } else if (index === nextPendingInstallmentIndex) {
                         status = 'Pendiente';
                     } else {
                         status = 'Futuro';
                     }
-
-                    // For auctioned plans, keep the status as it was, don't change future to pending/vencido
-                    if (group.status === 'Subastado' && inst.number > cuotasPagadas) {
-                        if (isBefore(dueDate, today)) {
-                          status = 'Vencido';
-                        } else {
-                          status = 'Futuro';
-                        }
+                    
+                    if (group.status === 'Subastado' && status !== 'Pagado' && status !== 'Vencido') {
+                        status = 'Futuro';
                     }
                     
-                    const isMonthPast = status === 'Pagado' || status === 'Vencido' || isBefore(dueDate, today);
+                    const isMonthPast = status === 'Pagado' || status === 'Vencido';
                     const currentAwards = isMonthPast ? groupAwards[inst.number - 1] : undefined;
                     const awardDate = isMonthPast ? format(addDays(dueDate, 5), 'dd/MM/yyyy') : undefined;
 
@@ -474,5 +478,3 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
     </>
   );
 }
-
-    
