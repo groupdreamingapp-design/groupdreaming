@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { ArrowLeft, Users, Clock, Users2, Calendar, Gavel, HandCoins, Ticket, Info, Trophy, FileX2, TrendingUp, Hand, Scale, CalendarCheck, Gift, Check, X } from 'lucide-react';
+import { ArrowLeft, Users, Clock, Users2, Calendar, Gavel, HandCoins, Ticket, Info, Trophy, FileX2, TrendingUp, Hand, Scale, CalendarCheck, Gift, Check, X, Award as AwardIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { useGroups } from '@/hooks/use-groups';
@@ -21,6 +21,7 @@ import { Separator } from '@/components/ui/separator';
 import { addDays, parseISO, format, isBefore, isToday } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { useToast } from '@/hooks/use-toast';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 
 type GroupDetailClientProps = {
@@ -239,6 +240,7 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
 
   const advanceSavings = calculateSavings(cuotasToAdvance);
   const bidSavings = calculateSavings(cuotasToBid);
+  const bidQualifiesForBenefit = isBidInputValid && cuotasFuturas > 0 && (cuotasToBid / cuotasFuturas) > 0.5;
 
   const formatCurrency = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD' }).format(amount);
   const formatCurrencyNoDecimals = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount);
@@ -414,12 +416,23 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                                  <p className="text-xs text-muted-foreground">Tu oferta competirá con otros miembros. Si ganas, cancelas las últimas cuotas.</p>
                              </div>
                              {isBidInputValid ? (
-                                 <Card className="bg-muted/50">
-                                     <CardContent className="p-4 text-sm space-y-1">
-                                         <p>Monto de la oferta (valor puro): <strong>{formatCurrency(bidSavings.totalToPay)}</strong></p>
-                                         <p className="text-green-600 font-semibold">Ahorro estimado (gastos adm. y seguros): {formatCurrency(bidSavings.totalSaving)}</p>
-                                     </CardContent>
-                                 </Card>
+                                <div className="space-y-2">
+                                     <Card className="bg-muted/50">
+                                         <CardContent className="p-4 text-sm space-y-1">
+                                             <p>Monto de la oferta (valor puro): <strong>{formatCurrency(bidSavings.totalToPay)}</strong></p>
+                                             <p className="text-green-600 font-semibold">Ahorro estimado (gastos adm. y seguros): {formatCurrency(bidSavings.totalSaving)}</p>
+                                         </CardContent>
+                                     </Card>
+                                     {bidQualifiesForBenefit && (
+                                        <Alert variant="default" className="border-green-500 bg-green-500/10 text-green-800">
+                                            <AwardIcon className="h-4 w-4 text-green-600" />
+                                            <AlertTitle>¡Calificas para un Beneficio!</AlertTitle>
+                                            <AlertDescription>
+                                                Tu oferta supera el 50% de las cuotas restantes. Si ganas, obtendrás el beneficio "+ Cubrís + Ganás".
+                                            </AlertDescription>
+                                        </Alert>
+                                     )}
+                                </div>
                              ) : (
                                 <p className="text-xs text-muted-foreground">
                                     {cuotasFuturas > 0 ? 'Ingresa un número de cuotas válido para ver el monto.' : 'No tienes cuotas futuras para licitar.'}

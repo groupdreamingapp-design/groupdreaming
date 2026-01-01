@@ -1,40 +1,71 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Gift, Check, X, ShieldCheck, CalendarX } from "lucide-react";
+import { ArrowLeft, Gift, Award, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 
-const benefitDetails = {
-    title: "Los últimos serán los primeros",
-    description: "Un programa que recompensa la paciencia y el compromiso de nuestros miembros más fieles.",
-    icon: Gift,
-    clauses: [
-        {
-            title: "Funcionamiento del Beneficio",
-            points: [
-                "Este beneficio está diseñado para los miembros que son adjudicados en la recta final de su plan de ahorro.",
-                "Se activa automáticamente si un miembro resulta adjudicado por sorteo dentro del último 20% del plazo total de su grupo.",
-                "Por ejemplo, en un plan de 24 meses, el beneficio aplica si la adjudicación ocurre entre el mes 20 y el 24."
-            ]
-        },
-        {
-            title: "La Recompensa",
-            points: [
-                "Se realizará la devolución del 50% del 'Derecho de Suscripción' abonado en el plan vigente.",
-                "Se otorgará un descuento del 50% en el 'Derecho de Suscripción' para el próximo plan que el miembro suscriba en la plataforma."
-            ]
-        },
-        {
-            title: "Condiciones para Acceder (Bases)",
-            points: [
-                "No haber registrado cuotas vencidas ni pagado fuera de término durante toda la vigencia del plan.",
-                "No haber rechazado un acto de adjudicación previo en el mismo plan.",
-                "El beneficio aplica únicamente a adjudicaciones por sorteo, no por licitación.",
-                "El plan no debe haber sido adquirido a través de una subasta en el mercado secundario."
-            ]
-        }
-    ]
-};
+const benefits = [
+    {
+        title: "Los últimos serán los primeros",
+        description: "Un programa que recompensa la paciencia y el compromiso de nuestros miembros más fieles.",
+        icon: Gift,
+        clauses: [
+            {
+                title: "Funcionamiento del Beneficio",
+                points: [
+                    "Este beneficio está diseñado para los miembros que son adjudicados en la recta final de su plan de ahorro.",
+                    "Se activa automáticamente si un miembro resulta adjudicado por sorteo dentro del último 20% del plazo total de su grupo.",
+                    "Por ejemplo, en un plan de 24 meses, el beneficio aplica si la adjudicación ocurre entre el mes 20 y el 24."
+                ]
+            },
+            {
+                title: "La Recompensa",
+                points: [
+                    "Se realizará la devolución del 50% del 'Derecho de Suscripción' abonado en el plan vigente.",
+                    "Se otorgará un descuento del 50% en el 'Derecho de Suscripción' para el próximo plan que el miembro suscriba en la plataforma."
+                ]
+            },
+            {
+                title: "Condiciones para Acceder (Bases)",
+                points: [
+                    "No haber registrado cuotas vencidas ni pagado fuera de término durante toda la vigencia del plan.",
+                    "No haber rechazado un acto de adjudicación previo en el mismo plan.",
+                    "El beneficio aplica únicamente a adjudicaciones por sorteo, no por licitación.",
+                    "El plan no debe haber sido adquirido a través de una subasta en el mercado secundario."
+                ]
+            }
+        ]
+    },
+    {
+        title: "+ Cubrís + Ganás",
+        description: "Un incentivo para quienes apuestan fuerte y aceleran la solidez del grupo.",
+        icon: Award,
+        clauses: [
+            {
+                title: "Funcionamiento del Beneficio",
+                points: [
+                    "Este beneficio premia a los miembros que ganan una licitación realizando una oferta significativa.",
+                    "Se activa si resultas adjudicado por licitación y tu oferta es por más del 50% de las cuotas que te quedaban por pagar.",
+                    "Ejemplo: Si a tu plan le restan 10 cuotas por pagar y ganas la licitación ofertando 6 o más cuotas, el beneficio es tuyo."
+                ]
+            },
+            {
+                title: "La Recompensa",
+                points: [
+                    "Se realizará la devolución del 50% del 'Derecho de Suscripción' abonado en el plan vigente.",
+                    "Se otorgará un descuento del 50% en el 'Derecho de Suscripción' para el próximo plan que el miembro suscriba en la plataforma."
+                ]
+            },
+             {
+                title: "Condiciones para Acceder (Bases)",
+                points: [
+                    "Ser el ganador del acto de licitación con una oferta que cumpla la condición mencionada.",
+                    "No haber registrado cuotas vencidas ni pagado fuera de término durante toda la vigencia del plan.",
+                ]
+            }
+        ]
+    }
+];
 
 export default function BenefitsPage() {
     return (
@@ -47,33 +78,44 @@ export default function BenefitsPage() {
                   </Link>
                 </Button>
                 <h1 className="text-3xl font-bold font-headline flex items-center gap-3">
-                    <benefitDetails.icon className="h-8 w-8 text-primary" />
+                    <Gift className="h-8 w-8 text-primary" />
                     Programa de Beneficios
                 </h1>
                 <p className="text-muted-foreground">Incentivos y recompensas por tu compromiso y fidelidad.</p>
             </div>
-
-            <Card className="shadow-lg">
-                <CardHeader>
-                    <CardTitle>{benefitDetails.title}</CardTitle>
-                    <CardDescription>{benefitDetails.description}</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                    {benefitDetails.clauses.map((clause, index) => (
-                        <div key={index}>
-                            <h3 className="font-semibold text-lg mb-3 border-b pb-2">{clause.title}</h3>
-                            <ul className="space-y-3 text-sm text-muted-foreground">
-                                {clause.points.map((point, pIndex) => (
-                                    <li key={pIndex} className="flex items-start gap-3">
-                                        <ShieldCheck className="h-4 w-4 mt-1 text-primary shrink-0" />
-                                        <span>{point}</span>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    ))}
-                </CardContent>
-            </Card>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+                {benefits.map((benefit, bIndex) => (
+                    <Card key={bIndex} className="shadow-lg h-full flex flex-col">
+                        <CardHeader>
+                            <div className="flex items-center gap-4">
+                                <div className="bg-primary/10 p-3 rounded-lg">
+                                    <benefit.icon className="h-6 w-6 text-primary" />
+                                </div>
+                                <div>
+                                    <CardTitle>{benefit.title}</CardTitle>
+                                    <CardDescription>{benefit.description}</CardDescription>
+                                </div>
+                            </div>
+                        </CardHeader>
+                        <CardContent className="space-y-6 flex-grow">
+                            {benefit.clauses.map((clause, index) => (
+                                <div key={index}>
+                                    <h3 className="font-semibold text-lg mb-3 border-b pb-2">{clause.title}</h3>
+                                    <ul className="space-y-3 text-sm text-muted-foreground">
+                                        {clause.points.map((point, pIndex) => (
+                                            <li key={pIndex} className="flex items-start gap-3">
+                                                <ShieldCheck className="h-4 w-4 mt-1 text-primary shrink-0" />
+                                                <span>{point}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            ))}
+                        </CardContent>
+                    </Card>
+                ))}
+            </div>
         </>
     );
 }
