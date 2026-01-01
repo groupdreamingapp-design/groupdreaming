@@ -77,7 +77,9 @@ const generateStaticAwards = (group: Group): Award[][] => {
         let awardsThisMonth = 2;
         
         if (remainingWinners > 0 && (remainingWinners / remainingMonths > 2)) {
-             awardsThisMonth = 4;
+             awardsThisMonth = Math.ceil(remainingWinners / remainingMonths);
+             if(awardsThisMonth % 2 !== 0) awardsThisMonth++;
+             awardsThisMonth = Math.min(4, awardsThisMonth);
         }
 
         for(let j = 0; j < awardsThisMonth && winnerPool.length > 0; j++) {
@@ -181,7 +183,17 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
 
   const isPlanActive = group.status === 'Activo';
   
-  let firstPendingFound = false;
+  const pendingInstallmentIndex = useMemo(() => {
+    if (!isPlanActive) return -1;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    return installments.findIndex(inst => {
+      const dueDate = parseISO(inst.dueDate);
+      const isPaid = inst.number <= cuotasPagadas;
+      return !isPaid && !isBefore(dueDate, today);
+    });
+  }, [installments, cuotasPagadas, isPlanActive]);
 
   return (
     <>
@@ -385,25 +397,24 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {installments.map((inst) => {
+                  {installments.map((inst, index) => {
                     let status: Installment['status'] = 'Futuro';
-                    let dueDate = parseISO(inst.dueDate);
-                    let today = new Date();
+                    const dueDate = parseISO(inst.dueDate);
+                    const today = new Date();
                     today.setHours(0, 0, 0, 0);
 
                     if (isPlanActive) {
                         const isPaid = inst.number <= cuotasPagadas;
-                        const isOverdue = isBefore(dueDate, today);
-
-                        if (isPaid) {
-                            status = 'Pagado';
-                        } else if (isOverdue) {
-                            status = 'Vencido';
-                        } else if (!firstPendingFound) {
-                            status = 'Pendiente';
-                            firstPendingFound = true;
+                        if (isBefore(dueDate, today)) {
+                            status = isPaid ? 'Pagado' : 'Vencido';
                         } else {
-                            status = 'Futuro';
+                            if (isPaid) { // Future installment paid in advance
+                                status = 'Pagado';
+                            } else if (index === pendingInstallmentIndex) {
+                                status = 'Pendiente';
+                            } else {
+                                status = 'Futuro';
+                            }
                         }
                     }
                     
