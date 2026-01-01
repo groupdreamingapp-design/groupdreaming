@@ -7,7 +7,7 @@ import { initialGroups, generateInstallments } from '@/lib/data';
 import type { Group } from '@/lib/types';
 import { GroupsContext } from '@/hooks/use-groups';
 import { toast } from '@/hooks/use-toast';
-import { parseISO, differenceInHours } from 'date-fns';
+import { parseISO, differenceInHours, isBefore } from 'date-fns';
 
 function generateNewGroup(templateGroup: Group): Group {
     const today = new Date();
