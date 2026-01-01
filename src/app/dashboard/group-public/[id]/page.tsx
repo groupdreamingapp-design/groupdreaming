@@ -8,15 +8,18 @@ import type { Installment } from '@/lib/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { ArrowLeft, Users, Clock, Scale, Users2, FileX2, CheckCircle, Ticket, HandCoins } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from '@/components/ui/dialog';
+import { ArrowLeft, Users, Clock, Scale, Users2, FileX2, CheckCircle, Ticket, HandCoins, ShieldAlert } from 'lucide-react';
 import Link from 'next/link';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { useUserNav } from '@/components/app/user-nav';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 export default function GroupPublicDetailPage() {
   const params = useParams();
   const router = useRouter();
   const { groups, joinGroup } = useGroups();
+  const { isVerified } = useUserNav();
   
   const groupId = typeof params.id === 'string' ? params.id : '';
   const group = groups.find(g => g.id === groupId);
@@ -55,9 +58,60 @@ export default function GroupPublicDetailPage() {
                 <h1 className="text-3xl font-bold font-headline">{formatCurrencyNoDecimals(group.capital)}</h1>
                 <p className="text-muted-foreground">en {group.plazo} meses (Grupo {group.id})</p>
             </div>
-            <Button onClick={handleJoinGroup} size="lg">
-                <CheckCircle className="mr-2" /> Unirme a este grupo
-            </Button>
+            
+            <Dialog>
+                <DialogTrigger asChild>
+                    <Button size="lg">
+                        <CheckCircle className="mr-2" /> Unirme a este grupo
+                    </Button>
+                </DialogTrigger>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Confirmar Unión al Grupo {group.id}</DialogTitle>
+                         <DialogDescription>Estás a punto de unirte a un plan de {formatCurrencyNoDecimals(group.capital)} en {group.plazo} meses.</DialogDescription>
+                    </DialogHeader>
+
+                    {isVerified ? (
+                        <div>
+                            <p className="text-sm text-muted-foreground mb-4">
+                                Al confirmar, te comprometes a los términos del contrato de ahorro colectivo. Se generará el débito de la primera cuota en tu método de pago principal.
+                            </p>
+                            <Alert>
+                                <CheckCircle className="h-4 w-4" />
+                                <AlertTitle>¡Identidad Verificada!</AlertTitle>
+                                <AlertDescription>
+                                    Tu cuenta está verificada y lista para operar.
+                                </AlertDescription>
+                            </Alert>
+                        </div>
+                    ) : (
+                         <div>
+                            <p className="text-sm text-muted-foreground mb-4">
+                                Para continuar, primero debes completar el proceso de verificación de identidad. Es un requisito legal para garantizar la seguridad de todos los miembros.
+                            </p>
+                             <Alert variant="destructive">
+                                <ShieldAlert className="h-4 w-4" />
+                                <AlertTitle>Verificación de Identidad Requerida</AlertTitle>
+                                <AlertDescription>
+                                    Tu cuenta aún no ha sido verificada. Por favor, completa el formulario para poder unirte a un grupo.
+                                </AlertDescription>
+                            </Alert>
+                        </div>
+                    )}
+                    
+                    <DialogFooter>
+                        <DialogClose asChild><Button variant="ghost">Cancelar</Button></DialogClose>
+                        {isVerified ? (
+                            <Button onClick={handleJoinGroup}>Confirmar y Unirme</Button>
+                        ) : (
+                            <Button asChild>
+                                <Link href="/dashboard/verify">Ir a Verificar</Link>
+                            </Button>
+                        )}
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
         </div>
       </div>
 

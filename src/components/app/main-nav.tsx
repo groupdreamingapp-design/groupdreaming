@@ -4,7 +4,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
-import { Gavel, LayoutDashboard, Search, Wallet, Users, Bot, PieChart } from "lucide-react"
+import { Gavel, LayoutDashboard, Search, Wallet, Users, Bot, PieChart, Shield } from "lucide-react"
 import { Badge } from "@/components/ui/badge";
 
 type MainNavProps = {
@@ -41,6 +41,11 @@ export function MainNav({ isMobile = false }: MainNavProps) {
       icon: Wallet,
     },
     {
+      href: "/dashboard/verify",
+      label: "Verificación",
+      icon: Shield,
+    },
+    {
       href: "/dashboard/transparency",
       label: "Transparencia",
       icon: PieChart,
@@ -65,9 +70,6 @@ export function MainNav({ isMobile = false }: MainNavProps) {
         >
           <route.icon className="h-4 w-4" />
           {route.label}
-          {route.badge && (
-            <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">{route.badge}</Badge>
-          )}
         </Link>
       ))}
     </>

@@ -3,6 +3,7 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { cn } from '@/lib/utils';
 import { GroupsProvider } from '@/components/app/providers';
+import { UserNavProvider } from '@/components/app/user-nav';
 
 export const metadata: Metadata = {
   title: 'Group Dreaming',
@@ -26,9 +27,11 @@ export default function RootLayout({
           "min-h-screen bg-background font-body antialiased",
         )}
       >
-        <GroupsProvider>
-          {children}
-        </GroupsProvider>
+        <UserNavProvider>
+          <GroupsProvider>
+            {children}
+          </GroupsProvider>
+        </UserNavProvider>
         <Toaster />
       </body>
     </html>

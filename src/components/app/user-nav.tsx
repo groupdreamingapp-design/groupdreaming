@@ -1,6 +1,7 @@
 
 'use client';
 
+import { useState, createContext, useContext, ReactNode } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
@@ -12,10 +13,37 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { user as mockUser } from "@/lib/data"; // Using mock user
+import { user as mockUser } from "@/lib/data";
+import Link from "next/link";
+import { CheckCircle, Shield, User } from "lucide-react";
+
+type UserNavContextType = {
+  isVerified: boolean;
+  setIsVerified: (isVerified: boolean) => void;
+};
+
+const UserNavContext = createContext<UserNavContextType | undefined>(undefined);
+
+export function UserNavProvider({ children }: { children: ReactNode }) {
+  const [isVerified, setIsVerified] = useState(false);
+  return (
+    <UserNavContext.Provider value={{ isVerified, setIsVerified }}>
+      {children}
+    </UserNavContext.Provider>
+  );
+}
+
+export function useUserNav() {
+  const context = useContext(UserNavContext);
+  if (!context) {
+    throw new Error("useUserNav must be used within a UserNavProvider");
+  }
+  return context;
+}
 
 export function UserNav() {
   const user = mockUser;
+  const { isVerified } = useUserNav();
   
   const userInitials = user?.name?.split(' ').map(n => n[0]).join('') || user?.email?.charAt(0).toUpperCase() || 'U';
 
@@ -40,11 +68,17 @@ export function UserNav() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>
-            Perfil
+          <DropdownMenuItem asChild>
+            <Link href="/dashboard/profile">
+                <User className="mr-2 h-4 w-4" />
+                <span>Perfil</span>
+            </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem>
-            Ajustes
+           <DropdownMenuItem asChild>
+            <Link href="/dashboard/verify">
+                {isVerified ? <CheckCircle className="mr-2 h-4 w-4 text-green-500" /> : <Shield className="mr-2 h-4 w-4" />}
+                <span>Verificación</span>
+            </Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />

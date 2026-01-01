@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { auctions, generateInstallments } from "@/lib/data";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Clock, Tag, TrendingUp, Gavel, ArrowUp, Bot, BookText, AlertTriangle, Info } from "lucide-react";
+import { Clock, Tag, TrendingUp, Gavel, ArrowUp, Bot, BookText, AlertTriangle, Info, ShieldAlert, CheckCircle } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,6 +15,9 @@ import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useUserNav } from "@/components/app/user-nav";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+
 
 const Countdown = ({ endDate, isUrgent }: { endDate: string, isUrgent?: boolean }) => {
   const [timeLeft, setTimeLeft] = useState<string>('');
@@ -65,6 +68,7 @@ export default function AuctionsPage() {
   const [autoIncrement, setAutoIncrement] = useState('');
   const [hasReadRules, setHasReadRules] = useState(false);
   const { toast } = useToast();
+  const { isVerified } = useUserNav();
   
   const [openDialogs, setOpenDialogs] = useState<Record<string, boolean>>({});
 
@@ -126,6 +130,14 @@ export default function AuctionsPage() {
 
   const handleAcceptTerms = (checked: boolean, auction: (typeof auctions)[0], startBid: number) => {
     if (checked) {
+        if (!isVerified) {
+             toast({
+                variant: "destructive",
+                title: "Verificación Requerida",
+                description: "Debes verificar tu identidad para aceptar los términos.",
+            });
+            return;
+        }
         const isValid = validateOffer(auction, startBid);
         if (isValid) {
             setTermsAccepted(true);
@@ -277,103 +289,126 @@ export default function AuctionsPage() {
                       <DialogTitle>Hacer una oferta por el plan {auction.groupId}</DialogTitle>
                       <DialogDescription>Tu oferta debe ser igual o mayor a la próxima puja mínima.</DialogDescription>
                     </DialogHeader>
-                    <div className="space-y-4">
-                      <div className="grid grid-cols-2 gap-4 text-sm">
-                        <div className="font-medium">Puja Actual:</div>
-                        <div className="text-right font-bold">{formatCurrency(startBid)}</div>
-                        <div className="font-medium">Próxima Puja Mínima:</div>
-                        <div className="text-right font-bold">{formatCurrency(nextMinBid)}</div>
-                      </div>
-                      
-                      <Separator />
-
-                       <div className="flex items-center justify-between">
-                          <Label htmlFor="autobid-switch" className="flex items-center gap-2">
-                            <Bot className="h-5 w-5" />
-                            <span>Oferta Automática</span>
-                          </Label>
-                          <Switch id="autobid-switch" checked={autoBidEnabled} onCheckedChange={setAutoBidEnabled} disabled={termsAccepted}/>
+                    
+                     {!isVerified ? (
+                        <div className="space-y-4">
+                             <Alert variant="destructive">
+                                <ShieldAlert className="h-4 w-4" />
+                                <AlertTitle>Verificación de Identidad Requerida</AlertTitle>
+                                <AlertDescription>
+                                    Para poder realizar una oferta, primero debes completar el proceso de verificación de identidad. Es un requisito legal para garantizar la seguridad de todos los miembros.
+                                </AlertDescription>
+                            </Alert>
+                             <DialogFooter>
+                                <DialogClose asChild>
+                                    <Button type="button" variant="secondary">Cancelar</Button>
+                                </DialogClose>
+                                <Button asChild>
+                                    <Link href="/dashboard/verify">Ir a Verificar</Link>
+                                </Button>
+                            </DialogFooter>
                         </div>
-                        
-                        {autoBidEnabled ? (
-                            <div className="space-y-4 p-4 border rounded-md bg-muted/50">
-                               <p className="text-xs text-muted-foreground">El sistema pujará por ti hasta alcanzar tu límite, usando el incremento que definas.</p>
-                               <div className="grid grid-cols-2 gap-4">
-                                   <div className="space-y-2">
-                                    <Label htmlFor="max-bid">Oferta Máxima (USD)</Label>
-                                    <Input 
-                                        id="max-bid" 
-                                        type="number" 
-                                        placeholder={`> ${formatCurrency(startBid)}`}
-                                        value={maxBid}
-                                        onChange={(e) => setMaxBid(e.target.value)}
-                                        className={cn(Number(maxBid) > 0 && isMaxBidInvalid && "border-red-500")}
-                                        disabled={termsAccepted}
-                                    />
-                                   </div>
-                                   <div className="space-y-2">
-                                    <Label htmlFor="auto-increment">Incremento por Puja (USD)</Label>
-                                    <Input 
-                                        id="auto-increment" 
-                                        type="number" 
-                                        placeholder={`Min: ${formatCurrency(minBidIncrement)}`}
-                                        value={autoIncrement}
-                                        onChange={(e) => setAutoIncrement(e.target.value)}
-                                        className={cn(Number(autoIncrement) > 0 && isAutoIncrementInvalid && "border-red-500")}
-                                        disabled={termsAccepted}
-                                    />
-                                   </div>
-                               </div>
-                            </div>
-                        ) : (
-                            <div className="space-y-2">
-                                <Label htmlFor="offer-amount">Tu Oferta (USD)</Label>
-                                <Input 
-                                    id="offer-amount" 
-                                    type="number" 
-                                    placeholder={formatCurrency(nextMinBid)}
-                                    value={offerAmount}
-                                    onChange={(e) => setOfferAmount(e.target.value)}
-                                    className={cn(isManualOfferInvalid && offerAmount && "border-red-500")}
-                                    disabled={termsAccepted}
-                                />
-                            </div>
-                        )}
-                      
-                       <div className="items-top flex space-x-2 pt-2">
-                           <Switch id="terms" checked={termsAccepted} onCheckedChange={(checked) => handleAcceptTerms(checked, auction, startBid)} disabled={!hasReadRules} />
-                          <div className="grid gap-1.5 leading-none">
-                            <Label htmlFor="terms" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center gap-2">
-                              Acepto los términos y condiciones
-                              <Button variant="link" size="sm" className="p-0 h-auto" asChild>
-                                <Link href="/dashboard/auctions/rules" target="_blank" onClick={() => setHasReadRules(true)}>
-                                  (Ver Reglamento)
-                                </Link>
-                              </Button>
-                            </Label>
-                            <p className="text-xs text-muted-foreground">
-                              Si ganas la subasta, te comprometes a pagar el monto ofertado. Se aplicará una comisión del 2% (+IVA) sobre el valor final.
-                            </p>
-                             {!hasReadRules && (
-                                <p className="text-xs text-amber-600 font-semibold">
-                                Debes hacer clic en 'Ver Reglamento' para poder aceptar los términos.
-                                </p>
-                            )}
+                    ) : (
+                        <div className="space-y-4">
+                          <div className="grid grid-cols-2 gap-4 text-sm">
+                            <div className="font-medium">Puja Actual:</div>
+                            <div className="text-right font-bold">{formatCurrency(startBid)}</div>
+                            <div className="font-medium">Próxima Puja Mínima:</div>
+                            <div className="text-right font-bold">{formatCurrency(nextMinBid)}</div>
                           </div>
+                          
+                          <Separator />
+
+                           <div className="flex items-center justify-between">
+                              <Label htmlFor="autobid-switch" className="flex items-center gap-2">
+                                <Bot className="h-5 w-5" />
+                                <span>Oferta Automática</span>
+                              </Label>
+                              <Switch id="autobid-switch" checked={autoBidEnabled} onCheckedChange={setAutoBidEnabled} disabled={termsAccepted}/>
+                            </div>
+                            
+                            {autoBidEnabled ? (
+                                <div className="space-y-4 p-4 border rounded-md bg-muted/50">
+                                   <p className="text-xs text-muted-foreground">El sistema pujará por ti hasta alcanzar tu límite, usando el incremento que definas.</p>
+                                   <div className="grid grid-cols-2 gap-4">
+                                       <div className="space-y-2">
+                                        <Label htmlFor="max-bid">Oferta Máxima (USD)</Label>
+                                        <Input 
+                                            id="max-bid" 
+                                            type="number" 
+                                            placeholder={`> ${formatCurrency(startBid)}`}
+                                            value={maxBid}
+                                            onChange={(e) => setMaxBid(e.target.value)}
+                                            className={cn(Number(maxBid) > 0 && isMaxBidInvalid && "border-red-500")}
+                                            disabled={termsAccepted}
+                                        />
+                                       </div>
+                                       <div className="space-y-2">
+                                        <Label htmlFor="auto-increment">Incremento por Puja (USD)</Label>
+                                        <Input 
+                                            id="auto-increment" 
+                                            type="number" 
+                                            placeholder={`Min: ${formatCurrency(minBidIncrement)}`}
+                                            value={autoIncrement}
+                                            onChange={(e) => setAutoIncrement(e.target.value)}
+                                            className={cn(Number(autoIncrement) > 0 && isAutoIncrementInvalid && "border-red-500")}
+                                            disabled={termsAccepted}
+                                        />
+                                       </div>
+                                   </div>
+                                </div>
+                            ) : (
+                                <div className="space-y-2">
+                                    <Label htmlFor="offer-amount">Tu Oferta (USD)</Label>
+                                    <Input 
+                                        id="offer-amount" 
+                                        type="number" 
+                                        placeholder={formatCurrency(nextMinBid)}
+                                        value={offerAmount}
+                                        onChange={(e) => setOfferAmount(e.target.value)}
+                                        className={cn(isManualOfferInvalid && offerAmount && "border-red-500")}
+                                        disabled={termsAccepted}
+                                    />
+                                </div>
+                            )}
+                          
+                           <div className="items-top flex space-x-2 pt-2">
+                               <Switch id="terms" checked={termsAccepted} onCheckedChange={(checked) => handleAcceptTerms(checked, auction, startBid)} disabled={!hasReadRules} />
+                              <div className="grid gap-1.5 leading-none">
+                                <Label htmlFor="terms" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center gap-2">
+                                  Acepto los términos y condiciones
+                                  <Button variant="link" size="sm" className="p-0 h-auto" asChild>
+                                    <Link href="/dashboard/auctions/rules" target="_blank" onClick={() => setHasReadRules(true)}>
+                                      (Ver Reglamento)
+                                    </Link>
+                                  </Button>
+                                </Label>
+                                <p className="text-xs text-muted-foreground">
+                                  Si ganas la subasta, te comprometes a pagar el monto ofertado. Se aplicará una comisión del 2% (+IVA) sobre el valor final.
+                                </p>
+                                 {!hasReadRules && (
+                                    <p className="text-xs text-amber-600 font-semibold">
+                                    Debes hacer clic en 'Ver Reglamento' para poder aceptar los términos.
+                                    </p>
+                                )}
+                              </div>
+                            </div>
+                           
+                            <DialogFooter>
+                                <DialogClose asChild>
+                                    <Button type="button" variant="secondary">Cancelar</Button>
+                                </DialogClose>
+                                <Button 
+                                    type="button" 
+                                    onClick={() => handleConfirmOffer(auction)}
+                                    disabled={!termsAccepted}
+                                >
+                                    Confirmar Oferta
+                                </Button>
+                            </DialogFooter>
                         </div>
-                    </div>
-                    <DialogFooter>
-                      <DialogClose asChild>
-                        <Button type="button" variant="secondary">Cancelar</Button>
-                      </DialogClose>
-                     <Button 
-                        type="button" 
-                        onClick={() => handleConfirmOffer(auction)}
-                        disabled={!termsAccepted}
-                      >
-                        Confirmar Oferta
-                      </Button>
-                    </DialogFooter>
+                    )}
+
                   </DialogContent>
                 </Dialog>
               </CardFooter>
