@@ -202,7 +202,7 @@ export default function TransparencyPage() {
                         
                         <ArrowDown className="h-8 w-8 text-muted-foreground" />
 
-                        <div className="w-full md:w-3/4 lg:w-1/2">
+                        <div className="w-full md-w-3/4 lg:w-1/2">
                              <Card className="shadow-lg">
                                 <CardHeader className="text-center">
                                     <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/50 mb-2">
@@ -223,3 +223,5 @@ export default function TransparencyPage() {
         </>
     );
 }
+
+    
