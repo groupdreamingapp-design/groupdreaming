@@ -117,7 +117,13 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
                 }
                 return group;
             });
-            return groupsToUpdate;
+
+            // Only update state if there are actual changes
+            if (JSON.stringify(groupsToUpdate) !== JSON.stringify(currentGroups)) {
+                return groupsToUpdate;
+            }
+
+            return currentGroups;
         });
     };
 
