@@ -20,7 +20,8 @@ export type Group = {
   userIsMember: boolean;
   userIsAwarded?: boolean;
   monthsCompleted?: number;
-  isOverdue?: boolean; // To identify the group that uses past due dates
+  isOverdue?: boolean;
+  activationDate?: string;
 };
 
 export type TransactionType = "Depósito" | "Retiro" | "Pago de Cuota" | "Licitación" | "Subasta" | "Liquidación";

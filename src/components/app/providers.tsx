@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState, useCallback, ReactNode, useEffect, useRef } from 'react';
@@ -6,6 +7,7 @@ import { initialGroups, installments as allInstallments } from '@/lib/data';
 import type { Group } from '@/lib/types';
 import { GroupsContext } from '@/hooks/use-groups';
 import { toast } from '@/hooks/use-toast';
+import { format } from 'date-fns';
 
 function generateNewGroup(templateGroup: Group): Group {
     const today = new Date();
@@ -57,7 +59,11 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
                 setGroups(currentGroups => {
                     const newGroups = currentGroups.map(g => {
                         if (g.id === pendingGroup.id) {
-                            return { ...g, status: 'Activo' };
+                            return { 
+                                ...g, 
+                                status: 'Activo',
+                                activationDate: format(new Date(), 'yyyy-MM-dd')
+                            };
                         }
                         return g;
                     });
