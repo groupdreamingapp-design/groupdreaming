@@ -28,6 +28,7 @@ const plazoOptions = [12, 24, 36, 48, 60, 72, 84];
 const generatedGroups: Group[] = [];
 let groupCounter = 1;
 
+// This date is static and will be the same on server and client
 const todayForId = new Date('2026-01-01T00:00:00Z');
 const year = todayForId.getFullYear();
 const month = String(todayForId.getMonth() + 1).padStart(2, '0');
@@ -47,6 +48,7 @@ for (const capital of capitalOptions) {
             else if (plazo <= 48) totalMembers = 96;
             else totalMembers = 144;
             
+            // Deterministic membersCount to avoid hydration errors
             const membersCount = (groupCounter % (totalMembers -1));
 
             generatedGroups.push({
@@ -68,7 +70,9 @@ for (const capital of capitalOptions) {
 // Add the active group that started in the past
 const activeGroupCapital = 15000;
 const activeGroupPlazo = 24;
-const activeActivationDate = new Date('2025-06-05T00:00:00Z');
+// We set a fixed past date for activation
+const activeActivationDate = new Date('2025-06-05T00:00:00Z'); 
+// We set a fixed "today" to calculate the completed months
 const today = new Date('2026-01-01T00:00:00Z');
 const activeMonthsCompleted = differenceInMonths(today, activeActivationDate);
 
@@ -206,6 +210,7 @@ function generateNewGroup(templateGroup: Group): Group {
     
 
     
+
 
 
 
