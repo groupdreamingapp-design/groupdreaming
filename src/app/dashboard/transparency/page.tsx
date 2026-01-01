@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Banknote, Briefcase, PiggyBank, Plus, ArrowDown, Users, Calendar, Target, Award, CheckCircle } from "lucide-react";
+import { ArrowLeft, Banknote, Briefcase, PiggyBank, Plus, ArrowDown, Users, Calendar, Target, Award, CheckCircle, Hand } from "lucide-react";
 import Link from "next/link";
 
 export default function TransparencyPage() {
@@ -185,11 +185,15 @@ export default function TransparencyPage() {
                                     <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-orange-100 dark:bg-orange-900/50 mb-2">
                                         <Calendar className="h-6 w-6 text-orange-600 dark:text-orange-400" />
                                     </div>
-                                    <CardTitle>4. Meses 3 a 12 - Ciclo Mensual</CardTitle>
-                                    <CardDescription>El proceso se repite hasta el final</CardDescription>
+                                    <CardTitle>4. Meses 3 a 11 - Ciclo Mensual y Mercado Secundario</CardTitle>
+                                    <CardDescription>El proceso se repite y se habilita la subasta</CardDescription>
                                 </CardHeader>
                                 <CardContent>
-                                    <p className="text-sm text-muted-foreground text-center">Cada mes, con el pago de las cuotas, se repite el acto de adjudicación. 2 nuevos miembros reciben su capital, hasta que los 24 hayan sido adjudicados.</p>
+                                    <p className="text-sm text-muted-foreground text-center mb-4">Cada mes se adjudican 2 nuevos miembros (1 por sorteo, 1 por licitación). A partir del 3er pago, los miembros pueden opcionalmente vender su plan en el Mercado Secundario (Subasta).</p>
+                                    <div className="flex items-center justify-center gap-2 text-sm font-semibold">
+                                        <Hand className="h-4 w-4 text-primary" />
+                                        <span>Opción de Subasta Habilitada</span>
+                                    </div>
                                 </CardContent>
                             </Card>
                         </div>
@@ -199,10 +203,27 @@ export default function TransparencyPage() {
                         <div className="w-full md-w-3/4 lg:w-1/2">
                              <Card className="shadow-lg">
                                 <CardHeader className="text-center">
+                                    <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-900/50 mb-2">
+                                        <Award className="h-6 w-6 text-indigo-600 dark:text-indigo-400" />
+                                    </div>
+                                    <CardTitle>5. Mes 12 - Gran Adjudicación Final</CardTitle>
+                                    <CardDescription>Se adjudican los últimos 4 miembros</CardDescription>
+                                </CardHeader>
+                                <CardContent>
+                                    <p className="text-sm text-muted-foreground text-center">En el último mes, se acelera el proceso para garantizar que todos los miembros restantes (4 en este ejemplo) reciban su capital. Se realizan 4 adjudicaciones por sorteo.</p>
+                                </CardContent>
+                            </Card>
+                        </div>
+
+                         <ArrowDown className="h-8 w-8 text-muted-foreground" />
+
+                         <div className="w-full md-w-3/4 lg:w-1/2">
+                             <Card className="shadow-lg">
+                                <CardHeader className="text-center">
                                     <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/50 mb-2">
                                         <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400" />
                                     </div>
-                                    <CardTitle>5. Cierre del Grupo</CardTitle>
+                                    <CardTitle>6. Cierre del Grupo</CardTitle>
                                     <CardDescription>Finalización y liquidación</CardDescription>
                                 </CardHeader>
                                 <CardContent>
@@ -217,5 +238,3 @@ export default function TransparencyPage() {
         </>
     );
 }
-
-    
