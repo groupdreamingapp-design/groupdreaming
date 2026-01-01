@@ -262,7 +262,7 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                                      </SelectTrigger>
                                      <SelectContent>
                                          {Array.from({ length: cuotasRestantes }, (_, i) => i + 1).map(num => (
-                                             <SelectItem key.tsx={num} value={String(num)}>{num} cuota{num > 1 && 's'}</SelectItem>
+                                             <SelectItem key={num} value={String(num)}>{num} cuota{num > 1 && 's'}</SelectItem>
                                          ))}
                                      </SelectContent>
                                  </Select>
