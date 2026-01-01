@@ -64,6 +64,24 @@ for (const capital of capitalOptions) {
     }
 }
 
+// Add the new completed group
+const completedGroupCapital = 15000;
+const completedGroupPlazo = 24;
+generatedGroups.push({
+    id: 'ID-COMPLETED-2025',
+    capital: completedGroupCapital,
+    plazo: completedGroupPlazo,
+    cuotaPromedio: calculateCuotaPromedio(completedGroupCapital, completedGroupPlazo),
+    membersCount: 48,
+    totalMembers: 48,
+    status: 'Cerrado', // A completed plan should have the status "Cerrado"
+    userIsMember: true,
+    userIsAwarded: true, // Usually a completed plan means the user was awarded
+    monthsCompleted: 24,
+    activationDate: new Date('2025-06-05T00:00:00Z').toISOString(),
+});
+
+
 export const initialGroups: Group[] = generatedGroups;
 
 
@@ -161,6 +179,7 @@ export const generateExampleInstallments = (capital: number, plazo: number): Ins
     
 
     
+
 
 
 
