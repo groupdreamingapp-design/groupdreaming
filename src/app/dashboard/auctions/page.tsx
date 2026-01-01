@@ -220,7 +220,7 @@ export default function AuctionsPage() {
                     <div className="flex items-baseline justify-between gap-2">
                         <div>
                             <p className="text-sm text-muted-foreground">Mejor Oferta</p>
-                            <p className="text-2xl font-bold text-primary">{formatCurrency(auction.highestBid)}</p>
+                            <p className="text-2xl font-bold text-primary">{formatCurrency(startBid)}</p>
                         </div>
                         <div className="text-right">
                              <p className="text-sm text-muted-foreground">Precio Base</p>
