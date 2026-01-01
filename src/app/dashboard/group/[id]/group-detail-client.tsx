@@ -96,15 +96,23 @@ const generateStaticAwards = (group: Group): Award[][] => {
 
 // Component to safely format dates on the client side, avoiding hydration mismatch.
 function ClientFormattedDate({ dateString, formatString }: { dateString: string, formatString: string }) {
-  const [formattedDate, setFormattedDate] = useState(() => format(parseISO(dateString), 'yyyy-MM-dd'));
+  const [formattedDate, setFormattedDate] = useState(dateString);
 
   useEffect(() => {
     // This effect runs only on the client, after hydration.
     // It updates the date to the user's local timezone format.
-    setFormattedDate(format(parseISO(dateString), formatString, { locale: es }));
+    try {
+      const date = parseISO(dateString);
+      setFormattedDate(format(date, formatString, { locale: es }));
+    } catch (error) {
+      // Keep the original string if it's not a valid date
+      setFormattedDate(dateString);
+    }
   }, [dateString, formatString]);
 
-  return <>{formattedDate}</>;
+  // Initially, render the raw date string on the server and during hydration.
+  // The useEffect will then format it on the client.
+  return <>{formattedDate.startsWith('20') ? formattedDate.split('T')[0] : formattedDate}</>;
 }
 
 
@@ -572,5 +580,3 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
     </>
   );
 }
-
-    
