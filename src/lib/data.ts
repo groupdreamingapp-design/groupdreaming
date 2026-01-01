@@ -51,7 +51,7 @@ export const transactions: Transaction[] = [
     { id: "txn-2", date: "2024-07-10", type: "Pago de Cuota", description: "Grupo ID-20240115-9998, cuota 5/48", amount: -380, status: "Completado" },
     { id: "txn-3", date: "2024-07-10", type: "Pago de Cuota", description: "Grupo ID-20230720-9999, cuota 12/36", amount: -455, status: "Completado" },
     { id: "txn-4", date: "2024-06-25", type: "Liquidación", description: "Adjudicación ID-20240115-9998", amount: 15000, status: "Completado" },
-    { id: "txn-5", date: "2024-6-15", type: "Retiro", description: "Retiro a cuenta bancaria", amount: -2000, status: "Completado" },
+    { id: "txn-5", date: "2024-06-15", type: "Retiro", description: "Retiro a cuenta bancaria", amount: -2000, status: "Completado" },
 ];
 
 const getFutureDate = (hours: number) => new Date(Date.now() + hours * 60 * 60 * 1000).toISOString();
