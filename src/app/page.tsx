@@ -9,6 +9,7 @@ import { ArrowRight, CheckCircle, Users, HandCoins, PiggyBank } from "lucide-rea
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Logo } from '@/components/icons';
+import { useState, useEffect } from "react";
 
 const heroImage = PlaceHolderImages.find((img) => img.id === 'hero-family');
 const goalImages = [
@@ -18,7 +19,12 @@ const goalImages = [
 ]
 
 export default function LandingPage() {
-  const currentYear = new Date().getFullYear();
+  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+
+  useEffect(() => {
+    setCurrentYear(new Date().getFullYear());
+  }, []);
+
 
   const definitions = [
     { title: "ADMINISTRADORA", content: "Refiere a Group Dreaming S.A.S., sociedad que gestiona y administra la PLATAFORMA." },
