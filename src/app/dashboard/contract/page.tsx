@@ -44,6 +44,10 @@ const contractClauses = [
     {
         title: "DÉCIMA: JURISDICCIÓN",
         content: "Para cualquier controversia que pudiera surgir de la interpretación o ejecución del presente contrato, las partes se someten a la jurisdicción de los Tribunales Ordinarios de la Ciudad Autónoma de Buenos Aires, renunciando a cualquier otro fuero o jurisdicción."
+    },
+    {
+        title: "UNDÉCIMA: ACEPTACIÓN",
+        content: "EL SUSCRIPTOR, al hacer clic en el botón 'Confirmar y Unirme' o acción equivalente en la plataforma y habiendo tildado la casilla de aceptación, manifiesta su consentimiento y aceptación expresa, incondicional e irrevocable de todos y cada uno de los términos y condiciones establecidos en el presente Contrato de Adhesión, perfeccionándose el vínculo contractual entre las partes."
     }
 ];
 
