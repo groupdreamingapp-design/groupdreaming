@@ -23,18 +23,6 @@ const calculateCuotaPromedio = (capital: number, plazo: number): number => {
 }
 
 export const initialGroups: Group[] = [
-    // Plan Activo: 6 cuotas pagadas desde Enero 2024
-    { id: "ID-20240115-9998", capital: 15000, plazo: 48, cuotaPromedio: 345, membersCount: 96, totalMembers: 96, status: "Activo", monthsCompleted: 6, userIsMember: true, userIsAwarded: false, activationDate: '2024-01-15T12:00:00Z' },
-    // Plan Cerrado: Adjudicado y finalizado en Julio 2023
-    { id: "ID-20230720-9999", capital: 15000, plazo: 36, cuotaPromedio: 455, membersCount: 72, totalMembers: 72, status: "Cerrado", monthsCompleted: 36, userIsMember: true, userIsAwarded: true, activationDate: '2020-07-20T12:00:00Z' },
-    // Plan en Subasta Forzosa: Activado en Marzo 2024, con 2 cuotas pagas.
-    { id: "ID-20240510-8888", capital: 20000, plazo: 60, cuotaPromedio: calculateCuotaPromedio(20000, 60), membersCount: 120, totalMembers: 120, status: "Subastado", monthsCompleted: 2, userIsMember: true, userIsAwarded: false, activationDate: '2024-03-10T12:00:00Z' },
-    // Plan Vendido en Subasta: Ya no pertenece al usuario.
-    { id: "ID-20231101-7777", capital: 10000, plazo: 24, cuotaPromedio: calculateCuotaPromedio(10000, 24), membersCount: 48, totalMembers: 48, status: "Subastado", monthsCompleted: 19, userIsMember: false, userIsAwarded: false, activationDate: '2022-04-01T12:00:00Z' },
-    // Plan al que el usuario se unió y está abierto
-    { id: "ID-20240801-1024", capital: 10000, plazo: 24, cuotaPromedio: calculateCuotaPromedio(10000, 24), membersCount: 29, totalMembers: 48, status: "Abierto", userIsMember: true, userIsAwarded: false },
-
-
     // Grupos Abiertos (Nuevos y variados)
     { id: "ID-20240801-5012", capital: 5000, plazo: 12, cuotaPromedio: calculateCuotaPromedio(5000, 12), membersCount: 5, totalMembers: 24, status: "Abierto", userIsMember: false, userIsAwarded: false },
     { id: "ID-20240801-5024", capital: 5000, plazo: 24, cuotaPromedio: calculateCuotaPromedio(5000, 24), membersCount: 12, totalMembers: 48, status: "Abierto", userIsMember: false, userIsAwarded: false },
@@ -52,25 +40,17 @@ export const initialGroups: Group[] = [
 ];
 
 export const transactions: Transaction[] = [
-    { id: "txn-1", date: "2024-01-10", type: "Depósito", description: "Depósito inicial vía transferencia", amount: 5000, status: "Completado" },
-    
-    // Pagos del Plan Activo ID-20240115-9998 (6 cuotas)
-    { id: "txn-2", date: "2024-02-15", type: "Pago de Cuota", description: "Cuota 1/48, Plan ID-20240115-9998", amount: -345, status: "Completado" },
-    { id: "txn-3", date: "2024-03-15", type: "Pago de Cuota", description: "Cuota 2/48, Plan ID-20240115-9998", amount: -345, status: "Completado" },
-    { id: "txn-5", date: "2024-04-15", type: "Pago de Cuota", description: "Cuota 3/48, Plan ID-20240115-9998", amount: -345, status: "Completado" },
-    { id: "txn-7", date: "2024-05-15", type: "Pago de Cuota", description: "Cuota 4/48, Plan ID-20240115-9998", amount: -345, status: "Completado" },
-    { id: "txn-9", date: "2024-06-15", type: "Pago de Cuota", description: "Cuota 5/48, Plan ID-20240115-9998", amount: -345, status: "Completado" },
-    { id: "txn-10", date: "2024-07-15", type: "Pago de Cuota", description: "Cuota 6/48, Plan ID-20240115-9998", amount: -345, status: "Completado" },
-
-    // Pagos del Plan en Subasta ID-20240510-8888 (2 cuotas)
-    { id: "txn-4", date: "2024-04-10", type: "Pago de Cuota", description: "Cuota 1/60, Plan ID-20240510-8888", amount: -370, status: "Completado" },
-    { id: "txn-6", date: "2024-05-10", type: "Pago de Cuota", description: "Cuota 2/60, Plan ID-20240510-8888", amount: -370, status: "Completado" },
-    
-    // Liquidación del Plan Cerrado ID-20230720-9999
-    { id: "txn-8", date: "2023-08-01", type: "Liquidación", description: "Capital adjudicado del plan ID-20230720-9999", amount: 15000, status: "Completado" },
-
-    // Retiro de fondos
-    { id: "txn-11", date: "2024-07-20", type: "Retiro", description: "Retiro a cuenta bancaria", amount: -10000, status: "Completado" },
+    { id: "txn-1", date: "2024-01-10T10:00:00Z", type: "Depósito", description: "Depósito inicial vía transferencia", amount: 5000, status: "Completado" },
+    { id: "txn-2", date: "2024-02-15T10:00:00Z", type: "Pago de Cuota", description: "Cuota 1/48, Plan ID-20240115-9998", amount: -345, status: "Completado" },
+    { id: "txn-3", date: "2024-03-15T10:00:00Z", type: "Pago de Cuota", description: "Cuota 2/48, Plan ID-20240115-9998", amount: -345, status: "Completado" },
+    { id: "txn-4", date: "2024-04-10T10:00:00Z", type: "Pago de Cuota", description: "Cuota 1/60, Plan ID-20240510-8888", amount: -370, status: "Completado" },
+    { id: "txn-5", date: "2024-04-15T10:00:00Z", type: "Pago de Cuota", description: "Cuota 3/48, Plan ID-20240115-9998", amount: -345, status: "Completado" },
+    { id: "txn-6", date: "2024-05-10T10:00:00Z", type: "Pago de Cuota", description: "Cuota 2/60, Plan ID-20240510-8888", amount: -370, status: "Completado" },
+    { id: "txn-7", date: "2024-05-15T10:00:00Z", type: "Pago de Cuota", description: "Cuota 4/48, Plan ID-20240115-9998", amount: -345, status: "Completado" },
+    { id: "txn-8", date: "2023-08-01T10:00:00Z", type: "Liquidación", description: "Capital adjudicado del plan ID-20230720-9999", amount: 15000, status: "Completado" },
+    { id: "txn-9", date: "2024-06-15T10:00:00Z", type: "Pago de Cuota", description: "Cuota 5/48, Plan ID-20240115-9998", amount: -345, status: "Completado" },
+    { id: "txn-10", date: "2024-07-15T10:00:00Z", type: "Pago de Cuota", description: "Cuota 6/48, Plan ID-20240115-9998", amount: -345, status: "Completado" },
+    { id: "txn-11", date: "2024-07-20T10:00:00Z", type: "Retiro", description: "Retiro a cuenta bancaria", amount: -10000, status: "Completado" },
 ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
 
@@ -79,8 +59,8 @@ const getFutureDate = (hours: number) => new Date(Date.now() + hours * 60 * 60 *
 export let auctions: Omit<Auction, 'precioBase'>[] = [
     { id: "auc-1", groupId: "ID-20240210-1138", orderNumber: 15, capital: 30000, plazo: 60, cuotasPagadas: 15, highestBid: 7520, endDate: getFutureDate(48), numberOfBids: 1 },
     { id: "auc-2", groupId: "ID-20240305-4815", orderNumber: 42, capital: 15000, plazo: 36, cuotasPagadas: 20, highestBid: 4166.67, endDate: getFutureDate(24), numberOfBids: 0, isPostAdjudicacion: true },
-    { id: "auc-3", groupId: "ID-20231101-7777", orderNumber: 23, capital: 10000, plazo: 24, cuotasPagadas: 19, highestBid: 7800, endDate: getFutureDate(2), numberOfBids: 5, isMine: true },
-    { id: "auc-4", groupId: "ID-20240510-8888", orderNumber: 88, capital: 20000, plazo: 60, cuotasPagadas: 5, highestBid: 0, endDate: getFutureDate(48), numberOfBids: 0, isMine: true },
+    { id: "auc-3", groupId: "ID-20231101-7777", orderNumber: 23, capital: 10000, plazo: 24, cuotasPagadas: 19, highestBid: 7800, endDate: getFutureDate(2), numberOfBids: 5 },
+    { id: "auc-4", groupId: "ID-20240510-8888", orderNumber: 88, capital: 20000, plazo: 60, cuotasPagadas: 5, highestBid: 0, endDate: getFutureDate(48), numberOfBids: 0 },
 ];
 
 export const generateInstallments = (capital: number, plazo: number, activationDate: string): Installment[] => {
@@ -165,3 +145,4 @@ export const generateExampleInstallments = (capital: number, plazo: number): Ins
     
 
     
+
