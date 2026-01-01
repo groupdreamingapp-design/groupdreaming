@@ -106,7 +106,7 @@ export default function DashboardPage() {
                  <div className="flex items-center gap-4">
                   <PieChart className="h-8 w-8 text-muted-foreground" />
                   <div>
-                    <p className="text-sm text-muted-foreground">Cupo de Capital</p>
+                    <p className="text-sm text-muted-foreground">Cupo de Capital Disponible</p>
                     <p className="text-2xl font-bold">{formatCurrency(availableToSubscribe)}</p>
                     <p className="text-xs text-muted-foreground">Total: {formatCurrency(MAX_CAPITAL)}</p>
                   </div>
