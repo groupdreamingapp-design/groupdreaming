@@ -182,7 +182,7 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
   const comisionVenta = precioBaseSubasta * 0.02 * IVA;
   const liquidacionEstimada = precioBaseSubasta - comisionVenta;
   
-  const isPlanActive = group.status === 'Activo' || group.status === 'Subastado';
+  const isPlanActive = group.status === 'Activo';
 
   const pendingInstallmentIndex = useMemo(() => {
     if (!isPlanActive) return -1;
@@ -284,7 +284,7 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
           </Card>
         </div>
         
-         {isMember && (isPlanActive) && (
+         {isMember && isPlanActive && (
            <div className="lg:col-span-3">
              <Card>
                <CardHeader>

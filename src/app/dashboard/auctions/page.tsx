@@ -75,19 +75,29 @@ export default function AuctionsPage() {
 
   const auctions = groups
     .filter(g => g.status === 'Subastado')
-    .map(g => ({
-        id: g.id,
-        groupId: g.id,
-        orderNumber: 42,
-        capital: g.capital,
-        plazo: g.plazo,
-        cuotasPagadas: g.monthsCompleted || 0,
-        highestBid: (g.monthsCompleted || 0) * (g.capital/g.plazo) * 0.5, // Mock starting bid
-        endDate: new Date(Date.now() + 1000 * 60 * 60 * 24 * 3).toISOString(), // Mock end date
-        numberOfBids: Math.floor(Math.random() * 20),
-        isMine: g.userIsMember,
-        isPostAdjudicacion: !!g.userIsAwarded,
-    } as Auction));
+    .map(g => {
+        const installments = g.activationDate ? generateInstallments(g.capital, g.plazo, g.activationDate) : [];
+        const totalCuotasEmitidas = installments
+              .slice(0, g.monthsCompleted || 0)
+              .reduce((acc, installment) => acc + installment.total, 0);
+
+        const precioBase = totalCuotasEmitidas * 0.5;
+
+        return {
+            id: g.id,
+            groupId: g.id,
+            orderNumber: 42,
+            capital: g.capital,
+            plazo: g.plazo,
+            cuotasPagadas: g.monthsCompleted || 0,
+            highestBid: precioBase, // Start with the base price as the highest bid
+            endDate: new Date(Date.now() + 1000 * 60 * 60 * 24 * 3).toISOString(), // Mock end date
+            numberOfBids: 0, // Start with 0 bids
+            isMine: g.userIsMember,
+            isPostAdjudicacion: !!g.userIsAwarded,
+            activationDate: g.activationDate,
+        } as Auction
+    });
   
   const [openDialogs, setOpenDialogs] = useState<Record<string, boolean>>({});
 

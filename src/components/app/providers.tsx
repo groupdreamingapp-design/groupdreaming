@@ -40,6 +40,8 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
   const myGroupsCountRef = useRef(groups.filter(g => g.userIsMember).length);
   const lastJoinedGroupRef = useRef<Group | null>(null);
   const prevGroupsRef = useRef<Group[]>(groups);
+  const userInitiatedAuctionRef = useRef<string | null>(null);
+
 
   useEffect(() => {
     const currentMyGroups = groups.filter(g => g.userIsMember);
@@ -150,11 +152,17 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
         const prevGroup = prevGroups.find(p => p.id === currentGroup.id);
         if (prevGroup && prevGroup.userIsMember && currentGroup.userIsMember) {
             if (prevGroup.status === 'Activo' && currentGroup.status === 'Subastado') {
-                toast({
-                    variant: "destructive",
-                    title: "Plan en Subasta Forzosa",
-                    description: `Tu plan ${currentGroup.id} ha sido puesto en subasta por tener 2 o más cuotas vencidas.`,
-                });
+                if (userInitiatedAuctionRef.current === currentGroup.id) {
+                    // This was a user-initiated auction, toast is handled in the component
+                    userInitiatedAuctionRef.current = null; // Reset ref
+                } else {
+                    // This was a forced auction
+                    toast({
+                        variant: "destructive",
+                        title: "Plan en Subasta Forzosa",
+                        description: `Tu plan ${currentGroup.id} ha sido puesto en subasta por tener 2 o más cuotas vencidas.`,
+                    });
+                }
             }
         }
          if (prevGroup && prevGroup.userIsMember && !currentGroup.userIsMember) {
@@ -261,6 +269,7 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
   }, [toast]);
   
   const auctionGroup = useCallback((groupId: string) => {
+    userInitiatedAuctionRef.current = groupId;
     setGroups(currentGroups => {
       return currentGroups.map(g => 
         g.id === groupId ? { ...g, status: 'Subastado' } : g
