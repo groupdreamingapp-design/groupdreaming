@@ -28,7 +28,7 @@ const plazoOptions = [12, 24, 36, 48, 60, 72, 84];
 const generatedGroups: Group[] = [];
 let groupCounter = 1;
 
-const todayForId = new Date('2026-01-01T00:00:00Z');
+const todayForId = new Date();
 const year = todayForId.getFullYear();
 const month = String(todayForId.getMonth() + 1).padStart(2, '0');
 const day = String(todayForId.getDate()).padStart(2, '0');
@@ -39,15 +39,14 @@ for (const capital of capitalOptions) {
         const cuotaPromedio = calculateCuotaPromedio(capital, plazo);
 
         if (cuotaPromedio <= 1000) {
-            const sequentialNumber = String(groupCounter++).padStart(4, '0');
+            const sequentialNumber = String(groupCounter).padStart(4, '0');
             const newId = `ID-${dateString}-${sequentialNumber}`;
-
-            let totalMembers;
-            if (plazo <= 24) totalMembers = 48;
-            else if (plazo <= 48) totalMembers = 96;
-            else totalMembers = 144;
+            
+            const totalMembers = plazo <= 24 ? 48 : plazo <= 48 ? 96 : 144;
             
             const membersCount = (groupCounter % (totalMembers -1));
+            groupCounter++;
+
 
             generatedGroups.push({
                 id: newId,
@@ -112,14 +111,12 @@ export const generateInstallments = (capital: number, plazo: number, activationD
         const derechoSuscripcion = i < mesesFinanciacionSuscripcion ? cuotaSuscripcion : 0;
         const totalCuota = alicuotaPura + gastosAdm + seguroVida + derechoSuscripcion;
         
-        const targetMonthDate = addMonths(startDate, i + 1);
-        
-        const targetYear = targetMonthDate.getUTCFullYear();
-        const targetMonth = targetMonthDate.getUTCMonth();
-        
-        const lastDayOfTargetMonthInUTC = new Date(Date.UTC(targetYear, targetMonth + 1, 0)).getUTCDate();
-        
-        const dayToSet = Math.min(activationDay, lastDayOfTargetMonthInUTC);
+        const futureDate = addMonths(startDate, i + 1);
+        const targetYear = futureDate.getUTCFullYear();
+        const targetMonth = futureDate.getUTCMonth();
+
+        const lastDayOfTargetMonth = new Date(Date.UTC(targetYear, targetMonth + 1, 0)).getUTCDate();
+        const dayToSet = Math.min(activationDay, lastDayOfTargetMonth);
 
         const dueDate = new Date(Date.UTC(targetYear, targetMonth, dayToSet));
 
@@ -198,6 +195,7 @@ function generateNewGroup(templateGroup: Group): Group {
     
 
     
+
 
 
 

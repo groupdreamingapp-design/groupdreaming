@@ -212,7 +212,8 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
     if (dateString.startsWith('Mes')) {
         return dateString;
     }
-    return format(parseISO(dateString), 'dd/MM/yyyy');
+    // By passing a UTC timezone, we ensure the date is not shifted by the client's local timezone.
+    return format(parseISO(dateString), 'dd/MM/yyyy', { timeZone: 'UTC' });
   }
 
   return (
