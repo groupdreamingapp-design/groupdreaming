@@ -62,7 +62,7 @@ export function UserNav() {
         // Optionally, show a toast message to the user
       }
     }
-  }
+  };
 
   return (
     <DropdownMenu>
