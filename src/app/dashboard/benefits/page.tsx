@@ -13,7 +13,7 @@ const benefits = [
             {
                 title: "Funcionamiento del Beneficio",
                 points: [
-                    "Este beneficio está diseñado para los miembros que son adjudicados en la recta final de su plan de ahorro.",
+                    "Este beneficio está diseñado para los miembros que son adjudicados por sorteo en la recta final de su plan de ahorro.",
                     "Se activa automáticamente si un miembro resulta adjudicado por sorteo dentro del último 20% del plazo total de su grupo.",
                     "Por ejemplo, en un plan de 24 meses, el beneficio aplica si la adjudicación ocurre entre el mes 20 y el 24."
                 ]
@@ -31,7 +31,9 @@ const benefits = [
                     "No haber registrado cuotas vencidas ni pagado fuera de término durante toda la vigencia del plan.",
                     "No haber rechazado un acto de adjudicación previo en el mismo plan.",
                     "El beneficio aplica únicamente a adjudicaciones por sorteo, no por licitación.",
-                    "El plan no debe haber sido adquirido a través de una subasta en el mercado secundario."
+                    "El plan no debe haber sido adquirido a través de una subasta en el mercado secundario.",
+                    "El plan no debe haber sido suscripto utilizando un bono de descuento de un beneficio obtenido anteriormente.",
+                    "Los beneficios no son acumulables. No se pueden obtener ambos beneficios en un mismo grupo."
                 ]
             }
         ]
@@ -61,6 +63,8 @@ const benefits = [
                 points: [
                     "Ser el ganador del acto de licitación con una oferta que cumpla la condición mencionada.",
                     "No haber registrado cuotas vencidas ni pagado fuera de término durante toda la vigencia del plan.",
+                    "El plan no debe haber sido suscripto utilizando un bono de descuento de un beneficio obtenido anteriormente.",
+                    "Los beneficios no son acumulables. No se pueden obtener ambos beneficios en un mismo grupo."
                 ]
             }
         ]
