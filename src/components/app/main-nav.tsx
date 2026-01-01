@@ -34,7 +34,6 @@ export function MainNav({ isMobile = false }: MainNavProps) {
       href: "/dashboard/auctions",
       label: "Subastas",
       icon: Gavel,
-      badge: "2"
     },
     {
       href: "/dashboard/wallet",
