@@ -96,7 +96,6 @@ export const generateInstallments = (capital: number, plazo: number, activationD
     });
 };
 
-
 export const generateExampleInstallments = (capital: number, plazo: number): Installment[] => {
     const alicuotaPura = capital / plazo;
     const gastosAdm = (alicuotaPura * 0.10) * IVA; // 10% + IVA
