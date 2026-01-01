@@ -15,7 +15,7 @@ import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { useGroups } from '@/hooks/use-groups';
 import { generateInstallments, generateExampleInstallments } from '@/lib/data';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from '@/components/ui/separator';
 import { addDays, parseISO, format, isBefore, isToday } from 'date-fns';
@@ -93,6 +93,19 @@ const generateStaticAwards = (group: Group): Award[][] => {
 
     return awards;
 };
+
+// Component to safely format dates on the client side, avoiding hydration mismatch.
+function ClientFormattedDate({ dateString, formatString }: { dateString: string, formatString: string }) {
+  const [formattedDate, setFormattedDate] = useState(() => format(parseISO(dateString), 'yyyy-MM-dd'));
+
+  useEffect(() => {
+    // This effect runs only on the client, after hydration.
+    // It updates the date to the user's local timezone format.
+    setFormattedDate(format(parseISO(dateString), formatString, { locale: es }));
+  }, [dateString, formatString]);
+
+  return <>{formattedDate}</>;
+}
 
 
 export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
@@ -208,13 +221,7 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
 
   const formatCurrency = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD' }).format(amount);
   const formatCurrencyNoDecimals = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount);
-  const formatDate = (dateString: string) => {
-    if (dateString.startsWith('Mes')) {
-        return dateString;
-    }
-    // By passing a UTC timezone, we ensure the date is not shifted by the client's local timezone.
-    return format(parseISO(dateString), 'dd/MM/yyyy', { timeZone: 'UTC' });
-  }
+  
 
   return (
     <>
@@ -485,12 +492,12 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                       }
                       
                       const currentAwards = (isPlanActive && inst.number >= 2 && (status === 'Pagado' || status === 'Vencido')) ? groupAwards[inst.number - 2] : undefined;
-                      const awardDate = (isPlanActive && currentAwards) ? format(addDays(parseISO(inst.dueDate), 5), 'dd/MM/yyyy') : undefined;
+                      const awardDateString = (isPlanActive && currentAwards) ? addDays(parseISO(inst.dueDate), 5).toISOString() : undefined;
 
                       return (
                         <TableRow key={inst.id}>
                           <TableCell>{inst.number}</TableCell>
-                          <TableCell>{formatDate(inst.dueDate)}</TableCell>
+                          <TableCell>{inst.dueDate.startsWith('Mes') ? inst.dueDate : <ClientFormattedDate dateString={inst.dueDate} formatString="dd/MM/yyyy" />}</TableCell>
                           <TableCell>
                             <Badge variant={status === 'Pagado' ? 'default' : status === 'Pendiente' ? 'secondary' : status === 'Vencido' ? 'destructive' : 'outline'}
                               className={cn(
@@ -501,10 +508,10 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                             >{status}</Badge>
                           </TableCell>
                            <TableCell className="text-xs text-muted-foreground">
-                              {awardDate && inst.number >= 2 && (
+                              {awardDateString && inst.number >= 2 && (
                                   <div className="flex items-center gap-2">
                                        <CalendarCheck className="h-4 w-4" />
-                                       <span>{awardDate}</span>
+                                       <span>{<ClientFormattedDate dateString={awardDateString} formatString="dd/MM/yyyy" />}</span>
                                   </div>
                               )}
                               <div className="flex items-center gap-3 mt-1">
@@ -565,3 +572,5 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
     </>
   );
 }
+
+    

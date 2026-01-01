@@ -89,7 +89,7 @@ export const initialGroups: Group[] = generatedGroups;
 
 export const transactions: Transaction[] = [];
 
-const staticBaseDate = new Date('2026-01-10T12:00:00Z').getTime();
+const staticBaseDate = new Date('2026-01-10T12:00:00Z');
 
 
 export let auctions: Omit<Auction, 'precioBase'>[] = [];
@@ -218,3 +218,6 @@ function generateNewGroup(templateGroup: Group): Group {
 
 
 
+
+
+    
