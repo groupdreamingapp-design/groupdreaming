@@ -3,8 +3,6 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { cn } from '@/lib/utils';
 import { GroupsProvider } from '@/components/app/providers';
-import { AuthProvider } from '@/components/app/auth-provider';
-import { FirebaseClientProvider } from '@/firebase';
 
 export const metadata: Metadata = {
   title: 'Group Dreaming',
@@ -28,13 +26,9 @@ export default function RootLayout({
           "min-h-screen bg-background font-body antialiased",
         )}
       >
-        <FirebaseClientProvider>
-          <GroupsProvider>
-            <AuthProvider>
-              {children}
-            </AuthProvider>
-          </GroupsProvider>
-        </FirebaseClientProvider>
+        <GroupsProvider>
+          {children}
+        </GroupsProvider>
         <Toaster />
       </body>
     </html>

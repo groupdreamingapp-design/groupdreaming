@@ -5,10 +5,11 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Users, Scale, Rows, ShieldCheck } from "lucide-react";
 import { Logo } from '@/components/icons';
-import { useUser } from "@/firebase";
+import { user as mockUser } from "@/lib/data"; // Use mock user
 
 export default function WhyUsPage() {
-  const user = useUser();
+  // We'll use a mock user for now.
+  const user = mockUser;
 
   const pillars = [
     {
