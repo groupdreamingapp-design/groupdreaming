@@ -99,6 +99,9 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
   const { groups, joinGroup } = useGroups();
   const [cuotasToAdvance, setCuotasToAdvance] = useState<number>(0);
   const [cuotasToBid, setCuotasToBid] = useState<number>(0);
+  const [termsAcceptedAdvance, setTermsAcceptedAdvance] = useState(false);
+  const [termsAcceptedBid, setTermsAcceptedBid] = useState(false);
+
 
   const group = useMemo(() => groups.find(g => g.id === groupId), [groups, groupId]);
   
@@ -134,17 +137,7 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
 
   const cuotasPagadas = group.monthsCompleted || 0;
   const cuotasRestantes = group.plazo - cuotasPagadas;
-  const cuotasFuturas = cuotasRestantes > 0 ? cuotasRestantes -1 : 0;
-
-
-  const formatCurrency = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD' }).format(amount);
-  const formatCurrencyNoDecimals = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount);
-  const formatDate = (dateString: string) => {
-    if (dateString.startsWith('Mes')) {
-        return dateString;
-    }
-    return format(parseISO(dateString), 'dd/MM/yyyy');
-  }
+  
   const isMember = group.userIsMember;
   
   const realInstallments = useMemo(() => {
@@ -168,10 +161,25 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
   
   const futureInstallments = realInstallments.slice(cuotasPagadas, group.plazo);
 
+  const isPlanActive = group.status === 'Activo';
+
+  const pendingInstallmentIndex = useMemo(() => {
+    if (!isPlanActive && group.status !== 'Subastado') return -1;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return installments.findIndex(inst => inst.number > cuotasPagadas && !isBefore(parseISO(inst.dueDate), today));
+  }, [installments, cuotasPagadas, isPlanActive, group.status]);
+  
+  const cuotasFuturas = pendingInstallmentIndex !== -1 ? group.plazo - installments[pendingInstallmentIndex].number + 1 : 0;
+  
+  const isAdvanceInputValid = cuotasToAdvance > 0 && cuotasToAdvance <= cuotasFuturas;
+  const isBidInputValid = cuotasToBid > 0 && cuotasToBid <= cuotasFuturas;
+
+
   const calculateSavings = (cuotasCount: number) => {
     if (cuotasCount <= 0 || cuotasCount > futureInstallments.length) return { totalToPay: 0, totalOriginal: 0, totalSaving: 0 };
     
-    const installmentsToConsider = futureInstallments.slice(0, cuotasCount);
+    const installmentsToConsider = futureInstallments.slice(futureInstallments.length - cuotasCount);
     const totalToPay = installmentsToConsider.reduce((acc, inst) => acc + inst.breakdown.alicuotaPura, 0);
     const totalOriginal = installmentsToConsider.reduce((acc, inst) => acc + inst.total, 0);
     const totalSaving = totalOriginal - totalToPay;
@@ -182,17 +190,14 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
   const advanceSavings = calculateSavings(cuotasToAdvance);
   const bidSavings = calculateSavings(cuotasToBid);
 
-  const isPlanActive = group.status === 'Activo';
-  
-  const pendingInstallmentIndex = useMemo(() => {
-    if (!isPlanActive && group.status !== 'Subastado') return -1;
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    
-    return installments.findIndex(inst => 
-        !isBefore(parseISO(inst.dueDate), today) && inst.number > cuotasPagadas
-    );
-  }, [installments, cuotasPagadas, isPlanActive, group.status]);
+  const formatCurrency = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD' }).format(amount);
+  const formatCurrencyNoDecimals = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount);
+  const formatDate = (dateString: string) => {
+    if (dateString.startsWith('Mes')) {
+        return dateString;
+    }
+    return format(parseISO(dateString), 'dd/MM/yyyy');
+  }
 
   return (
     <>
@@ -205,7 +210,7 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 flex flex-col md:flex-row gap-4">
+        <div className={cn("lg:col-span-3 flex flex-col md:flex-row gap-4", !isMember && "lg:col-span-2")}>
           {isMember && (
             <Card className="flex-1 flex flex-col">
               <CardHeader>
@@ -237,7 +242,7 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
           </Card>
         </div>
         
-        {isMember && (group.status === 'Activo') && (
+         {isMember && group.status === 'Activo' && (
            <div className="lg:col-span-3">
              <Card>
                <CardHeader>
@@ -245,26 +250,24 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                  <CardDescription>Opciones disponibles para tu plan.</CardDescription>
                </CardHeader>
                <CardContent className="flex flex-wrap gap-2">
-                 <Dialog onOpenChange={() => setCuotasToAdvance(0)}>
+                 <Dialog onOpenChange={() => { setCuotasToAdvance(0); setTermsAcceptedAdvance(false); }}>
                    <DialogTrigger asChild><Button size="sm" variant="secondary" disabled={!isPlanActive}><TrendingUp className="mr-2 h-4 w-4" /> Adelantar</Button></DialogTrigger>
                    <DialogContent>
                      <DialogHeader><DialogTitle>Adelantar Cuotas</DialogTitle><DialogDescription>Paga cuotas futuras para acortar tu plan y obtén una bonificación.</DialogDescription></DialogHeader>
                      <div className="space-y-4">
-                         <p className="text-sm text-muted-foreground">No compite por adjudicación, pero reduce el costo final de tu plan.</p>
-                         <div className="grid w-full max-w-sm items-center gap-1.5">
+                         <div className="grid w-full items-center gap-1.5">
                              <Label htmlFor="cuotas-adelantar">Cantidad de cuotas a adelantar</Label>
-                              <Select onValueChange={(value) => setCuotasToAdvance(Number(value))}>
-                                 <SelectTrigger id="cuotas-adelantar">
-                                     <SelectValue placeholder="Selecciona la cantidad de cuotas" />
-                                 </SelectTrigger>
-                                 <SelectContent>
-                                     {Array.from({ length: cuotasFuturas }, (_, i) => i + 1).map(num => (
-                                         <SelectItem key={num} value={String(num)}>{num} cuota{num > 1 && 's'}</SelectItem>
-                                     ))}
-                                 </SelectContent>
-                             </Select>
+                             <Input 
+                                id="cuotas-adelantar"
+                                type="number"
+                                placeholder={`Entre 1 y ${cuotasFuturas}`}
+                                value={cuotasToAdvance > 0 ? cuotasToAdvance : ''}
+                                onChange={(e) => setCuotasToAdvance(Number(e.target.value))}
+                                className={cn(cuotasToAdvance > 0 && !isAdvanceInputValid && "border-red-500")}
+                             />
+                             <p className="text-xs text-muted-foreground">Adelantas las últimas cuotas de tu plan. No compite por adjudicación.</p>
                          </div>
-                         {cuotasToAdvance > 0 ? (
+                         {isAdvanceInputValid ? (
                              <Card className="bg-muted/50">
                                  <CardContent className="p-4 text-sm space-y-1">
                                      <p>Pagarías (valor puro): <strong>{formatCurrency(advanceSavings.totalToPay)}</strong></p>
@@ -273,18 +276,29 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                                  </CardContent>
                              </Card>
                          ) : (
-                             <p className="text-xs text-muted-foreground">Selecciona una cantidad de cuotas para ver el ahorro.</p>
+                             <p className="text-xs text-muted-foreground">Ingresa un número de cuotas válido para ver el ahorro.</p>
                          )}
+                          <div className="items-top flex space-x-2 pt-2">
+                           <Switch id="terms-advance" checked={termsAcceptedAdvance} onCheckedChange={setTermsAcceptedAdvance} disabled={!isAdvanceInputValid} />
+                           <div className="grid gap-1.5 leading-none">
+                            <Label htmlFor="terms-advance" className={cn("font-medium", !isAdvanceInputValid && "text-muted-foreground")}>
+                                Acepto los términos y condiciones de adelanto.
+                            </Label>
+                            <p className="text-xs text-muted-foreground">
+                                El monto se debitará de tu billetera. Esta acción es irreversible.
+                            </p>
+                           </div>
+                         </div>
                      </div>
                      <DialogFooter>
-                         <Button type="submit">Adelantar Cuotas</Button>
+                         <Button type="submit" disabled={!termsAcceptedAdvance}>Adelantar Cuotas</Button>
                      </DialogFooter>
                    </DialogContent>
                  </Dialog>
  
                  {!group.userIsAwarded && (
                    <>
-                     <Dialog onOpenChange={() => setCuotasToBid(0)}>
+                     <Dialog onOpenChange={() => { setCuotasToBid(0); setTermsAcceptedBid(false); }}>
                        <DialogTrigger asChild>
                          <Button size="sm" disabled={!isPlanActive || cuotasPagadas < 2}>
                            <Gavel className="mr-2 h-4 w-4" /> Licitar
@@ -293,39 +307,42 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                        <DialogContent>
                          <DialogHeader><DialogTitle>Licitar por Adjudicación</DialogTitle><DialogDescription>Ofrece adelantar cuotas para obtener el capital. Quien más ofrezca, gana.</DialogDescription></DialogHeader>
                          <div className="space-y-4">
-                             <p className="text-sm text-muted-foreground">Tu oferta competirá con otros miembros. Si ganas, el monto se usa para cancelar las últimas cuotas de tu plan.</p>
-                             <div className="grid w-full max-w-sm items-center gap-1.5">
+                              <div className="grid w-full items-center gap-1.5">
                                  <Label htmlFor="cuotas-licitar">Cuotas a licitar (adelantar)</Label>
-                                 <Select onValueChange={(value) => setCuotasToBid(Number(value))}>
-                                     <SelectTrigger id="cuotas-licitar">
-                                         <SelectValue placeholder="Selecciona la cantidad de cuotas" />
-                                     </SelectTrigger>
-                                     <SelectContent>
-                                         {Array.from({ length: cuotasFuturas }, (_, i) => i + 1).map(num => (
-                                             <SelectItem key={num} value={String(num)}>{num} cuota{num > 1 && 's'}</SelectItem>
-                                         ))}
-                                     </SelectContent>
-                                 </Select>
+                                 <Input
+                                    id="cuotas-licitar"
+                                    type="number"
+                                    placeholder={`Entre 1 y ${cuotasFuturas}`}
+                                    value={cuotasToBid > 0 ? cuotasToBid : ''}
+                                    onChange={(e) => setCuotasToBid(Number(e.target.value))}
+                                    className={cn(cuotasToBid > 0 && !isBidInputValid && "border-red-500")}
+                                 />
+                                 <p className="text-xs text-muted-foreground">Tu oferta competirá con otros miembros. Si ganas, cancelas las últimas cuotas.</p>
                              </div>
-                             {cuotasToBid > 0 ? (
+                             {isBidInputValid ? (
                                  <Card className="bg-muted/50">
                                      <CardContent className="p-4 text-sm space-y-1">
-                                         <p>Pagarías (valor puro): <strong>{formatCurrency(bidSavings.totalToPay)}</strong></p>
-                                         <p>En lugar de (valor final): <span className='line-through'>{formatCurrency(bidSavings.totalOriginal)}</span></p>
-                                         <p className="text-green-600 font-semibold">¡Ahorras {formatCurrency(bidSavings.totalSaving)} en gastos y seguros!</p>
+                                         <p>Monto de la oferta (valor puro): <strong>{formatCurrency(bidSavings.totalToPay)}</strong></p>
+                                         <p>Ahorro estimado en gastos: <span className="text-green-600 font-semibold">{formatCurrency(bidSavings.totalSaving)}</span></p>
                                      </CardContent>
                                  </Card>
                              ) : (
-                                 <p className="text-xs text-muted-foreground">Selecciona una cantidad de cuotas para ver el ahorro.</p>
+                                 <p className="text-xs text-muted-foreground">Ingresa un número de cuotas válido para ver el monto.</p>
                              )}
-                             <div className="flex items-center space-x-2">
-                               <Switch id="licitacion-automatica" />
-                               <Label htmlFor="licitacion-automatica">Activar Licitación Automática</Label>
+                             <div className="items-top flex space-x-2 pt-2">
+                               <Switch id="terms-bid" checked={termsAcceptedBid} onCheckedChange={setTermsAcceptedBid} disabled={!isBidInputValid} />
+                               <div className="grid gap-1.5 leading-none">
+                                <Label htmlFor="terms-bid" className={cn("font-medium", !isBidInputValid && "text-muted-foreground")}>
+                                    Acepto los términos y condiciones de licitación.
+                                </Label>
+                                <p className="text-xs text-muted-foreground">
+                                    Si ganas y no integras el capital, se aplicará una multa del 2% (+IVA) sobre tu oferta.
+                                </p>
+                               </div>
                              </div>
-                             <p className="text-xs text-muted-foreground">Recuerda que si ganas y no integras el capital, se aplicará una multa del 2% (+IVA) sobre tu oferta.</p>
                          </div>
                          <DialogFooter>
-                             <Button type="submit">Confirmar Licitación</Button>
+                             <Button type="submit" disabled={!termsAcceptedBid}>Confirmar Licitación</Button>
                          </DialogFooter>
                        </DialogContent>
                      </Dialog>
@@ -376,17 +393,26 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
              </Card>
            </div>
          )}
+        
+        {isMember && group.status === 'Subastado' && (
+            <div className="lg:col-span-3">
+                <Card>
+                <CardHeader>
+                    <CardTitle className='text-orange-600'>Plan en Subasta</CardTitle>
+                    <CardDescription>
+                        Este plan se encuentra en el mercado secundario. Las acciones ya no están disponibles aquí.
+                        Puedes seguir el estado de la subasta en el módulo correspondiente.
+                    </CardDescription>
+                </CardHeader>
+                </Card>
+            </div>
+        )}
 
         {(group.status === 'Abierto' || group.status === 'Pendiente' || group.status === 'Activo' || group.status === 'Subastado') && (
           <div className="lg:col-span-3">
             <Card>
               <CardHeader>
                 <CardTitle>Plan de Cuotas { (group.status === 'Abierto' || group.status === 'Pendiente') ? '(Ejemplo)' : ''}</CardTitle>
-                {(group.userIsMember && group.status === 'Subastado') ? (
-                    <CardDescription className="!text-orange-600 font-semibold">
-                        Este plan está en el mercado secundario. Las acciones se gestionan desde la sección de Subastas.
-                    </CardDescription>
-                ) : null}
               </CardHeader>
               <CardContent>
                 <Table>
@@ -403,12 +429,13 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                   <TableBody>
                     {installments.map((inst, index) => {
                       let status: Installment['status'] = 'Futuro';
-                      const dueDate = parseISO(inst.dueDate);
                       const today = new Date();
                       today.setHours(0, 0, 0, 0);
 
                       if (group.status === 'Activo' || group.status === 'Subastado') {
+                          const dueDate = parseISO(inst.dueDate);
                           const isPaid = inst.number <= cuotasPagadas;
+                          
                           if (isBefore(dueDate, today)) {
                               status = isPaid ? 'Pagado' : 'Vencido';
                           } else {
@@ -422,8 +449,8 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                           }
                       }
                       
-                      const currentAwards = (isPlanActive && inst.number >= 2 && (cuotasPagadas >= inst.number - 1 || isBefore(dueDate, addDays(today, 5)))) ? groupAwards[inst.number - 2] : undefined;
-                      const awardDate = (isPlanActive && currentAwards) ? format(addDays(dueDate, 5), 'dd/MM/yyyy') : undefined;
+                      const currentAwards = (isPlanActive && inst.number >= 2 && (cuotasPagadas >= inst.number - 1 || isBefore(parseISO(inst.dueDate), addDays(today, 5)))) ? groupAwards[inst.number - 2] : undefined;
+                      const awardDate = (isPlanActive && currentAwards) ? format(addDays(parseISO(inst.dueDate), 5), 'dd/MM/yyyy') : undefined;
 
                       return (
                         <TableRow key={inst.id}>
@@ -503,3 +530,4 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
     </>
   );
 }
+
