@@ -20,7 +20,7 @@ const rulesConfig = [
         points: [
             "Los compradores realizan ofertas durante el plazo de la subasta. Al ganar, tienen 24hs para integrar el capital ofertado.",
             "Si el comprador no paga su oferta ganadora, será bloqueado hasta que pague una multa del 10% + IVA sobre el valor de su oferta.",
-            "Si un plan no recibe ofertas, la plataforma garantiza su compra al precio base, asegurando una liquidación para el vendedor."
+            "Si un plan no recibe ofertas, la subasta se declara desierta y el plan vuelve al control del vendedor, quien podrá volver a publicarlo."
         ]
     },
     {
