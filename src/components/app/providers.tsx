@@ -33,6 +33,7 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
   const [groups, setGroups] = useState<Group[]>(initialGroups);
   const myGroupsCountRef = useRef(groups.filter(g => g.userIsMember).length);
   const lastJoinedGroupRef = useRef<Group | null>(null);
+  const prevGroupsRef = useRef<Group[]>(groups);
 
   useEffect(() => {
     const currentMyGroups = groups.filter(g => g.userIsMember);
@@ -106,11 +107,6 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
                         
                         if (diffHours > 72) {
                             changed = true;
-                            toast({
-                                variant: "destructive",
-                                title: "Plan en Subasta Forzosa",
-                                description: `Tu plan ${group.id} ha sido puesto en subasta por tener 2 o más cuotas vencidas.`,
-                            });
                             return { ...group, status: 'Subastado' };
                         }
                     }
@@ -128,6 +124,23 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
     const timer = setTimeout(checkOverdue, 3000); // Check 3 seconds after app loads
     return () => clearTimeout(timer);
   }, []);
+
+  // Effect to show toast when a group is auctioned
+  useEffect(() => {
+    const prevGroups = prevGroupsRef.current;
+    groups.forEach(currentGroup => {
+        const prevGroup = prevGroups.find(p => p.id === currentGroup.id);
+        if (prevGroup && prevGroup.status === 'Activo' && currentGroup.status === 'Subastado') {
+            toast({
+                variant: "destructive",
+                title: "Plan en Subasta Forzosa",
+                description: `Tu plan ${currentGroup.id} ha sido puesto en subasta por tener 2 o más cuotas vencidas.`,
+            });
+        }
+    });
+    
+    prevGroupsRef.current = groups;
+  }, [groups]);
 
   const joinGroup = useCallback((groupId: string) => {
     let joinedGroup: Group | null = null;
