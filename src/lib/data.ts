@@ -26,7 +26,7 @@ export const initialGroups: Group[] = [
     { id: "ID-20240115-9998", capital: 15000, plazo: 48, cuotaPromedio: 345, membersCount: 96, totalMembers: 96, status: "Activo", monthsCompleted: 12, userIsMember: true, userIsAwarded: true, activationDate: '2024-01-15' },
     { id: "ID-20230720-9999", capital: 15000, plazo: 36, cuotaPromedio: 455, membersCount: 72, totalMembers: 72, status: "Cerrado", monthsCompleted: 36, userIsMember: true, userIsAwarded: true, activationDate: '2023-07-20' },
     { id: "ID-20240510-8888", capital: 20000, plazo: 60, cuotaPromedio: calculateCuotaPromedio(20000, 60), membersCount: 120, totalMembers: 120, status: "Activo", monthsCompleted: 1, userIsMember: true, userIsAwarded: false, activationDate: '2024-05-10' },
-    { id: "ID-20231101-7777", capital: 10000, plazo: 24, cuotaPromedio: calculateCuotaPromedio(10000, 24), membersCount: 48, totalMembers: 48, status: "Activo", monthsCompleted: 2, userIsMember: true, userIsAwarded: false, isOverdue: true, activationDate: '2023-11-01' },
+    { id: "ID-20231101-7777", capital: 10000, plazo: 24, cuotaPromedio: calculateCuotaPromedio(10000, 24), membersCount: 48, totalMembers: 48, status: "Activo", monthsCompleted: 2, userIsMember: true, userIsAwarded: false, activationDate: '2023-11-01' },
 
 
     // Grupos Abiertos (Nuevos y variados)
@@ -59,7 +59,6 @@ const getFutureDate = (hours: number) => new Date(Date.now() + hours * 60 * 60 *
 export let auctions: Omit<Auction, 'precioBase'>[] = [
     { id: "auc-1", groupId: "ID-20240210-1138", orderNumber: 15, capital: 30000, plazo: 60, cuotasPagadas: 15, highestBid: 7520, endDate: getFutureDate(48), numberOfBids: 1 },
     { id: "auc-2", groupId: "ID-20240305-4815", orderNumber: 42, capital: 15000, plazo: 36, cuotasPagadas: 20, highestBid: 4166.67, endDate: getFutureDate(24), numberOfBids: 0, isPostAdjudicacion: true },
-    { id: "auc-3", groupId: "ID-20231101-7777", orderNumber: 23, capital: 10000, plazo: 24, cuotasPagadas: 4, highestBid: 1000, endDate: getFutureDate(72), numberOfBids: 0 },
 ];
 
 const capital = 20000;
@@ -73,7 +72,7 @@ const cuotaSuscripcion = mesesFinanciacionSuscripcion > 0 ? totalSuscripcion / m
 
 // Use a static date to prevent hydration errors.
 const generateDueDates = (count: number): Date[] => {
-    const startDate = new Date('2024-01-10T12:00:00Z');
+    const startDate = new Date('2023-11-10T12:00:00Z');
     return Array.from({ length: count }, (_, i) => addMonths(startDate, i));
 };
 
@@ -133,4 +132,5 @@ export const generateExampleInstallments = (capital: number, plazo: number): Ins
 };
 
     
+
 

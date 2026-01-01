@@ -20,7 +20,6 @@ export type Group = {
   userIsMember: boolean;
   userIsAwarded?: boolean;
   monthsCompleted?: number;
-  isOverdue?: boolean;
   activationDate?: string;
 };
 
@@ -71,3 +70,4 @@ export type Installment = {
   };
   awards?: Award[];
 };
+
