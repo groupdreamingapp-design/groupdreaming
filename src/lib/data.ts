@@ -47,7 +47,7 @@ for (const capital of capitalOptions) {
             else if (plazo <= 48) totalMembers = 96;
             else totalMembers = 144;
             
-            const membersCount = Math.floor(Math.random() * (totalMembers - 1));
+            const membersCount = (groupCounter % (totalMembers -1));
 
             generatedGroups.push({
                 id: newId,
@@ -122,7 +122,6 @@ export const generateInstallments = (capital: number, plazo: number, activationD
         
         const targetMonthDate = addMonths(startDate, i + 1);
         
-        // Use UTC dates to avoid timezone issues
         const targetYear = targetMonthDate.getUTCFullYear();
         const targetMonth = targetMonthDate.getUTCMonth();
         
@@ -207,6 +206,7 @@ function generateNewGroup(templateGroup: Group): Group {
     
 
     
+
 
 
 
