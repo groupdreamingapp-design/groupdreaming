@@ -159,7 +159,7 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
   const comisionVenta = precioBaseSubasta * 0.02 * IVA;
   const liquidacionEstimada = precioBaseSubasta - comisionVenta;
   
-  const futureInstallments = realInstallments.slice(cuotasPagadas, group.plazo);
+  const futureInstallmentsOnly = realInstallments.slice(cuotasPagadas, group.plazo);
 
   const isPlanActive = group.status === 'Activo';
 
@@ -170,16 +170,26 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
     return installments.findIndex(inst => inst.number > cuotasPagadas && !isBefore(parseISO(inst.dueDate), today));
   }, [installments, cuotasPagadas, isPlanActive, group.status]);
   
-  const cuotasFuturas = pendingInstallmentIndex !== -1 ? group.plazo - installments[pendingInstallmentIndex].number + 1 : 0;
+  const cuotasFuturas = useMemo(() => {
+    if (pendingInstallmentIndex === -1) return cuotasRestantes;
+    // Count only installments strictly after the pending one.
+    const pendingInstallmentNumber = installments[pendingInstallmentIndex]?.number;
+    if (pendingInstallmentNumber) {
+        return group.plazo - pendingInstallmentNumber;
+    }
+    // If there is no pending installment (e.g. all are paid or overdue), there are no future installments to advance/bid
+    return realInstallments.filter(i => i.number > cuotasPagadas && isBefore(new Date(), parseISO(i.dueDate))).length -1;
+  }, [pendingInstallmentIndex, installments, group.plazo, cuotasRestantes, realInstallments, cuotasPagadas]);
+
   
   const isAdvanceInputValid = cuotasToAdvance > 0 && cuotasToAdvance <= cuotasFuturas;
   const isBidInputValid = cuotasToBid > 0 && cuotasToBid <= cuotasFuturas;
 
 
   const calculateSavings = (cuotasCount: number) => {
-    if (cuotasCount <= 0 || cuotasCount > futureInstallments.length) return { totalToPay: 0, totalOriginal: 0, totalSaving: 0 };
+    if (cuotasCount <= 0 || cuotasCount > futureInstallmentsOnly.length) return { totalToPay: 0, totalOriginal: 0, totalSaving: 0 };
     
-    const installmentsToConsider = futureInstallments.slice(futureInstallments.length - cuotasCount);
+    const installmentsToConsider = futureInstallmentsOnly.slice(futureInstallmentsOnly.length - cuotasCount);
     const totalToPay = installmentsToConsider.reduce((acc, inst) => acc + inst.breakdown.alicuotaPura, 0);
     const totalOriginal = installmentsToConsider.reduce((acc, inst) => acc + inst.total, 0);
     const totalSaving = totalOriginal - totalToPay;
@@ -433,19 +443,20 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                       today.setHours(0, 0, 0, 0);
 
                       if (group.status === 'Activo' || group.status === 'Subastado') {
-                          const dueDate = parseISO(inst.dueDate);
-                          const isPaid = inst.number <= cuotasPagadas;
-                          
-                          if (isBefore(dueDate, today)) {
-                              status = isPaid ? 'Pagado' : 'Vencido';
+                          if (inst.number <= cuotasPagadas) {
+                            status = 'Pagado';
                           } else {
-                              if (isPaid) {
-                                status = 'Pagado';
-                              } else if (index === pendingInstallmentIndex) {
-                                  status = 'Pendiente';
-                              } else {
-                                  status = 'Futuro';
-                              }
+                            const dueDate = parseISO(inst.dueDate);
+                            if (isBefore(dueDate, today)) {
+                              status = 'Vencido';
+                            } else {
+                                // Find the very first installment that is not paid and not overdue
+                                if (index === pendingInstallmentIndex) {
+                                    status = 'Pendiente';
+                                } else {
+                                    status = 'Futuro';
+                                }
+                            }
                           }
                       }
                       
@@ -531,3 +542,4 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
   );
 }
 
+    
