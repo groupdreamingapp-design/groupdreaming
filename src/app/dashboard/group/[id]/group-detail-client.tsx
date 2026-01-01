@@ -74,16 +74,13 @@ const generateStaticAwards = (group: Group): Award[][] => {
         const remainingMonths = group.plazo - i;
         const remainingWinners = winnerPool.length;
         
-        // Default to 2 awards per month
         let awardsThisMonth = 2;
         
-        // If remaining winners can't be covered by 2 awards/month, increase to 4
         if (remainingWinners > 0 && (remainingWinners / remainingMonths > 2)) {
              awardsThisMonth = 4;
         }
 
         for(let j = 0; j < awardsThisMonth && winnerPool.length > 0; j++) {
-            // Alternate between 'sorteo' and 'licitacion'
             const awardType = j % 2 === 0 ? 'sorteo' : 'licitacion';
             monthAwards.push({ type: awardType, orderNumber: winnerPool.shift()! });
         }
@@ -140,7 +137,6 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
   const formatCurrency = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD' }).format(amount);
   const formatCurrencyNoDecimals = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount);
   const formatDate = (dateString: string) => {
-    // Check if the date string is just a month reference like "Mes 1"
     if (dateString.startsWith('Mes')) {
         return dateString;
     }
@@ -183,19 +179,9 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
   const advanceSavings = calculateSavings(cuotasToAdvance);
   const bidSavings = calculateSavings(cuotasToBid);
 
-  const nextPendingInstallmentIndex = useMemo(() => {
-    if (group.status !== 'Activo') return -1;
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    // Find the first installment that is not paid and is due on or after today
-    return realInstallments.findIndex(inst => {
-      const dueDate = parseISO(inst.dueDate);
-      const isPaid = inst.number <= cuotasPagadas;
-      return !isPaid && !isBefore(dueDate, today);
-    });
-  }, [realInstallments, cuotasPagadas, group.status]);
-
   const isPlanActive = group.status === 'Activo';
+  
+  let firstPendingFound = false;
 
   return (
     <>
@@ -399,31 +385,28 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {installments.map((inst, index) => {
+                  {installments.map((inst) => {
                     let status: Installment['status'] = 'Futuro';
-                    let dueDate = isPlanActive ? parseISO(inst.dueDate) : new Date();
+                    let dueDate = parseISO(inst.dueDate);
                     let today = new Date();
                     today.setHours(0, 0, 0, 0);
 
-                    const isPastOrToday = isBefore(dueDate, today) || isToday(dueDate);
-
                     if (isPlanActive) {
-                        if (inst.number <= cuotasPagadas && isPastOrToday) {
-                            status = 'Pagado';
-                        } else if (isBefore(dueDate, today) && inst.number > cuotasPagadas) {
-                            status = 'Vencido';
-                        } else if (index === nextPendingInstallmentIndex) {
-                            status = 'Pendiente';
-                        }
-                    } else if (group.status === 'Abierto' || group.status === 'Pendiente') {
-                        status = 'Futuro';
-                    }
+                        const isPaid = inst.number <= cuotasPagadas;
+                        const isOverdue = isBefore(dueDate, today);
 
-                    if (group.status === 'Subastado' && status !== 'Pagado' && status !== 'Vencido') {
-                        status = 'Futuro';
+                        if (isPaid) {
+                            status = 'Pagado';
+                        } else if (isOverdue) {
+                            status = 'Vencido';
+                        } else if (!firstPendingFound) {
+                            status = 'Pendiente';
+                            firstPendingFound = true;
+                        } else {
+                            status = 'Futuro';
+                        }
                     }
                     
-                    const isMonthPast = isPlanActive && isBefore(dueDate, today);
                     const currentAwards = (isPlanActive && inst.number >= 2 && (cuotasPagadas >= inst.number - 1 || isBefore(dueDate, addDays(today, 5)))) ? groupAwards[inst.number - 2] : undefined;
                     const awardDate = (isPlanActive && currentAwards) ? format(addDays(dueDate, 5), 'dd/MM/yyyy') : undefined;
 
