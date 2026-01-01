@@ -19,7 +19,7 @@ import { generateInstallments, initialGroups } from '@/lib/data';
 import { useMemo, useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from '@/components/ui/separator';
-import { addDays, parseISO, format } from 'date-fns';
+import { addDays, parseISO, format, isBefore, isToday } from 'date-fns';
 import { es } from 'date-fns/locale';
 
 
@@ -262,7 +262,7 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                                      </SelectTrigger>
                                      <SelectContent>
                                          {Array.from({ length: cuotasRestantes }, (_, i) => i + 1).map(num => (
-                                             <SelectItem key={num} value={String(num)}>{num} cuota{num > 1 && 's'}</SelectItem>
+                                             <SelectItem key.tsx={num} value={String(num)}>{num} cuota{num > 1 && 's'}</SelectItem>
                                          ))}
                                      </SelectContent>
                                  </Select>
@@ -352,24 +352,29 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                 </TableHeader>
                 <TableBody>
                   {installments.map((inst) => {
-                    let status: Installment['status'];
                     const today = new Date();
+                    today.setHours(0, 0, 0, 0); // Normalize today to the start of the day
                     const dueDate = parseISO(inst.dueDate);
-                    
+
+                    let status: Installment['status'];
+
                     if (inst.number <= cuotasPagadas) {
-                      status = 'Pagado';
-                    } else if (group.status === 'Subastado') {
-                        if (dueDate < today) {
+                        status = 'Pagado';
+                    } else if (isBefore(dueDate, today)) {
+                        status = 'Vencido';
+                    } else if (inst.number === cuotasPagadas + 1) {
+                        status = 'Pendiente';
+                    } else {
+                        status = 'Futuro';
+                    }
+
+                    // For auctioned plans, keep the status as it was, don't change future to pending/vencido
+                    if (group.status === 'Subastado' && inst.number > cuotasPagadas) {
+                        if (isBefore(dueDate, today)) {
                           status = 'Vencido';
                         } else {
                           status = 'Futuro';
                         }
-                    } else if (dueDate < today) {
-                        status = 'Vencido';
-                    } else if (inst.number === cuotasPagadas + 1) {
-                      status = 'Pendiente';
-                    } else {
-                      status = 'Futuro';
                     }
                     
                     const currentAwards = status === 'Pagado' ? groupAwards[inst.number - 1] : undefined;
