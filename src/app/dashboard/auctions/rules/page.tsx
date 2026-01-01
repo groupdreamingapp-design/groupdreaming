@@ -9,33 +9,34 @@ const rulesConfig = [
         title: "Publicación y Precio Base",
         icon: FileText,
         points: [
-            "El vendedor publica su plan en subasta. El precio base se establece a partir del total de cuotas emitidas (incluyendo todos los conceptos), menos un 50%.",
-            "Una vez concretada la venta, del monto final a liquidar al vendedor se deduce cualquier concepto pendiente para entregar el plan libre de deudas, además de la comisión por venta (2% + IVA)."
+            "Un miembro puede poner su plan en subasta a partir de la 3ra cuota paga.",
+            "El vendedor publica su plan. El precio base se establece a partir del total de cuotas emitidas, menos un 50%.",
+            "Del monto final a liquidar al vendedor, se deduce cualquier deuda pendiente para entregar el plan saneado, más la comisión por venta (2% + IVA)."
         ]
     },
     {
-        title: "Proceso de Oferta y Garantía de Venta",
+        title: "Proceso de Oferta y Garantía",
         icon: ShieldCheck,
         points: [
-            "Los compradores realizan ofertas durante el plazo de la subasta. Al ganar, el comprador tiene 24 horas para integrar el capital ofertado más la comisión de compra (2% + IVA).",
-            "Si el comprador no concreta el pago, el plan se vuelve a subastar y el comprador es bloqueado hasta que pague una multa del 10% + IVA sobre la oferta realizada.",
+            "Los compradores realizan ofertas durante el plazo de la subasta. Al ganar, tienen 24hs para integrar el capital ofertado más la comisión de compra (2% + IVA).",
+            "Si el comprador no paga, el plan se vuelve a subastar y el comprador es bloqueado hasta que pague una multa del 10% + IVA sobre su oferta.",
             "Si un plan no recibe ofertas, la plataforma garantiza su compra al precio base, asegurando una liquidación para el vendedor."
         ]
     },
     {
-        title: "Fondo de Reserva y Sostenibilidad",
+        title: "Adjudicaciones y Licitaciones",
         icon: Landmark,
         points: [
-            "Para financiar la garantía de compra, la plataforma genera un fondo de reserva en cada grupo, compuesto por el 50% de los ingresos del \"Derecho de Suscripción\" y el 50% de los \"Gastos Administrativos\".",
-            "Cuando la plataforma absorbe un plan, utiliza este fondo para cubrir las cuotas mensuales, asegurando que el capital del grupo se complete para todos los miembros."
+            "Los actos de adjudicación (sorteo y licitación) se realizan mensualmente a partir del pago de la segunda cuota de cada miembro.",
+            "Para participar, los miembros deben tener su cuota al día. La mora suspende este derecho.",
         ]
     },
     {
         title: "Para el Comprador",
         icon: Users,
         points: [
-            "Al ganar la subasta, el comprador debe abonar únicamente el monto ofertado para concretar la adquisición del plan.",
-            "La comisión de compra (2% + IVA) será descontada del capital que reciba al momento de resultar adjudicado en el futuro."
+            "Al ganar la subasta, el comprador debe abonar únicamente el monto ofertado para adquirir el plan.",
+            "La comisión de compra (2% + IVA) se descontará del capital que reciba al momento de resultar adjudicado en el futuro."
         ]
     }
 ];

@@ -50,8 +50,6 @@ const generateStaticAwards = (group: Group): Award[][] => {
     
     let potentialWinners = [...memberOrderNumbers];
     
-    // Si el usuario ya está adjudicado, lo quitamos del pool general para no volver a adjudicarlo
-    // Y luego lo insertaremos en una posición fija para simular su adjudicación pasada.
     if (group.userIsAwarded) {
         const userIndex = potentialWinners.indexOf(userOrderNumber);
         if (userIndex > -1) {
@@ -59,7 +57,6 @@ const generateStaticAwards = (group: Group): Award[][] => {
         }
     }
     
-    // Si el plan está subastado, el usuario no puede ser adjudicado.
     if (group.status === 'Subastado') {
         const userIndex = potentialWinners.indexOf(userOrderNumber);
         if (userIndex > -1) {
@@ -69,7 +66,6 @@ const generateStaticAwards = (group: Group): Award[][] => {
 
     potentialWinners = shuffle(potentialWinners);
     
-    // Si el usuario está adjudicado, lo insertamos en el 5to mes (índice 4) para el ejemplo.
     if (group.userIsAwarded) {
         const awardsPerMonth = 2;
         const insertPosition = 4 * awardsPerMonth; 
@@ -174,7 +170,8 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
     today.setHours(0, 0, 0, 0);
     return installments.findIndex(inst => {
       const dueDate = parseISO(inst.dueDate);
-      return inst.number > cuotasPagadas && !isBefore(dueDate, today);
+      const isPaid = inst.number <= cuotasPagadas;
+      return !isPaid && !isBefore(dueDate, today);
     });
   }, [installments, cuotasPagadas]);
 
@@ -269,7 +266,11 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                  {!group.userIsAwarded && (
                    <>
                      <Dialog onOpenChange={() => setCuotasToBid(0)}>
-                       <DialogTrigger asChild><Button size="sm"><Gavel className="mr-2 h-4 w-4" /> Licitar</Button></DialogTrigger>
+                       <DialogTrigger asChild>
+                         <Button size="sm" disabled={cuotasPagadas < 2}>
+                           <Gavel className="mr-2 h-4 w-4" /> Licitar
+                         </Button>
+                       </DialogTrigger>
                        <DialogContent>
                          <DialogHeader><DialogTitle>Licitar por Adjudicación</DialogTitle><DialogDescription>Ofrece adelantar cuotas para obtener el capital. Quien más ofrezca, gana.</DialogDescription></DialogHeader>
                          <div className="space-y-4">
@@ -310,7 +311,11 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                        </DialogContent>
                      </Dialog>
                      <Dialog>
-                       <DialogTrigger asChild><Button size="sm" variant="secondary"><Hand className="mr-2 h-4 w-4" /> Subastar</Button></DialogTrigger>
+                       <DialogTrigger asChild>
+                         <Button size="sm" variant="secondary" disabled={cuotasPagadas < 3}>
+                           <Hand className="mr-2 h-4 w-4" /> Subastar
+                         </Button>
+                       </DialogTrigger>
                         <DialogContent>
                          <DialogHeader><DialogTitle>Subastar Plan (Vender)</DialogTitle><DialogDescription>Ofrece tu plan en el mercado secundario a otros inversores.</DialogDescription></DialogHeader>
                           <div className="space-y-4 text-sm">
@@ -394,9 +399,9 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                         status = 'Futuro';
                     }
                     
-                    const isMonthPast = status === 'Pagado' || status === 'Vencido';
-                    const currentAwards = isMonthPast ? groupAwards[inst.number - 1] : undefined;
-                    const awardDate = isMonthPast ? format(addDays(dueDate, 5), 'dd/MM/yyyy') : undefined;
+                    const isMonthPast = isBefore(dueDate, today);
+                    const currentAwards = (isMonthPast && (cuotasPagadas >= inst.number - 1)) ? groupAwards[inst.number - 1] : undefined;
+                    const awardDate = currentAwards ? format(addDays(dueDate, 5), 'dd/MM/yyyy') : undefined;
 
                     return (
                       <TableRow key={inst.id}>

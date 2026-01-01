@@ -51,7 +51,7 @@ export default function LandingPage() {
     },
     {
       title: "Adjudicación y Presentación de Garantías",
-      content: "Tras resultar adjudicado (por sorteo o licitación), el miembro tiene 48hs para aceptar, 72hs hábiles para presentar garantías y 24hs para integrar capital si licitó. El incumplimiento puede resultar en la pérdida del derecho de adjudicación. El sorteo se transmite en vivo. Si al momento de la adjudicación existe un saldo pendiente del \"Derecho de Suscripción\", este será descontado del capital a recibir."
+      content: "Tras resultar adjudicado (por sorteo o licitación, disponibles a partir de la 2da cuota), el miembro tiene 48hs para aceptar, 72hs hábiles para presentar garantías y 24hs para integrar capital si licitó. El incumplimiento puede resultar en la pérdida del derecho de adjudicación. El sorteo se transmite en vivo. Si al momento de la adjudicación existe un saldo pendiente del \"Derecho de Suscripción\", este será descontado del capital a recibir."
     },
     {
       title: "Incumplimiento de Licitación Ganadora",
@@ -63,7 +63,7 @@ export default function LandingPage() {
     },
     {
       title: "Subasta de Planes (Mercado Secundario)",
-      content: "El vendedor puede publicar su plan estableciendo un precio base para cubrir deudas. La comisión del 2% + IVA se descuenta de la venta. Si no hay ofertas, la plataforma garantiza la compra al precio base. El comprador asume una comisión del 2% + IVA sobre su futura adjudicación. Si un plan es adjudicado y puesto en subasta, el plazo de la misma será el tiempo restante para confirmar la adjudicación."
+      content: "Un miembro puede subastar su plan a partir de la 3ra cuota paga. El vendedor puede publicar su plan estableciendo un precio base para cubrir deudas. La comisión del 2% + IVA se descuenta de la venta. Si no hay ofertas, la plataforma garantiza la compra al precio base. El comprador asume una comisión del 2% + IVA sobre su futura adjudicación. Si un plan es adjudicado y puesto en subasta, el plazo de la misma será el tiempo restante para confirmar la adjudicación."
     },
     {
       title: "Política de Baja de Plan",
