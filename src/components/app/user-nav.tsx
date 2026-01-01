@@ -16,6 +16,7 @@ import {
 import { user as mockUser } from "@/lib/data";
 import Link from "next/link";
 import { CheckCircle, Shield, User } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 type UserNavContextType = {
   isVerified: boolean;
@@ -44,8 +45,13 @@ export function useUserNav() {
 export function UserNav() {
   const user = mockUser;
   const { isVerified } = useUserNav();
+  const router = useRouter();
   
   const userInitials = user?.name?.split(' ').map(n => n[0]).join('') || user?.email?.charAt(0).toUpperCase() || 'U';
+
+  const handleLogout = () => {
+    router.push('/');
+  }
 
   return (
     <DropdownMenu>
@@ -82,7 +88,7 @@ export function UserNav() {
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuItem onSelect={handleLogout}>
           Cerrar sesión
         </DropdownMenuItem>
       </DropdownMenuContent>
