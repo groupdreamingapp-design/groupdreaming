@@ -26,7 +26,7 @@ const capitalOptions = [5000, 10000, 15000, 20000, 25000];
 const plazoOptions = [12, 24, 36, 48, 60, 72, 84];
 
 const generatedGroups: Group[] = [];
-let groupCounter = 1000;
+let groupCounter = 2000; // Start counter at a higher number to avoid collisions
 const todayForId = new Date('2026-01-01T00:00:00Z');
 const year = todayForId.getFullYear();
 const month = String(todayForId.getMonth() + 1).padStart(2, '0');
@@ -63,37 +63,17 @@ for (const capital of capitalOptions) {
     }
 }
 
-// Add the active group from the past
-const activeGroupCapital = 15000;
-const activeGroupPlazo = 24;
-const pastActivationDate = new Date('2023-06-05T00:00:00Z');
-const today = new Date('2026-01-01T00:00:00Z');
-const monthsCompleted = differenceInMonths(today, pastActivationDate);
 
-generatedGroups.push({
-    id: 'ID-20230605-1001',
-    capital: activeGroupCapital,
-    plazo: activeGroupPlazo,
-    cuotaPromedio: calculateCuotaPromedio(activeGroupCapital, activeGroupPlazo),
-    membersCount: 48,
-    totalMembers: 48,
-    status: 'Activo',
-    userIsMember: true,
-    userIsAwarded: false,
-    monthsCompleted: monthsCompleted > 0 ? monthsCompleted : 0,
-    activationDate: pastActivationDate.toISOString(),
-});
-
-
-// Add the future active group (now past, based on 'today' = 2026-01-01)
+// Add the active group that started in the past
 const futureGroupCapital = 15000;
 const futureGroupPlazo = 24;
 const futureActivationDate = new Date('2025-06-05T00:00:00Z');
+const today = new Date('2026-01-01T00:00:00Z');
 const futureMonthsCompleted = differenceInMonths(today, futureActivationDate);
 
 
 generatedGroups.push({
-    id: 'ID-ACTIVE-2025',
+    id: 'ID-20250605-1100', // Unique ID following the pattern
     capital: futureGroupCapital,
     plazo: futureGroupPlazo,
     cuotaPromedio: calculateCuotaPromedio(futureGroupCapital, futureGroupPlazo),
@@ -102,7 +82,7 @@ generatedGroups.push({
     status: 'Activo',
     userIsMember: true,
     userIsAwarded: false,
-    monthsCompleted: futureMonthsCompleted,
+    monthsCompleted: futureMonthsCompleted > 0 ? futureMonthsCompleted : 0,
     activationDate: futureActivationDate.toISOString(),
 });
 
@@ -204,6 +184,7 @@ export const generateExampleInstallments = (capital: number, plazo: number): Ins
     
 
     
+
 
 
 
