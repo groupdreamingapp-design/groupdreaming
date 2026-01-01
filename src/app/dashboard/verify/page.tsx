@@ -33,6 +33,7 @@ const verificationSchema = z.object({
   city: z.string().min(2, "La ciudad es requerida"),
   province: z.string().min(2, "La provincia es requerida"),
   postalCode: z.string().min(4, "El código postal es requerido"),
+  country: z.string().min(2, "El país es requerido"),
   phone: z.string().min(8, "El teléfono es requerido"),
   email: z.string().email("El correo electrónico no es válido"),
 
@@ -204,21 +205,26 @@ export default function VerificationPage() {
                                 {errors.city && <p className="text-red-500 text-xs">{errors.city.message}</p>}
                             </div>
                              <div className="space-y-2">
+                                <Label htmlFor="postalCode">Código Postal</Label>
+                                <Input id="postalCode" {...register("postalCode")} />
+                                {errors.postalCode && <p className="text-red-500 text-xs">{errors.postalCode.message}</p>}
+                            </div>
+                            <div className="space-y-2">
                                 <Label htmlFor="province">Provincia</Label>
                                 <Input id="province" {...register("province")} />
                                 {errors.province && <p className="text-red-500 text-xs">{errors.province.message}</p>}
                             </div>
                              <div className="space-y-2">
-                                <Label htmlFor="postalCode">Código Postal</Label>
-                                <Input id="postalCode" {...register("postalCode")} />
-                                {errors.postalCode && <p className="text-red-500 text-xs">{errors.postalCode.message}</p>}
+                                <Label htmlFor="country">País</Label>
+                                <Input id="country" {...register("country")} />
+                                {errors.country && <p className="text-red-500 text-xs">{errors.country.message}</p>}
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="phone">Teléfono</Label>
                                 <Input id="phone" {...register("phone")} />
                                 {errors.phone && <p className="text-red-500 text-xs">{errors.phone.message}</p>}
                             </div>
-                            <div className="space-y-2 md:col-span-2">
+                            <div className="space-y-2">
                                 <Label htmlFor="email">Correo Electrónico</Label>
                                 <Input id="email" type="email" {...register("email")} />
                                 {errors.email && <p className="text-red-500 text-xs">{errors.email.message}</p>}
@@ -415,5 +421,3 @@ export default function VerificationPage() {
       </TooltipProvider>
     );
 }
-
-    
