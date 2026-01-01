@@ -133,7 +133,7 @@ export default function AuctionsPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         {auctions.map(auction => {
           // This is a mock date for calculation purposes. In a real app, this would come from the group's data.
-          const mockActivationDate = new Date(new Date().setFullYear(new Date().getFullYear() - 2)).toISOString();
+          const mockActivationDate = '2024-01-01T00:00:00.000Z';
           const installments = generateInstallments(auction.capital, auction.plazo, mockActivationDate);
           
           const totalCuotasEmitidas = installments
