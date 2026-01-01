@@ -1,0 +1,467 @@
+{
+  "entities": {
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
+      "type": "object",
+      "description": "Represents a user of the Dream Pool platform.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the user.",
+          "format": "uuid"
+        },
+        "firstName": {
+          "type": "string",
+          "description": "The user's first name."
+        },
+        "lastName": {
+          "type": "string",
+          "description": "The user's last name."
+        },
+        "email": {
+          "type": "string",
+          "description": "The user's email address.",
+          "format": "email"
+        },
+        "phone": {
+          "type": "string",
+          "description": "The user's phone number."
+        },
+        "dateJoined": {
+          "type": "string",
+          "description": "The date and time the user joined the platform.",
+          "format": "date-time"
+        },
+        "kycStatus": {
+          "type": "string",
+          "description": "The KYC (Know Your Customer) verification status of the user (e.g., pending, approved, rejected)."
+        }
+      },
+      "required": [
+        "id",
+        "firstName",
+        "lastName",
+        "email",
+        "dateJoined",
+        "kycStatus"
+      ]
+    },
+    "GroupDreamingPool": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "GroupDreamingPool",
+      "type": "object",
+      "description": "Represents a 'Group Dreaming' pool, where users contribute towards a common capital goal.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the group.",
+          "format": "uuid"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the group."
+        },
+        "capitalGoal": {
+          "type": "number",
+          "description": "The total capital goal for the group (in USD)."
+        },
+        "termLengthMonths": {
+          "type": "number",
+          "description": "The term length of the group in months."
+        },
+        "monthlyQuota": {
+          "type": "number",
+          "description": "Amount due per month"
+        },
+        "creationDate": {
+          "type": "string",
+          "description": "The date and time the group was created.",
+          "format": "date-time"
+        },
+        "status": {
+          "type": "string",
+          "description": "The current status of the group (e.g., open, pending, active, closed)."
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "capitalGoal",
+        "termLengthMonths",
+        "creationDate",
+        "status"
+      ]
+    },
+    "UserGroupMembership": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "UserGroupMembership",
+      "type": "object",
+      "description": "Represents the membership of a user in a 'Group Dreaming' pool.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the membership record.",
+          "format": "uuid"
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N UserGroupMembership)"
+        },
+        "groupId": {
+          "type": "string",
+          "description": "Reference to GroupDreamingPool. (Relationship: GroupDreamingPool 1:N UserGroupMembership)"
+        },
+        "joinDate": {
+          "type": "string",
+          "description": "The date and time the user joined the group.",
+          "format": "date-time"
+        },
+        "contributionAmount": {
+          "type": "number",
+          "description": "The amount the user contributes to the group each month."
+        },
+        "isAdjudicated": {
+          "type": "boolean",
+          "description": "Indicates whether the user has been adjudicated (awarded the capital) in the group."
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "groupId",
+        "joinDate",
+        "contributionAmount"
+      ]
+    },
+    "Wallet": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Wallet",
+      "type": "object",
+      "description": "Represents a user's digital wallet within the Dream Pool platform.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the wallet.",
+          "format": "uuid"
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:1 Wallet)"
+        },
+        "balance": {
+          "type": "number",
+          "description": "The current balance of the wallet (in USD)."
+        },
+        "creationDate": {
+          "type": "string",
+          "description": "The date and time the wallet was created.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "balance",
+        "creationDate"
+      ]
+    },
+    "Transaction": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Transaction",
+      "type": "object",
+      "description": "Represents a transaction within the Dream Pool platform (e.g., deposit, withdrawal, contribution).",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the transaction.",
+          "format": "uuid"
+        },
+        "walletId": {
+          "type": "string",
+          "description": "Reference to Wallet. (Relationship: Wallet 1:N Transaction)"
+        },
+        "transactionDate": {
+          "type": "string",
+          "description": "The date and time the transaction occurred.",
+          "format": "date-time"
+        },
+        "transactionType": {
+          "type": "string",
+          "description": "The type of transaction (e.g., deposit, withdrawal, contribution, fee)."
+        },
+        "amount": {
+          "type": "number",
+          "description": "The amount of the transaction (in USD)."
+        },
+        "description": {
+          "type": "string",
+          "description": "A description of the transaction."
+        }
+      },
+      "required": [
+        "id",
+        "walletId",
+        "transactionDate",
+        "transactionType",
+        "amount"
+      ]
+    },
+    "Auction": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Auction",
+      "type": "object",
+      "description": "Represents an auction of a plan on the secondary market.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the auction.",
+          "format": "uuid"
+        },
+        "groupId": {
+          "type": "string",
+          "description": "Reference to GroupDreamingPool. (Relationship: GroupDreamingPool 1:N Auction)"
+        },
+        "sellerId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N Auction (as Seller))"
+        },
+        "buyerId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N Auction (as Buyer))"
+        },
+        "startDate": {
+          "type": "string",
+          "description": "The date and time the auction started.",
+          "format": "date-time"
+        },
+        "endDate": {
+          "type": "string",
+          "description": "The date and time the auction ended.",
+          "format": "date-time"
+        },
+        "startPrice": {
+          "type": "number",
+          "description": "The starting price of the auction (in USD)."
+        },
+        "finalPrice": {
+          "type": "number",
+          "description": "The final price of the auction (in USD). Null if the auction is still active."
+        },
+        "status": {
+          "type": "string",
+          "description": "The status of the auction (e.g., active, completed, cancelled)."
+        }
+      },
+      "required": [
+        "id",
+        "groupId",
+        "sellerId",
+        "startDate",
+        "startPrice",
+        "status"
+      ]
+    },
+    "Penalty": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Penalty",
+      "type": "object",
+      "description": "Represents a penalty applied to a user for failing to meet certain obligations.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the penalty.",
+          "format": "uuid"
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N Penalty)"
+        },
+        "groupId": {
+          "type": "string",
+          "description": "Reference to GroupDreamingPool. (Relationship: GroupDreamingPool 1:N Penalty)"
+        },
+        "penaltyDate": {
+          "type": "string",
+          "description": "The date the penalty was applied.",
+          "format": "date-time"
+        },
+        "penaltyType": {
+          "type": "string",
+          "description": "The type of penalty (e.g., late payment, failed bidding)."
+        },
+        "amount": {
+          "type": "number",
+          "description": "The amount of the penalty (in USD)."
+        },
+        "description": {
+          "type": "string",
+          "description": "A description of the penalty."
+        },
+        "isPaid": {
+          "type": "boolean",
+          "description": "Indicates whether the penalty has been paid."
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "groupId",
+        "penaltyDate",
+        "penaltyType",
+        "amount"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Stores user profile information. Path-based ownership ensures only the user can access their own profile.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/group_dreaming_pools/{groupId}",
+        "definition": {
+          "entityName": "GroupDreamingPool",
+          "schema": {
+            "$ref": "#/backend/entities/GroupDreamingPool"
+          },
+          "description": "Stores information about each group dreaming pool.",
+          "params": [
+            {
+              "name": "groupId",
+              "description": "The unique identifier for the group."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/user_group_memberships/{membershipId}",
+        "definition": {
+          "entityName": "UserGroupMembership",
+          "schema": {
+            "$ref": "#/backend/entities/UserGroupMembership"
+          },
+          "description": "Stores the membership of a user in a group dreaming pool.",
+          "params": [
+            {
+              "name": "membershipId",
+              "description": "The unique identifier for the membership record."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/wallets/{walletId}",
+        "definition": {
+          "entityName": "Wallet",
+          "schema": {
+            "$ref": "#/backend/entities/Wallet"
+          },
+          "description": "Stores wallet information for each user. Path-based ownership ensures only the user can access their own wallet.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            },
+            {
+              "name": "walletId",
+              "description": "The unique identifier for the wallet."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/wallets/{walletId}/transactions/{transactionId}",
+        "definition": {
+          "entityName": "Transaction",
+          "schema": {
+            "$ref": "#/backend/entities/Transaction"
+          },
+          "description": "Stores transaction history for each wallet. Path-based ownership ensures only the user can access their own transaction history.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            },
+            {
+              "name": "walletId",
+              "description": "The unique identifier for the wallet."
+            },
+            {
+              "name": "transactionId",
+              "description": "The unique identifier for the transaction."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/auctions/{auctionId}",
+        "definition": {
+          "entityName": "Auction",
+          "schema": {
+            "$ref": "#/backend/entities/Auction"
+          },
+          "description": "Stores auction information.",
+          "params": [
+            {
+              "name": "auctionId",
+              "description": "The unique identifier for the auction."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/penalties/{penaltyId}",
+        "definition": {
+          "entityName": "Penalty",
+          "schema": {
+            "$ref": "#/backend/entities/Penalty"
+          },
+          "description": "Stores information about penalties applied to users.",
+          "params": [
+            {
+              "name": "penaltyId",
+              "description": "The unique identifier for the penalty."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/roles_admin/{userId}",
+        "definition": {
+          "entityName": "user",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Documents in this collection indicate admin privileges.  Authorization is based on document existence rather than content.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore data structure is designed to ensure security, scalability, and ease of debugging, in line with the principles of Authorization Independence, Clarity of Intent, DBAC (Database-Based Access Control), and QAPs (Rules are not Filters). It avoids hierarchical authorization dependencies by denormalizing relevant authorization data and employs structural segregation to maintain a homogeneous security posture within collections.\n\n*Authorization Independence*:\nAuthorization Independence is achieved primarily through denormalization. For example, membership information for `GroupDreamingPool` is copied into each `UserGroupMembership` document. This eliminates the need for security rules to fetch parent documents, enabling atomic operations and simplifying the rules.\n\n*Structural Segregation*:\nDifferent data types with different access requirements are stored in separate collections. User profiles are stored under `/users/{userId}`, ensuring only the user can access their data. Group Dreaming Pools are stored under `/group_dreaming_pools/{groupId}`. The auctions on the secondary market are stored under `/auctions/{auctionId}`.\n\n*Access Modeling*:\nPrivate data is modeled using path-based ownership, such as `/users/{userId}/wallets/{walletId}`. Collaborative data (group memberships) uses a membership map, denormalized as needed. Global roles are managed by existence in dedicated collections (e.g., `/roles_admin/{uid}`).\n\n*QAPs Support*:\nSecure `list` operations are supported using structural segregation and membership maps. For instance, listing all groups a user is a member of involves querying the `/user_group_memberships` collection with a `where` clause on the `userId` field. Denormalization of membership data into subcollections allows for efficient and secure filtering without complex rule logic or database `get()` calls.\n\nThe structure supports the described app features and avoids complex rule structures."
+  }
+}

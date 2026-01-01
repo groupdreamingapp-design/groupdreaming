@@ -1,0 +1,187 @@
+/**
+ * This ruleset enforces a security model for the Dream Pool platform,
+ * balancing user privacy with collaborative and public data access.
+ *
+ * Core Philosophy:
+ * The rules are built on a principle of least privilege. A user's private data
+ * is strictly confined to them, collaborative data requires membership,
+ * public data is read-only for most users, and administrative actions
+ * are restricted to a specific role.
+ *
+ * Data Structure:
+ * - /users/{userId}: Contains all private user data, including subcollections
+ *   for wallets and transactions. Access is strictly limited to the user owner.
+ * - /group_dreaming_pools/{groupId}: Publicly readable metadata for dream pools.
+ *   Modifications are restricted to admins.
+ * - /user_group_memberships/{membershipId}: A join collection linking users to
+ *   pools. Users can create and delete their own memberships.
+ * - /auctions/{auctionId}: A public marketplace where users can browse all
+ *   auctions, but only the original seller can modify their own listing.
+ * - /penalties/{penaltyId}: Private records of user penalties, readable only by
+ *   the affected user and manageable only by admins.
+ * - /roles_admin/{userId}: A collection where the existence of a document
+ *   grants a user administrative privileges across the platform.
+ *
+ * Key Security Decisions:
+ * - User Enumeration is Disabled: Listing the top-level /users, /penalties,
+ *   or /user_group_memberships collections is forbidden to protect user privacy.
+ * - Admin Role Management: An administrator role is defined by the existence of a
+ *   document in the `/roles_admin/{userId}` collection. This provides a clear and
+ *   secure way to manage platform-wide privileges.
+ * - Default to Signed-In Access: Most public collections (like pools and auctions)
+ *   require a user to be signed in for read access, preventing anonymous data scraping.
+ * - Writes are Restricted by Default: All write operations (`create`, `update`, `delete`)
+ *   are explicitly denied unless a specific condition based on ownership or role is met.
+ *
+ * Denormalization for Authorization:
+ * This ruleset relies on denormalized fields for efficient and secure authorization.
+ * For example, an `Auction` document contains a `sellerId` field. This allows rules
+ * on `/auctions/{auctionId}` to grant write access by simply checking this field
+_ * (`resource.data.sellerId`) against the requester's ID, avoiding slow and costly
+ * `get()` calls to other documents.
+ *
+ * Structural Segregation:
+ * The data model uses separate top-level collections for different data types
+ * with distinct security needs (e.g., `users`, `auctions`, `penalties`). This avoids
+ * mixing public and private data in a single collection, which simplifies rules and
+ * makes list operations more secure and performant.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions for reusable logic
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // Checks for admin role by looking for a document in the roles_admin collection
+    function isAdmin() {
+      return isSignedIn() && exists(/databases/$(database)/documents/roles_admin/$(request.auth.uid));
+    }
+
+    /**
+     * @description Manages user profile documents.
+     * @path /users/{userId}
+     * @allow A user (auth.uid: 'user_abc') can create their own profile document at /users/user_abc. (create)
+     * @deny A user (auth.uid: 'user_xyz') cannot read or write the profile of 'user_abc'. (get, update)
+     * @principle Restricts access to a user's own data tree and prevents user enumeration.
+     */
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow list: if false;
+      allow create: if isOwner(userId) && request.resource.data.id == userId;
+      allow update: if isOwner(userId) && resource != null;
+      allow delete: if isOwner(userId) && resource != null;
+
+      /**
+       * @description Manages a user's wallets.
+       * @path /users/{userId}/wallets/{walletId}
+       * @allow The owner (auth.uid: 'user_abc') can create and read their own wallets. (create, get, list)
+       * @deny Another user cannot access 'user_abc's wallets in any way. (get, list, create, update, delete)
+       * @principle Enforces document ownership for a user's private subcollections.
+       */
+      match /wallets/{walletId} {
+        allow get: if isOwner(userId);
+        allow list: if isOwner(userId);
+        allow create: if isOwner(userId) && request.resource.data.userId == userId;
+        allow update: if isOwner(userId) && resource != null && request.resource.data.userId == resource.data.userId;
+        allow delete: if isOwner(userId) && resource != null;
+
+        /**
+         * @description Manages a wallet's transaction history.
+         * @path /users/{userId}/wallets/{walletId}/transactions/{transactionId}
+         * @allow The owner (auth.uid: 'user_abc') can create and list their own transactions. (create, list)
+         * @deny Another user cannot access 'user_abc's transactions. (get, list, create, update, delete)
+         * @principle Enforces document ownership deep within a user's private data tree.
+         */
+        match /transactions/{transactionId} {
+          allow get: if isOwner(userId);
+          allow list: if isOwner(userId);
+          allow create: if isOwner(userId) && request.resource.data.walletId == walletId;
+          allow update: if isOwner(userId) && resource != null && request.resource.data.walletId == resource.data.walletId;
+          allow delete: if isOwner(userId) && resource != null;
+        }
+      }
+    }
+
+    /**
+     * @description Manages group dreaming pool metadata.
+     * @path /group_dreaming_pools/{groupId}
+     * @allow Any signed-in user can read the list of available pools. (get, list)
+     * @deny A regular user cannot create a new pool or modify an existing one. (create, update)
+     * @principle Provides public read access for browsing, while write access is restricted to administrators.
+     */
+    match /group_dreaming_pools/{groupId} {
+      allow get: if isSignedIn();
+      allow list: if isSignedIn();
+      allow create: if isAdmin();
+      allow update: if isAdmin() && resource != null;
+      allow delete: if isAdmin() && resource != null;
+    }
+
+    /**
+     * @description Manages user memberships in dreaming pools.
+     * @path /user_group_memberships/{membershipId}
+     * @allow A user (auth.uid: 'user_abc') can create a membership document where `userId` is 'user_abc'. (create)
+     * @deny A user cannot create a membership for another user, or view all memberships in the system. (create, list)
+     * @principle Users can manage their own relational data (joining/leaving groups) but cannot see or affect others.
+     */
+    match /user_group_memberships/{membershipId} {
+      allow get: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow list: if false;
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update: if false; // Disallowed in prototype for simplicity and security
+      allow delete: if isSignedIn() && resource != null && resource.data.userId == request.auth.uid;
+    }
+
+    /**
+     * @description Manages secondary market auctions.
+     * @path /auctions/{auctionId}
+     * @allow Any signed-in user can view all active auctions. (get, list)
+     * @deny A user cannot modify or delete an auction started by another user. (update, delete)
+     * @principle Enforces document ownership for writes on a publicly readable collection.
+     */
+    match /auctions/{auctionId} {
+      allow get: if isSignedIn();
+      allow list: if isSignedIn();
+      allow create: if isSignedIn() && request.resource.data.sellerId == request.auth.uid;
+      allow update: if isSignedIn() && resource != null && resource.data.sellerId == request.auth.uid;
+      allow delete: if isSignedIn() && resource != null && resource.data.sellerId == request.auth.uid;
+    }
+
+    /**
+     * @description Manages penalties applied to users.
+     * @path /penalties/{penaltyId}
+     * @allow A user (auth.uid: 'user_abc') can read a penalty document if its `userId` field is 'user_abc'. (get)
+     * @deny A user cannot see the global list of all penalties. (list)
+     * @principle Protects sensitive user-specific information while allowing admins to manage it.
+     */
+    match /penalties/{penaltyId} {
+      allow get: if (isSignedIn() && resource.data.userId == request.auth.uid) || isAdmin();
+      allow list: if false;
+      allow create: if isAdmin();
+      allow update: if isAdmin() && resource != null;
+      allow delete: if isAdmin() && resource != null;
+    }
+
+    /**
+     * @description Manages administrator roles for the platform.
+     * @path /roles_admin/{userId}
+     * @allow An admin can check if another user is also an admin. (get)
+     * @deny Non-admin users cannot read or write to this collection. (get, list, create, update, delete)
+     * @principle Secures role management to existing administrators only.
+     */
+    match /roles_admin/{userId} {
+      allow get: if isAdmin();
+      allow list: if isAdmin();
+      allow create: if isAdmin();
+      allow update: if isAdmin() && resource != null;
+      allow delete: if isAdmin() && resource != null;
+    }
+  }
+}
