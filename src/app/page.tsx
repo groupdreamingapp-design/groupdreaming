@@ -1,6 +1,6 @@
 'use client';
 
-import { useUser } from '@/firebase';
+import { useUser, useAuth } from '@/firebase';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Logo } from '@/components/icons';
@@ -8,8 +8,9 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { ArrowRight, CheckCircle, Clock, Home, PiggyBank, Users } from 'lucide-react';
-import { useAuth } from '@/firebase/provider';
-import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { AuthDialog } from '@/components/app/auth-dialog';
+import { useState } from 'react';
+import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 
 const features = [
   {
@@ -41,21 +42,23 @@ const goals = [
 ].filter(Boolean) as any[];
 
 
-export default function Root() {
+export default function Page() {
   const { user, loading } = useUser();
   const auth = useAuth();
-
-  const handleLogin = async () => {
+  const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
+  
+  const handleGoogleSignIn = async () => {
     if (auth) {
       const provider = new GoogleAuthProvider();
       try {
         await signInWithPopup(auth, provider);
+        // Auth state change will be handled by the UserProvider
+        setIsAuthDialogOpen(false);
       } catch (error) {
-        console.error("Error during sign-in:", error);
+        console.error("Error signing in with Google: ", error);
       }
     }
   };
-
 
   const heroImage = PlaceHolderImages.find(img => img.id === 'hero-family');
 
@@ -74,10 +77,12 @@ export default function Root() {
               <Link href="/dashboard">Ir a mi Panel</Link>
             </Button>
           ) : (
-            <>
-              <Button variant="ghost" onClick={handleLogin}>Ingresar</Button>
-              <Button onClick={handleLogin}>Comenzar Ahora</Button>
-            </>
+            <AuthDialog open={isAuthDialogOpen} onOpenChange={setIsAuthDialogOpen}>
+              <>
+                 <Button variant="ghost" onClick={() => setIsAuthDialogOpen(true)}>Ingresar</Button>
+                 <Button onClick={() => setIsAuthDialogOpen(true)}>Comenzar Ahora</Button>
+              </>
+            </AuthDialog>
           )}
         </nav>
       </header>
@@ -106,9 +111,11 @@ export default function Root() {
                 </p>
               </div>
               <div className="space-x-4">
-                <Button size="lg" onClick={handleLogin}>
-                  Únete Ahora <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
+                 <AuthDialog open={isAuthDialogOpen} onOpenChange={setIsAuthDialogOpen}>
+                    <Button size="lg" onClick={() => setIsAuthDialogOpen(true)}>
+                      Únete Ahora <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                </AuthDialog>
                 <Button size="lg" variant="outline" asChild>
                    <Link href="/dashboard/explore">Explorar Grupos</Link>
                 </Button>
