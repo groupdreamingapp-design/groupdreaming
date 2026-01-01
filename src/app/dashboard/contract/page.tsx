@@ -7,7 +7,7 @@ import Link from "next/link";
 const contractClauses = [
     {
         title: "PRIMERA: PARTES",
-        content: "De una parte, GROUP DREAMING S.A.S., CUIT 30-71888999-1, con domicilio en Av. Rivadavia 5920, Caballito, CABA, en adelante 'LA ADMINISTRADORA'. De otra parte, la persona humana o jurídica cuyos datos se registran en el formulario de alta de la plataforma, en adelante 'EL SUSCRIPTOR'. Ambas partes celebran el presente Contrato de Adhesión a un Sistema de Ahorro Colectivo."
+        content: "De una parte, GROUP DREAMING S.A.S., CUIT 30-71888999-1, con domicilio en Av. Rivadavia 5920, Caballito, CABA, en adelante 'LA ADMINISTRADORA'. De otra parte, la persona humana o jurídica cuyos datos se registran en el formulario de alta de la plataforma, en adelante 'EL SUSCRIPTOR'. EL SUSCRIPTOR declara bajo juramento que toda la información y datos personales proporcionados en el formulario de registro y/o verificación son veraces, exactos y completos, asumiendo total responsabilidad por su falsedad u omisión, y deslindando a LA ADMINISTRADORA de cualquier responsabilidad que pudiera surgir a raíz de ello. Ambas partes celebran el presente Contrato de Adhesión a un Sistema de Ahorro Colectivo."
     },
     {
         title: "SEGUNDA: OBJETO",
@@ -35,7 +35,7 @@ const contractClauses = [
     },
     {
         title: "OCTAVA: LIMITACIÓN DE RESPONSABILIDAD",
-        content: "LA ADMINISTRADORA no será responsable por daños, perjuicios o pérdidas sufridas por EL SUSCRIPTOR causados por fallas en el sistema, en el servidor o en Internet, que sean ajenas a su control. Tampoco será responsable por cualquier virus que pudiera infectar el equipo de EL SUSCRIPTOR como consecuencia del acceso o uso de su sitio web. EL SUSCRIPTOR es el único responsable de la confidencialidad de su contraseña y del uso de su cuenta, y exime de responsabilidad a LA ADMINISTRADORA por el acceso no autorizado o uso indebido de la misma por parte de terceros."
+        content: "LA ADMINISTRADORA no será responsable por daños, perjuicios o pérdidas sufridas por EL SUSCRIPTOR causados por fallas en el sistema, en el servidor o en Internet, que sean ajenas a su control. Tampoco será responsable por cualquier virus que pudiera infectar el equipo de EL SUSCRIPTOR como consecuencia del acceso o uso de su sitio web. EL SUSCRIPTOR es el único responsable de la confidencialidad de su contraseña y del uso de su cuenta, y exime de responsabilidad a LA ADMINISTRADora por el acceso no autorizado o uso indebido de la misma por parte de terceros."
     },
     {
         title: "NOVENA: JURISDICCIÓN",
