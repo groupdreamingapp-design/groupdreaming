@@ -4,10 +4,10 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Users, Scale, Rows, ShieldCheck, Star } from "lucide-react";
+import { ArrowRight, Users, Scale, Rows, ShieldCheck } from "lucide-react";
 import { Logo } from '@/components/icons';
 import { user as mockUser } from "@/lib/data";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 
@@ -82,7 +82,7 @@ export default function WhyUsPage() {
       </header>
 
       <main className="flex-1">
-        <section className="py-20 md:py-28">
+        <section className="py-20 md:py-24">
           <div className="container mx-auto px-4 text-center">
             <h1 className="font-headline text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
               Tus metas, más cerca que nunca.
@@ -93,7 +93,7 @@ export default function WhyUsPage() {
           </div>
         </section>
 
-        <section className="py-24 sm:py-32">
+        <section className="py-20 sm:py-24">
           <div className="container mx-auto px-4">
              <Carousel
               opts={{
@@ -129,29 +129,34 @@ export default function WhyUsPage() {
           </div>
         </section>
         
-        <section className="py-24 sm:py-32 bg-secondary">
+        <section className="py-20 sm:py-28 bg-secondary">
           <div className="container mx-auto px-4">
             <div className="mx-auto max-w-5xl">
               <div className="text-center">
                 <h2 className="text-base font-semibold leading-7 text-primary">NUESTROS PILARES</h2>
                 <p className="mt-2 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">Por qué Group Dreaming es diferente</p>
               </div>
-              <div className="mt-16 grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="mt-16 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 {pillars.map((pillar) => (
-                  <div key={pillar.title} className="flex flex-col items-center text-center">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                      <pillar.icon className="h-6 w-6" aria-hidden="true" />
-                    </div>
-                    <h3 className="mt-4 text-lg font-semibold leading-7 text-foreground">{pillar.title}</h3>
-                    <p className="mt-1 text-sm leading-6 text-muted-foreground">{pillar.description}</p>
-                  </div>
+                  <Card key={pillar.title} className="group relative overflow-hidden text-center">
+                    <CardContent className="p-6 flex flex-col items-center justify-center h-full">
+                       <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary mb-4 transition-transform duration-300 group-hover:scale-110">
+                        <pillar.icon className="h-6 w-6" aria-hidden="true" />
+                      </div>
+                      <h3 className="text-lg font-semibold leading-7 text-foreground">{pillar.title}</h3>
+                      <p className="mt-2 text-sm text-muted-foreground transition-opacity duration-300 group-hover:opacity-0">{pillar.description}</p>
+                       <div className="absolute inset-0 bg-primary/90 p-6 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                          <p className="text-sm text-primary-foreground font-medium">{pillar.description}</p>
+                      </div>
+                    </CardContent>
+                  </Card>
                 ))}
               </div>
             </div>
           </div>
         </section>
 
-        <section className="py-24 sm:py-32 bg-background">
+        <section className="py-24 sm:py-28 bg-background">
           <div className="container mx-auto px-4 text-center">
             <h2 className="font-headline text-3xl font-bold tracking-tight sm:text-4xl">
               ¿Listo para empezar a soñar en grupo?
