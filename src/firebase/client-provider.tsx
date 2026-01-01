@@ -5,17 +5,49 @@ import { ReactNode, useState, useEffect } from 'react';
 import { FirebaseProvider } from './provider';
 import { initializeFirebase } from './config';
 import type { User } from 'firebase/auth';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { FirebaseApp } from 'firebase/app';
+import { Firestore } from 'firebase/firestore';
+import { Auth } from 'firebase/auth';
 
 type FirebaseClientProviderProps = {
   children: ReactNode;
 };
 
-// This component is temporarily simplified to not initialize Firebase
-// until we re-enable authentication.
 export function FirebaseClientProvider({
   children,
 }: FirebaseClientProviderProps) {
-  // For now, we are not connecting to Firebase so we just return children.
-  // In the future, we will restore the Firebase initialization here.
-  return <>{children}</>;
+  const [firebase, setFirebase] = useState<{
+    app: FirebaseApp;
+    auth: Auth;
+    firestore: Firestore;
+  } | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const { app, auth, firestore } = initializeFirebase();
+    setFirebase({ app, auth, firestore });
+
+    const authInstance = getAuth(app);
+    const unsubscribe = onAuthStateChanged(authInstance, (user) => {
+      setUser(user);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  if (!firebase) {
+    // You can render a loading spinner here if you'd like
+    return null; 
+  }
+
+  return (
+    <FirebaseProvider
+      firebaseApp={firebase.app}
+      auth={firebase.auth}
+      firestore={firebase.firestore}
+    >
+      {children}
+    </FirebaseProvider>
+  );
 }

@@ -17,6 +17,8 @@ import { user as mockUser } from "@/lib/data";
 import Link from "next/link";
 import { CheckCircle, Shield, User } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/firebase/provider";
+import { signOut } from "firebase/auth";
 
 type UserNavContextType = {
   isVerified: boolean;
@@ -46,11 +48,20 @@ export function UserNav() {
   const user = mockUser;
   const { isVerified } = useUserNav();
   const router = useRouter();
+  const auth = useAuth();
   
   const userInitials = user?.name?.split(' ').map(n => n[0]).join('') || user?.email?.charAt(0).toUpperCase() || 'U';
 
-  const handleLogout = () => {
-    router.push('/');
+  const handleLogout = async () => {
+    if (auth) {
+      try {
+        await signOut(auth);
+        router.push('/');
+      } catch (error) {
+        console.error("Error signing out: ", error);
+        // Optionally, show a toast message to the user
+      }
+    }
   }
 
   return (
