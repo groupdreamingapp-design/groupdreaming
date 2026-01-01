@@ -28,8 +28,7 @@ export function FirebaseClientProvider({
     const { app, auth, firestore } = initializeFirebase();
     setFirebase({ app, auth, firestore });
 
-    const authInstance = getAuth(app);
-    const unsubscribe = onAuthStateChanged(authInstance, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
     });
 
