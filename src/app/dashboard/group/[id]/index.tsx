@@ -1,4 +1,5 @@
 
+
 import GroupDetailClient from './group-detail-client';
 
 type GroupDetailPageProps = {
