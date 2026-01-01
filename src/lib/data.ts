@@ -25,7 +25,7 @@ const calculateCuotaPromedio = (capital: number, plazo: number): number => {
 export const initialGroups: Group[] = [
     { id: "ID-20240115-9998", capital: 15000, plazo: 48, cuotaPromedio: 345, membersCount: 96, totalMembers: 96, status: "Activo", monthsCompleted: 23, userIsMember: true, userIsAwarded: false, activationDate: '2024-01-15T12:00:00Z' },
     { id: "ID-20230720-9999", capital: 15000, plazo: 36, cuotaPromedio: 455, membersCount: 72, totalMembers: 72, status: "Cerrado", monthsCompleted: 36, userIsMember: true, userIsAwarded: true, activationDate: '2023-07-20T12:00:00Z' },
-    { id: "ID-20240510-8888", capital: 20000, plazo: 60, cuotaPromedio: calculateCuotaPromedio(20000, 60), membersCount: 120, totalMembers: 120, status: "Subastado", monthsCompleted: 5, userIsMember: true, userIsAwarded: false, activationDate: '2025-05-28T12:00:00Z' },
+    { id: "ID-20240510-8888", capital: 20000, plazo: 60, cuotaPromedio: calculateCuotaPromedio(20000, 60), membersCount: 120, totalMembers: 120, status: "Subastado", monthsCompleted: 5, userIsMember: true, userIsAwarded: false, activationDate: '2024-03-10T12:00:00Z' },
     { id: "ID-20231101-7777", capital: 10000, plazo: 24, cuotaPromedio: calculateCuotaPromedio(10000, 24), membersCount: 48, totalMembers: 48, status: "Subastado", monthsCompleted: 19, userIsMember: true, userIsAwarded: false, activationDate: '2023-11-01T12:00:00Z' },
     { id: "ID-20240801-1024", capital: 10000, plazo: 24, cuotaPromedio: calculateCuotaPromedio(10000, 24), membersCount: 29, totalMembers: 48, status: "Abierto", userIsMember: true, userIsAwarded: false },
 
@@ -47,15 +47,13 @@ export const initialGroups: Group[] = [
 ];
 
 export const transactions: Transaction[] = [
-    { id: "txn-1", date: "2024-07-20", type: "Liquidación", description: "Venta en subasta del plan ID-20240510-8888", amount: 1650, status: "Completado" },
-    { id: "txn-2", date: "2024-07-15", type: "Pago de Cuota", description: "Cuota 24/48, Plan ID-20240115-9998", amount: -345, status: "Completado" },
-    { id: "txn-3", date: "2024-07-05", type: "Depósito", description: "Depósito inicial vía transferencia", amount: 5000, status: "Completado" },
-    { id: "txn-4", date: "2024-06-25", type: "Liquidación", description: "Capital adjudicado del plan ID-20230720-9999", amount: 15000, status: "Completado" },
-    { id: "txn-5", date: "2024-06-15", type: "Pago de Cuota", description: "Cuota 23/48, Plan ID-20240115-9998", amount: -345, status: "Completado" },
-    { id: "txn-6", date: "2024-05-15", type: "Pago de Cuota", description: "Cuota 22/48, Plan ID-20240115-9998", amount: -345, status: "Completado" },
-    { id: "txn-7", date: "2024-05-10", type: "Licitación", description: "Oferta ganadora por 5 cuotas, Plan ID-20231101-7777", amount: -2083.33, status: "Completado"},
-    { id: "txn-8", date: "2024-04-12", type: "Subasta", description: "Multa por licitación no integrada, Plan ID-20240115-9998", amount: -41.67, status: "Completado"},
-    { id: "txn-9", date: "2024-04-10", type: "Retiro", description: "Retiro a cuenta bancaria", amount: -10000, status: "Completado" },
+    { id: "txn-1", date: "2024-07-05", type: "Depósito", description: "Depósito inicial vía transferencia", amount: 5000, status: "Completado" },
+    { id: "txn-2", date: "2024-07-15", type: "Pago de Cuota", description: "Cuota 23/48, Plan ID-20240115-9998", amount: -345, status: "Completado" },
+    { id: "txn-3", date: "2024-06-15", type: "Pago de Cuota", description: "Cuota 22/48, Plan ID-20240115-9998", amount: -345, status: "Completado" },
+    { id: "txn-4", date: "2024-05-15", type: "Pago de Cuota", description: "Cuota 21/48, Plan ID-20240115-9998", amount: -345, status: "Completado" },
+    { id: "txn-5", date: "2024-07-25", type: "Liquidación", description: "Capital adjudicado del plan ID-20230720-9999", amount: 15000, status: "Completado" },
+    { id: "txn-6", date: "2024-08-01", type: "Liquidación", description: "Venta en subasta del plan ID-20240510-8888", amount: 1650, status: "Completado" },
+    { id: "txn-7", date: "2024-08-02", type: "Retiro", description: "Retiro a cuenta bancaria", amount: -10000, status: "Completado" },
 ];
 
 const getFutureDate = (hours: number) => new Date(Date.now() + hours * 60 * 60 * 1000).toISOString();
