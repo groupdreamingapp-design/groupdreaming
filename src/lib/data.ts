@@ -26,20 +26,19 @@ const capitalOptions = [5000, 10000, 15000, 20000, 25000];
 const plazoOptions = [12, 24, 36, 48, 60, 72, 84];
 
 const generatedGroups: Group[] = [];
-let groupCounter = 2000;
-const todayForId = new Date('2026-01-01T00:00:00Z');
-const year = todayForId.getFullYear();
-const month = String(todayForId.getMonth() + 1).padStart(2, '0');
-const day = String(todayForId.getDate()).padStart(2, '0');
-const dateString = `${year}${month}${day}`;
-
 
 for (const capital of capitalOptions) {
     for (const plazo of plazoOptions) {
         const cuotaPromedio = calculateCuotaPromedio(capital, plazo);
 
         if (cuotaPromedio <= 1000) {
-            const newId = `ID-${dateString}-${groupCounter++}`;
+            const todayForId = new Date();
+            const year = todayForId.getFullYear();
+            const month = String(todayForId.getMonth() + 1).padStart(2, '0');
+            const day = String(todayForId.getDate()).padStart(2, '0');
+            const dateString = `${year}${month}${day}`;
+            const randomNumbers = String(Math.floor(Math.random() * 10000)).padStart(4, '0');
+            const newId = `ID-${dateString}-${randomNumbers}`;
 
             let totalMembers;
             if (plazo <= 24) totalMembers = 48;
@@ -120,13 +119,11 @@ export const generateInstallments = (capital: number, plazo: number, activationD
         const totalCuota = alicuotaPura + gastosAdm + seguroVida + derechoSuscripcion;
         
         const targetMonthDate = addMonths(startDate, i + 1);
-        const targetYearUTC = targetMonthDate.getUTCFullYear();
-        const targetMonthUTC = targetMonthDate.getUTCMonth();
-
-        const lastDayOfTargetMonth = new Date(Date.UTC(targetYearUTC, targetMonthUTC + 1, 0)).getUTCDate();
+        
+        const lastDayOfTargetMonth = new Date(Date.UTC(targetMonthDate.getUTCFullYear(), targetMonthDate.getUTCMonth() + 1, 0)).getUTCDate();
         const dayToSet = Math.min(activationDay, lastDayOfTargetMonth);
         
-        const dueDate = new Date(Date.UTC(targetYearUTC, targetMonthUTC, dayToSet));
+        const dueDate = new Date(Date.UTC(targetMonthDate.getUTCFullYear(), targetMonthDate.getUTCMonth(), dayToSet));
 
         return {
             id: `cuota-${i + 1}`,
@@ -182,6 +179,7 @@ export const generateExampleInstallments = (capital: number, plazo: number): Ins
     
 
     
+
 
 
 

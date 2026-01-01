@@ -175,11 +175,13 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
     useEffect(() => {
         const soldAuctionSimulator = setTimeout(() => {
             setGroups(currentGroups => {
-                const groupToSellId = 'ID-20231101-7777';
-                const groupExistedAndWasAuctioned = currentGroups.some(g => g.id === groupToSellId && g.userIsMember && g.status === 'Subastado');
+                const groupToSellId = 'auc-3'; // Corresponds to the auction with isMine: true
+                const auction = initialGroups.find(g => g.id === 'ID-20231101-7777');
+                
+                const groupExistedAndWasAuctioned = currentGroups.some(g => g.id === 'ID-20231101-7777' && g.userIsMember && g.status === 'Subastado');
 
                 if (groupExistedAndWasAuctioned) {
-                    return currentGroups.map(g => g.id === groupToSellId ? { ...g, userIsMember: false, acquiredInAuction: true } : g);
+                    return currentGroups.map(g => g.id === 'ID-20231101-7777' ? { ...g, userIsMember: false, acquiredInAuction: true } : g);
                 }
                 return currentGroups;
             });
