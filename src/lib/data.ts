@@ -93,7 +93,7 @@ generatedGroups.push({
     status: 'Activo',
     userIsMember: true,
     userAwardStatus: "Adjudicado - Pendiente Aceptación", // Set for testing the award flow
-    monthsCompleted: 4,
+    monthsCompleted: 7,
     activationDate: '2025-05-04T00:00:00.000Z',
     acquiredInAuction: false,
     isImmediateActivation: false,
