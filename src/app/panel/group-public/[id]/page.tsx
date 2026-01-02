@@ -37,7 +37,7 @@ export default function GroupPublicDetail() {
         <h1 className="text-2xl font-bold">Grupo no encontrado</h1>
         <p className="text-muted-foreground">El grupo que buscas no existe o fue eliminado.</p>
         <Button asChild className="mt-4">
-          <Link href="/dashboard/explore">Volver a Explorar</Link>
+          <Link href="/panel/explore">Volver a Explorar</Link>
         </Button>
       </div>
     );
@@ -50,7 +50,7 @@ export default function GroupPublicDetail() {
   
   const handleJoinGroup = () => {
     joinGroup(group.id);
-    router.push(`/dashboard/group/${group.id}`);
+    router.push(`/panel/group/${group.id}`);
   };
 
   const resetDialog = () => {
@@ -61,7 +61,7 @@ export default function GroupPublicDetail() {
   return (
     <>
       <div className="mb-4">
-        <Link href="/dashboard/explore" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary mb-2">
+        <Link href="/panel/explore" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary mb-2">
           <ArrowLeft className="h-4 w-4" /> Volver a Explorar
         </Link>
         <div className="flex justify-between items-start">
@@ -106,7 +106,7 @@ export default function GroupPublicDetail() {
                                     htmlFor="terms" 
                                     className={cn("text-sm font-medium leading-none", !hasReadContract && "text-muted-foreground cursor-not-allowed")}
                                   >
-                                   He leído y acepto el <Button variant="link" className="p-0 h-auto" asChild><Link href="/dashboard/contract" target="_blank" onClick={() => setHasReadContract(true)}>Contrato de Adhesión</Link></Button>.
+                                   He leído y acepto el <Button variant="link" className="p-0 h-auto" asChild><Link href="/panel/contract" target="_blank" onClick={() => setHasReadContract(true)}>Contrato de Adhesión</Link></Button>.
                                   </Label>
                                   {!hasReadContract && (
                                     <p className="text-xs text-amber-600 font-semibold">
@@ -137,7 +137,7 @@ export default function GroupPublicDetail() {
                             <Button onClick={handleJoinGroup} disabled={!termsAccepted}>Confirmar y Unirme</Button>
                         ) : (
                             <Button asChild>
-                                <Link href="/dashboard/verify">Ir a Verificar</Link>
+                                <Link href="/panel/verify">Ir a Verificar</Link>
                             </Button>
                         )}
                     </DialogFooter>

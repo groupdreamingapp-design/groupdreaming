@@ -190,7 +190,7 @@ export default function GroupDetail({ params }: GroupDetailPageProps) {
         <h1 className="text-2xl font-bold">Grupo no encontrado</h1>
         <p className="text-muted-foreground">El grupo que buscas no existe o fue eliminado.</p>
         <Button asChild className="mt-4">
-          <Link href="/dashboard/my-groups">Volver a Mis Grupos</Link>
+          <Link href="/panel/my-groups">Volver a Mis Grupos</Link>
         </Button>
       </div>
     );
@@ -307,7 +307,7 @@ export default function GroupDetail({ params }: GroupDetailPageProps) {
   return (
     <>
       <div className="mb-4">
-        <Link href="/dashboard/my-groups" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary mb-2">
+        <Link href="/panel/my-groups" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary mb-2">
           <ArrowLeft className="h-4 w-4" /> Volver a Mis Grupos
         </Link>
         <h1 className="text-3xl font-bold font-headline">{formatCurrencyNoDecimals(group.capital)}</h1>
@@ -691,5 +691,3 @@ export default function GroupDetail({ params }: GroupDetailPageProps) {
     </>
   );
 }
-
-    

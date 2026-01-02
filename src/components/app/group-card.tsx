@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -58,7 +57,7 @@ export function GroupCard({ group, isPublic = false }: GroupCardProps) {
     ? `Validando (${group.totalMembers}/${group.totalMembers})`
     : 'Grupo finalizado';
     
-  const cardLink = group.userIsMember ? `/dashboard/group/${group.id}` : `/dashboard/group-public/${group.id}`;
+  const cardLink = group.userIsMember ? `/panel/group/${group.id}` : `/panel/group-public/${group.id}`;
 
   const renderAction = () => {
     if (isPublic) {

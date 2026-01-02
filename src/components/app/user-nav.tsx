@@ -86,13 +86,13 @@ export function UserNav() {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem asChild>
-            <Link href="/dashboard/profile">
+            <Link href="/panel/profile">
                 <User className="mr-2 h-4 w-4" />
                 <span>Perfil</span>
             </Link>
           </DropdownMenuItem>
            <DropdownMenuItem asChild>
-            <Link href="/dashboard/verify">
+            <Link href="/panel/verify">
                 {isVerified ? <CheckCircle className="mr-2 h-4 w-4 text-green-500" /> : <Shield className="mr-2 h-4 w-4" />}
                 <span>Verificación</span>
             </Link>

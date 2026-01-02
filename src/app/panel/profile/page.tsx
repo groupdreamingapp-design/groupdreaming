@@ -84,12 +84,12 @@ export default function ProfileSetup() {
                         </p>
                         <div className="flex justify-center gap-4">
                             <Button asChild>
-                                <Link href="/dashboard/explore">
+                                <Link href="/panel/explore">
                                     <Search className="mr-2 h-4 w-4" /> Explorar Grupos
                                 </Link>
                             </Button>
                             <Button asChild variant="outline">
-                                <Link href="/dashboard/transparency">
+                                <Link href="/panel/transparency">
                                     <PieChart className="mr-2 h-4 w-4" /> Ver Transparencia
                                 </Link>
                             </Button>

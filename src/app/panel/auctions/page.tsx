@@ -157,7 +157,7 @@ export default function Auctions() {
           <p className="text-muted-foreground">Adquiere planes avanzados y acorta tu camino a la adjudicación.</p>
         </div>
         <Button asChild variant="outline">
-          <Link href="/dashboard/auctions/rules">
+          <Link href="/panel/auctions/rules">
             <BookText className="mr-2 h-4 w-4" />
             Ver Reglamento
           </Link>
@@ -270,7 +270,7 @@ export default function Auctions() {
                                       <Button type="button" variant="secondary">Cancelar</Button>
                                   </DialogClose>
                                   <Button asChild>
-                                      <Link href="/dashboard/verify">Ir a Verificar</Link>
+                                      <Link href="/panel/verify">Ir a Verificar</Link>
                                   </Button>
                               </DialogFooter>
                           </div>
@@ -344,7 +344,7 @@ export default function Auctions() {
                                   <Label htmlFor="terms" className={cn("text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center gap-2", (!isOfferValid || !hasReadRules) && "text-muted-foreground")}>
                                     Acepto los términos y condiciones
                                     <Button variant="link" size="sm" className="p-0 h-auto" asChild>
-                                      <Link href="/dashboard/auctions/rules" target="_blank" onClick={() => setHasReadRules(true)}>
+                                      <Link href="/panel/auctions/rules" target="_blank" onClick={() => setHasReadRules(true)}>
                                         (Ver Reglamento)
                                       </Link>
                                     </Button>

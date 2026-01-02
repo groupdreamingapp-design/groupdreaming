@@ -60,7 +60,7 @@ export default function Contract() {
         <>
             <div className="mb-6">
                 <Button asChild variant="ghost" className="mb-2 -ml-4">
-                  <Link href="/dashboard">
+                  <Link href="/panel">
                     <ArrowLeft className="mr-2 h-4 w-4" />
                     Volver al Panel
                   </Link>

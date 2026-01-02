@@ -13,8 +13,8 @@ export function Header() {
         {/* Desktop nav is in the sidebar, this is a placeholder for the logo */}
          <div className="hidden md:flex items-center gap-2 lg:gap-4">
           <Button variant="ghost" asChild><Link href="/">Por qué nosotros</Link></Button>
-          <Button variant="ghost" asChild><Link href="/dashboard/explore">Explorar Grupos</Link></Button>
-          <Button variant="ghost" asChild><Link href="/dashboard/transparency">Transparencia</Link></Button>
+          <Button variant="ghost" asChild><Link href="/panel/explore">Explorar Grupos</Link></Button>
+          <Button variant="ghost" asChild><Link href="/panel/transparency">Transparencia</Link></Button>
         </div>
       </nav>
       <Sheet>

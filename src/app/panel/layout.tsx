@@ -4,7 +4,7 @@ import { Header } from "@/components/app/header";
 import { MainNav } from "@/components/app/main-nav";
 import { Logo } from "@/components/icons";
 
-export default function DashboardLayout({
+export default function PanelLayout({
   children,
 }: {
   children: React.ReactNode;

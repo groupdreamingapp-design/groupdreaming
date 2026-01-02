@@ -46,7 +46,7 @@ export default function AuctionRules() {
         <>
             <div className="mb-6">
                 <Button asChild variant="ghost" className="mb-2 -ml-4">
-                  <Link href="/dashboard/auctions">
+                  <Link href="/panel/auctions">
                     <ArrowLeft className="mr-2 h-4 w-4" />
                     Volver a Subastas
                   </Link>

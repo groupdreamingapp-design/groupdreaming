@@ -1,8 +1,7 @@
-
 'use client';
 
 import { useMemo, useState } from "react";
-import { useGroups } from "@/hooks/use-groups";
+import { useGroups } from '@/hooks/use-groups';
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { GroupCard } from "@/components/app/group-card";
 import { Button } from "@/components/ui/button";
@@ -68,7 +67,7 @@ export default function MyGroups() {
           <div className="text-center py-16 text-muted-foreground flex flex-col items-center gap-4">
             <p>Aún no te has unido a ningún grupo.</p>
             <Button asChild>
-              <Link href="/dashboard/explore">
+              <Link href="/panel/explore">
                 ¡Explora los grupos disponibles y empieza a cumplir tus sueños!
               </Link>
             </Button>

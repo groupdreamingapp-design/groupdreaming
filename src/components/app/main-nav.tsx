@@ -16,52 +16,52 @@ export function MainNav({ isMobile = false }: MainNavProps) {
 
   const routes = [
     {
-      href: "/dashboard",
+      href: "/panel",
       label: "Mi Panel",
       icon: LayoutDashboard,
     },
     {
-      href: "/dashboard/my-groups",
+      href: "/panel/my-groups",
       label: "Mis Grupos",
       icon: Users,
     },
     {
-      href: "/dashboard/explore",
+      href: "/panel/explore",
       label: "Explorar Grupos",
       icon: Search,
     },
     {
-      href: "/dashboard/auctions",
+      href: "/panel/auctions",
       label: "Subastas",
       icon: Gavel,
     },
     {
-      href: "/dashboard/wallet",
+      href: "/panel/wallet",
       label: "Billetera",
       icon: Wallet,
     },
     {
-      href: "/dashboard/verify",
+      href: "/panel/verify",
       label: "Verificación",
       icon: Shield,
     },
     {
-      href: "/dashboard/transparency",
+      href: "/panel/transparency",
       label: "Transparencia",
       icon: PieChart,
     },
      {
-      href: "/dashboard/benefits",
+      href: "/panel/benefits",
       label: "Beneficios",
       icon: Gift,
     },
      {
-      href: "/dashboard/contract",
+      href: "/panel/contract",
       label: "Contrato",
       icon: FileText,
     },
      {
-      href: "/dashboard/faq",
+      href: "/panel/faq",
       label: "FAQ",
       icon: HelpCircle,
     },

@@ -88,7 +88,7 @@ export default function Verification() {
                 description: "Tus datos han sido enviados y tu cuenta ha sido verificada.",
                 className: "bg-green-100 border-green-500 text-green-700",
             });
-            router.push('/dashboard');
+            router.push('/panel');
         }, 2000);
     };
 
@@ -129,7 +129,7 @@ export default function Verification() {
                     Ya completaste el proceso de verificación de identidad. No es necesario que lo hagas de nuevo. Ya puedes operar en la plataforma.
                 </p>
                 <Button asChild className="mt-4">
-                  <Link href="/dashboard">Volver al Panel</Link>
+                  <Link href="/panel">Volver al Panel</Link>
                 </Button>
               </div>
         )
@@ -140,7 +140,7 @@ export default function Verification() {
         <form onSubmit={handleSubmit(onSubmit)}>
             <div className="mb-6">
                 <Button asChild variant="ghost" className="mb-2 -ml-4">
-                  <Link href="/dashboard">
+                  <Link href="/panel">
                     <ArrowLeft className="mr-2 h-4 w-4" />
                     Volver al Panel
                   </Link>

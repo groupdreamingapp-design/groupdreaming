@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useMemo } from "react";
@@ -170,7 +169,7 @@ export default function Dashboard() {
                                 </TableCell>
                                 <TableCell className="text-right">
                                     <Button asChild variant="outline" size="sm">
-                                        <Link href={`/dashboard/group/${group.id}`}>Ver Detalles</Link>
+                                        <Link href={`/panel/group/${group.id}`}>Ver Detalles</Link>
                                     </Button>
                                 </TableCell>
                             </TableRow>
@@ -181,7 +180,7 @@ export default function Dashboard() {
                 <div className="text-center py-16 text-muted-foreground flex flex-col items-center gap-4">
                     <p>Aún no te has unido a ningún grupo.</p>
                     <Button asChild>
-                    <Link href="/dashboard/explore">
+                    <Link href="/panel/explore">
                         ¡Explora los grupos disponibles y empieza a cumplir tus sueños!
                     </Link>
                     </Button>
