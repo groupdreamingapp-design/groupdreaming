@@ -165,6 +165,8 @@ export default function GroupDetail() {
   const [termsAcceptedBid, setTermsAcceptedBid] = useState(false);
   const [termsAcceptedAuction, setTermsAcceptedAuction] = useState(false);
   const [termsAcceptedBaja, setTermsAcceptedBaja] = useState(false);
+  const [awardTermsAccepted, setAwardTermsAccepted] = useState(false);
+  const [hasReadAwardRules, setHasReadAwardRules] = useState(false);
   const [selectedInstallment, setSelectedInstallment] = useState<Installment | null>(null);
   const [selectedReceipt, setSelectedReceipt] = useState<Installment | null>(null);
 
@@ -433,7 +435,7 @@ export default function GroupDetail() {
                </CardHeader>
                <CardContent className="flex flex-wrap gap-2">
                 {group.userAwardStatus === "Adjudicado - Pendiente Aceptación" && (
-                    <Dialog>
+                    <Dialog onOpenChange={(open) => !open && (setAwardTermsAccepted(false), setHasReadAwardRules(false))}>
                         <DialogTrigger asChild>
                             <Button size="sm" variant="default" className='bg-green-600 hover:bg-green-700'>
                                 <AwardIcon className="mr-2 h-4 w-4" /> Aceptar Adjudicación
@@ -444,9 +446,30 @@ export default function GroupDetail() {
                                 <DialogTitle>¡Felicitaciones! Has sido adjudicado</DialogTitle>
                                 <DialogDescription>Tienes 48hs para aceptar. Al aceptar, te comprometes a presentar las garantías y pagar la licitación (si aplica) en las próximas 72hs.</DialogDescription>
                             </DialogHeader>
+                             <div className="items-top flex space-x-2 pt-4">
+                                <Switch 
+                                  id="award-terms" 
+                                  checked={awardTermsAccepted} 
+                                  onCheckedChange={setAwardTermsAccepted}
+                                  disabled={!hasReadAwardRules}
+                                />
+                                <div className="grid gap-1.5 leading-none">
+                                  <Label 
+                                    htmlFor="award-terms" 
+                                    className={cn("text-sm font-medium leading-none", !hasReadAwardRules && "text-muted-foreground cursor-not-allowed")}
+                                  >
+                                   He leído y acepto el <Button variant="link" className="p-0 h-auto" asChild><Link href="/panel/rules" target="_blank" onClick={() => setHasReadAwardRules(true)}>Reglamento de Adjudicación</Link></Button>.
+                                  </Label>
+                                  {!hasReadAwardRules && (
+                                    <p className="text-xs text-amber-600 font-semibold">
+                                      Debes hacer clic en 'Reglamento de Adjudicación' para poder aceptar.
+                                    </p>
+                                  )}
+                                </div>
+                            </div>
                             <DialogFooter>
-                                <Button variant="destructive">Rechazar</Button>
-                                <Button className='bg-green-600 hover:bg-green-700'>Aceptar Adjudicación</Button>
+                                <DialogClose asChild><Button variant="destructive">Rechazar</Button></DialogClose>
+                                <Button className='bg-green-600 hover:bg-green-700' disabled={!awardTermsAccepted}>Aceptar Adjudicación</Button>
                             </DialogFooter>
                         </DialogContent>
                     </Dialog>
