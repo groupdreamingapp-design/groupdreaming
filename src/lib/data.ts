@@ -125,7 +125,7 @@ generatedGroups.push({
     membersCount: 96,
     totalMembers: 96,
     status: 'Subastado',
-    userIsMember: true,
+    userIsMember: false,
     userAwardStatus: "No Adjudicado",
     monthsCompleted: 12,
     activationDate: '2025-01-08T00:00:00.000Z',
