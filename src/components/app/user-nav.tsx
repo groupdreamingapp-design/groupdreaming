@@ -99,12 +99,10 @@ export function UserNav() {
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onSelect={handleLogout}>
+        <DropdownMenuItem onSelect={(e) => { e.preventDefault(); handleLogout(); }}>
           Cerrar sesión
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )
 }
-
-    
