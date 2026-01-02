@@ -79,10 +79,10 @@ export default function Page() {
             </Button>
           ) : (
             <AuthDialog open={isAuthDialogOpen} onOpenChange={setIsAuthDialogOpen}>
-              <div className="flex gap-2">
-                 <Button variant="ghost" onClick={() => setIsAuthDialogOpen(true)}>Ingresar</Button>
-                 <Button onClick={() => setIsAuthDialogOpen(true)}>Comenzar Ahora</Button>
-              </div>
+               <div className="flex gap-2">
+                  <Button variant="ghost" onClick={() => setIsAuthDialogOpen(true)}>Ingresar</Button>
+                  <Button onClick={() => setIsAuthDialogOpen(true)}>Comenzar Ahora</Button>
+               </div>
             </AuthDialog>
           )}
         </nav>
@@ -113,11 +113,11 @@ export default function Page() {
               </div>
               <div className="space-x-4">
                  {!user && (
-                    <AuthDialog open={isAuthDialogOpen} onOpenChange={setIsAuthDialogOpen}>
-                        <Button size="lg" onClick={() => setIsAuthDialogOpen(true)}>
+                    <Button size="lg" asChild>
+                      <Link href="/panel">
                         Únete Ahora <ArrowRight className="ml-2 h-4 w-4" />
-                        </Button>
-                    </AuthDialog>
+                      </Link>
+                    </Button>
                  )}
                 <Button size="lg" variant="outline" asChild>
                    <Link href="/panel/explore">Explorar Grupos</Link>
@@ -249,5 +249,3 @@ export default function Page() {
     </div>
   )
 }
-
-    
