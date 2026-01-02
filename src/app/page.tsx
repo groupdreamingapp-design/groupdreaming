@@ -112,11 +112,13 @@ export default function Page() {
                 </p>
               </div>
               <div className="space-x-4">
-                 <AuthDialog open={isAuthDialogOpen} onOpenChange={setIsAuthDialogOpen}>
-                    <Button size="lg" onClick={() => setIsAuthDialogOpen(true)}>
-                      Únete Ahora <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                </AuthDialog>
+                 {!user && (
+                    <AuthDialog open={isAuthDialogOpen} onOpenChange={setIsAuthDialogOpen}>
+                        <Button size="lg" onClick={() => setIsAuthDialogOpen(true)}>
+                        Únete Ahora <ArrowRight className="ml-2 h-4 w-4" />
+                        </Button>
+                    </AuthDialog>
+                 )}
                 <Button size="lg" variant="outline" asChild>
                    <Link href="/panel/explore">Explorar Grupos</Link>
                 </Button>
