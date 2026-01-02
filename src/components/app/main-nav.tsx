@@ -40,12 +40,17 @@ export function MainNav({ isMobile = false }: MainNavProps) {
       label: "Billetera",
       icon: Wallet,
     },
+    {
+      href: "/panel/admin",
+      label: "Admin",
+      icon: Shield,
+    },
   ];
 
   const linkClass = (href: string) => cn(
     "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary",
     {
-      "bg-muted text-primary": pathname === href,
+      "bg-muted text-primary": pathname.startsWith(href) && href !== "/panel" || pathname === href,
       "justify-center": isMobile,
     }
   );
