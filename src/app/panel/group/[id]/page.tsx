@@ -155,7 +155,7 @@ function ClientFormattedDate({ dateString, formatString }: { dateString: string,
 export default function GroupDetail() {
   const params = useParams();
   const groupId = typeof params.id === 'string' ? params.id : '';
-  const { groups, joinGroup, auctionGroup, acceptAward, approveAward, advanceInstallments } = useGroups();
+  const { groups, joinGroup, auctionGroup, acceptAward, approveAward, advanceInstallments, advancedInstallments } = useGroups();
   const { toast } = useToast();
   const [cuotasToAdvance, setCuotasToAdvance] = useState<number>(0);
   const [cuotasToBid, setCuotasToBid] = useState<number>(0);
@@ -751,7 +751,12 @@ export default function GroupDetail() {
                       const today = new Date();
                       today.setHours(0, 0, 0, 0);
 
-                      if (group.status === 'Activo' || group.status === 'Subastado' || group.status === 'Cerrado') {
+                      const advancedCount = advancedInstallments[group.id] || 0;
+                      const isAdvanced = inst.number > group.plazo - advancedCount;
+
+                      if (isAdvanced) {
+                        currentStatus = 'Pagado';
+                      } else if (group.status === 'Activo' || group.status === 'Subastado' || group.status === 'Cerrado') {
                           if (inst.number <= cuotasPagadas) {
                             currentStatus = 'Pagado';
                           } else {

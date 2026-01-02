@@ -43,6 +43,7 @@ const MAX_CAPITAL = 100000;
 
 export function GroupsProvider({ children }: { children: ReactNode }) {
   const [groups, setGroups] = useState<Group[]>(initialGroups);
+  const [advancedInstallments, setAdvancedInstallments] = useState<Record<string, number>>({});
   const { toast } = useToast();
   const myGroupsCountRef = useRef(groups.filter(g => g.userIsMember).length);
   const lastJoinedGroupRef = useRef<Group | null>(null);
@@ -172,14 +173,11 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
   }, [toast]);
 
   const advanceInstallments = useCallback((groupId: string, cuotasCount: number) => {
-    setGroups(currentGroups => {
-      return currentGroups.map(g => {
-        if (g.id === groupId && g.monthsCompleted !== undefined) {
-          return { ...g, monthsCompleted: g.monthsCompleted + cuotasCount };
-        }
-        return g;
-      });
-    });
+    setAdvancedInstallments(prev => ({
+        ...prev,
+        [groupId]: (prev[groupId] || 0) + cuotasCount
+    }));
+
     toast({
         title: "¡Adelanto Exitoso!",
         description: `Has adelantado ${cuotasCount} cuota(s) en el grupo ${groupId}.`,
@@ -190,7 +188,7 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
   const formatCurrency = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount);
 
   return (
-    <GroupsContext.Provider value={{ groups, joinGroup, auctionGroup, acceptAward, approveAward, advanceInstallments }}>
+    <GroupsContext.Provider value={{ groups, joinGroup, auctionGroup, acceptAward, approveAward, advanceInstallments, advancedInstallments }}>
       {children}
     </GroupsContext.Provider>
   );

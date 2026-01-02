@@ -14,6 +14,7 @@ interface GroupsContextType {
   acceptAward: (groupId: string) => void;
   approveAward: (groupId: string) => void;
   advanceInstallments: (groupId: string, cuotasCount: number) => void;
+  advancedInstallments: Record<string, number>;
 }
 
 // 2. Create the context with an initial undefined value
