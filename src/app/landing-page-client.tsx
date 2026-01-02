@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Button } from '@/components/ui/button';
@@ -140,6 +141,10 @@ export default function LandingPageClient() {
                 <li>
                   <CheckCircle className="mr-2 inline-block h-4 w-4 text-primary" />
                   Adjudicación mensual por sorteo y licitación.
+                </li>
+                <li>
+                  <CheckCircle className="mr-2 inline-block h-4 w-4 text-primary" />
+                  Libre disponibilidad del capital una vez adjudicado.
                 </li>
               </ul>
                <Button asChild size="lg">
