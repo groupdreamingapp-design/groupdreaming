@@ -12,7 +12,7 @@ export default function PanelLayout({
 }) {
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
-      <div className="hidden border-r bg-muted/40 md:block">
+      <div className="hidden border-r bg-muted/40 md:block sticky top-0 h-screen">
         <div className="flex h-full max-h-screen flex-col gap-2">
           <div className="flex h-16 items-center border-b px-6">
             <Link href="/" className="flex items-center gap-2 font-semibold">
@@ -20,12 +20,12 @@ export default function PanelLayout({
               <span className="text-xl">Group Dreaming</span>
             </Link>
           </div>
-          <div className="flex-1">
+          <div className="flex-1 overflow-y-auto">
             <nav className="grid items-start px-4 text-sm font-medium">
               <MainNav />
             </nav>
           </div>
-          <div className="mt-auto p-4">
+          <div className="mt-auto p-4 border-t">
              <UserNav />
           </div>
         </div>
