@@ -13,7 +13,6 @@ export function Header() {
       <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
         {/* Desktop nav is in the sidebar, this is a placeholder for the logo */}
          <div className="hidden md:flex items-center gap-2 lg:gap-4">
-          <Button variant="ghost" asChild><Link href="/">Por qué nosotros</Link></Button>
           <Button variant="ghost" asChild><Link href="/panel/explore">Explorar Grupos</Link></Button>
           <Button variant="ghost" asChild><Link href="/panel/transparency">Transparencia</Link></Button>
         </div>
