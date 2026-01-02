@@ -138,7 +138,16 @@ generatedGroups.push({
 export const initialGroups: Group[] = generatedGroups;
 
 
-export const transactions: Transaction[] = [];
+export const transactions: Transaction[] = [
+    {
+        id: 'tx-0',
+        date: new Date().toISOString(),
+        type: 'Depósito',
+        description: 'Depósito inicial de fondos de prueba',
+        amount: 50000,
+        status: 'Completado'
+    }
+];
 
 const staticBaseDate = new Date('2026-01-10T12:00:00Z');
 
