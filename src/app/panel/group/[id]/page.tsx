@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import type { Group, Installment, Award, UserAwardStatus } from '@/lib/types';
@@ -11,7 +10,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { ArrowLeft, Users, Clock, Users2, Calendar, Gavel, HandCoins, Ticket, Info, Trophy, FileX2, TrendingUp, Hand, Scale, CalendarCheck, Gift, Check, X, Award as AwardIcon, Sparkles, Upload, MessageCircleQuestion } from 'lucide-react';
+import { ArrowLeft, Users, Clock, Users2, Calendar, Gavel, HandCoins, Ticket, Info, Trophy, FileX2, TrendingUp, Hand, Scale, CalendarCheck, Gift, Check, X, Award as AwardIcon, Sparkles, Upload, MessageCircleQuestion, Youtube, CalendarDays } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { useGroups } from '@/hooks/use-groups';
@@ -354,6 +353,9 @@ export default function GroupDetail() {
   };
   const AwardStatusIconComponent = awardStatusIcon[group.userAwardStatus];
 
+  const nextInstallment = installments[pendingInstallmentIndex];
+  const nextAdjudicationDate = nextInstallment ? addDays(parseISO(nextInstallment.dueDate), 5) : null;
+
 
   return (
     <TooltipProvider>
@@ -396,6 +398,35 @@ export default function GroupDetail() {
                 <div className="flex items-center gap-2"><Users2 className="h-4 w-4 text-primary" /><span>Adjudicaciones: <strong>2 por mes</strong></span></div>
             </CardContent>
           </Card>
+           {isPlanActive && nextAdjudicationDate && (
+            <Card className="flex-1 bg-blue-500/5 border-blue-500/20">
+                <CardHeader>
+                    <CardTitle className="text-blue-800 dark:text-blue-300">Próximo Acto de Adjudicación</CardTitle>
+                    <CardDescription className="text-blue-700/80 dark:text-blue-300/80">Información sobre el siguiente sorteo y licitación.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4 text-sm">
+                    <div className="flex items-center gap-3">
+                        <CalendarDays className="h-5 w-5 text-blue-600" />
+                        <div>
+                            <p className="font-semibold">Fecha del Acto</p>
+                            <p><ClientFormattedDate dateString={nextAdjudicationDate.toISOString()} formatString="'Aproximadamente el' EEEE, dd 'de' MMMM" /></p>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <Clock className="h-5 w-5 text-blue-600" />
+                        <div>
+                            <p className="font-semibold">Apertura y Licitación</p>
+                            <p>El acto abre a las 8:30hs. La licitación se define a las 9:00hs.</p>
+                        </div>
+                    </div>
+                     <Button asChild className="w-full">
+                        <Link href="#" target="_blank">
+                            <Youtube className="mr-2 h-4 w-4" /> Ver acto en vivo
+                        </Link>
+                    </Button>
+                </CardContent>
+            </Card>
+          )}
         </div>
 
         {isEligibleForBenefit && (
@@ -882,3 +913,5 @@ export default function GroupDetail() {
     </TooltipProvider>
   );
 }
+
+    
