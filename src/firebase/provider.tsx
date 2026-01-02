@@ -87,9 +87,9 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
       }
     );
     return () => {
-      // CRITICAL FIX: Only unsubscribe the listener. Do NOT sign out.
-      // Signing out here causes the user to be logged out on component unmount,
-      // which can happen during page navigation.
+      // Unsubscribe the listener to prevent memory leaks on component unmount.
+      // It is critical NOT to call signOut() here, as that would log the user
+      // out every time the provider unmounts (e.g., on page navigation).
       unsubscribe();
     };
   }, [auth]); // Depends on the auth instance
