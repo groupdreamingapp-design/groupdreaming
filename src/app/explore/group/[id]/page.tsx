@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, usePathname } from 'next/navigation';
 import { useGroups } from '@/hooks/use-groups';
 import { generateExampleInstallments, initialGroups } from '@/lib/data';
 import type { Installment } from '@/lib/types';
@@ -24,6 +24,7 @@ import { Badge } from '@/components/ui/badge';
 export default function GroupPublicDetail() {
   const params = useParams();
   const router = useRouter();
+  const pathname = usePathname();
   const { joinGroup } = useGroups();
   const { user, loading: userLoading } = useUser();
   const { isVerified } = useUserNav();
@@ -144,10 +145,10 @@ export default function GroupPublicDetail() {
     return (
         <div className='flex gap-2'>
             <Button variant="ghost" asChild>
-                <Link href="/login">Ingresar</Link>
+                <Link href={`/login?redirect=${pathname}`}>Ingresar</Link>
             </Button>
             <Button asChild>
-                <Link href="/register">Comenzar Ahora</Link>
+                <Link href={`/register?redirect=${pathname}`}>Comenzar Ahora</Link>
             </Button>
         </div>
     )

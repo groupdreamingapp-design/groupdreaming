@@ -1,13 +1,18 @@
 
+'use client';
+
 import { Logo } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function PublicPagesLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
+
   return (
     <div className="flex flex-col min-h-screen">
        <header className="px-4 lg:px-6 h-16 flex items-center bg-background/80 backdrop-blur-sm fixed top-0 w-full z-50 border-b">
@@ -18,10 +23,10 @@ export default function PublicPagesLayout({
         <nav className="ml-auto flex items-center gap-4 sm:gap-6">
           <div className="flex gap-2">
             <Button variant="ghost" asChild>
-                <Link href="/login">Ingresar</Link>
+                <Link href={`/login?redirect=${pathname}`}>Ingresar</Link>
             </Button>
             <Button asChild>
-                <Link href="/register">Comenzar Ahora</Link>
+                <Link href={`/register?redirect=${pathname}`}>Comenzar Ahora</Link>
             </Button>
           </div>
         </nav>

@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth, initiateEmailSignUp } from '@/firebase';
 import { signInWithGoogle } from '@/firebase/auth/google-auth';
 import { Logo } from '@/components/icons';
@@ -39,22 +39,28 @@ export default function RegisterPage() {
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const auth = useAuth();
 
   const { register, handleSubmit, formState: { errors } } = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
   });
 
+  const handleSuccess = () => {
+    const redirectUrl = searchParams.get('redirect') || '/panel/profile';
+    toast({
+      title: "¡Registro exitoso!",
+      description: "Hemos creado tu cuenta. Redirigiendo...",
+    });
+    router.push(redirectUrl);
+  };
+
   const onSubmit = async (data: RegisterFormValues) => {
     setIsLoading(true);
     try {
       if (!auth) throw new Error("Auth service not available");
       await initiateEmailSignUp(auth, data.email, data.password);
-      toast({
-        title: "¡Registro exitoso!",
-        description: "Hemos creado tu cuenta. Redirigiendo a tu panel...",
-      });
-      router.push('/panel/profile');
+      handleSuccess();
     } catch (error: any) {
       handleAuthError(error);
     } finally {
@@ -67,11 +73,7 @@ export default function RegisterPage() {
     try {
       if (!auth) throw new Error("Auth service not available");
       await signInWithGoogle(auth);
-      toast({
-        title: "¡Registro con Google exitoso!",
-        description: "Hemos creado tu cuenta. Redirigiendo a tu panel...",
-      });
-      router.push('/panel/profile');
+      handleSuccess();
     } catch (error: any) {
       handleAuthError(error);
     } finally {
