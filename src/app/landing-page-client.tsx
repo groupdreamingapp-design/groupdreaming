@@ -5,8 +5,9 @@ import { Logo } from '@/components/icons';
 import Link from 'next/link';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { ArrowRight, CheckCircle, Clock, Home, PiggyBank, Users } from 'lucide-react';
+import { ArrowRight, CheckCircle, Clock, Home, LayoutDashboard, PiggyBank, Users } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useUser } from '@/firebase';
 
 const features = [
   {
@@ -40,6 +41,7 @@ const goals = [
 
 export default function LandingPageClient() {
   const heroImage = PlaceHolderImages.find(img => img.id === 'hero-family');
+  const { user } = useUser();
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -50,12 +52,23 @@ export default function LandingPageClient() {
         </Link>
         <nav className="ml-auto flex items-center gap-4 sm:gap-6">
           <div className="flex gap-2">
-              <Button variant="ghost" asChild>
-                <Link href="/panel">Ingresar</Link>
-              </Button>
-              <Button asChild>
-                <Link href="/panel">Comenzar Ahora</Link>
-              </Button>
+            {user ? (
+                <Button asChild>
+                  <Link href="/panel">
+                    <LayoutDashboard className="mr-2 h-4 w-4" />
+                    Ir a Mi Panel
+                  </Link>
+                </Button>
+            ) : (
+              <>
+                <Button variant="ghost" asChild>
+                  <Link href="/panel">Ingresar</Link>
+                </Button>
+                <Button asChild>
+                  <Link href="/panel">Comenzar Ahora</Link>
+                </Button>
+              </>
+            )}
           </div>
         </nav>
       </header>
