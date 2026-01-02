@@ -97,11 +97,8 @@ export default function LandingPageClient() {
                 <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl/none text-white [text-shadow:2px_2px_4px_rgba(0,0,0,0.7)]">
                   El poder de la comunidad para construir tus sueños.
                 </h1>
-                <p className="mx-auto max-w-[700px] text-white/90 md:text-xl [text-shadow:2px_2px_8px_rgba(0,0,0,0.8)]">
-                  Group Dreaming es una plataforma de ahorro colectivo basada en la confianza y la ayuda mutua. Representamos la alternativa solidaria a los sistemas financieros tradicionales, brindando una solución transparente y accesible para que puedas alcanzar tus metas económicas, desde tu primer auto hasta tu propia casa, impulsado por la fuerza del grupo.
-                </p>
               </div>
-              <div className="space-x-4">
+              <div className="space-x-4 pt-4">
                 <Button size="lg" asChild className="shadow-lg">
                    <Link href="/transparency">
                       <PieChart className="mr-2 h-4 w-4" />
@@ -116,6 +113,14 @@ export default function LandingPageClient() {
           </div>
         </section>
         
+        <section className="w-full py-12 md:py-16 lg:py-20 bg-background">
+            <div className="container px-4 md:px-6">
+                <p className="mx-auto max-w-[700px] text-center text-foreground md:text-xl">
+                  Group Dreaming es una plataforma de ahorro colectivo basada en la confianza y la ayuda mutua. Representamos la alternativa solidaria a los sistemas financieros tradicionales, brindando una solución transparente y accesible para que puedas alcanzar tus metas económicas, desde tu primer auto hasta tu propia casa, impulsado por la fuerza del grupo.
+                </p>
+            </div>
+        </section>
+
         <section className="w-full py-12 md:py-24 lg:py-32 bg-muted">
           <div className="container grid items-center gap-6 px-4 md:px-6 lg:grid-cols-2 lg:gap-10">
             <div className="space-y-4">
