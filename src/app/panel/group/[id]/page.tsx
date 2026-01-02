@@ -155,7 +155,7 @@ function ClientFormattedDate({ dateString, formatString }: { dateString: string,
 export default function GroupDetail() {
   const params = useParams();
   const groupId = typeof params.id === 'string' ? params.id : '';
-  const { groups, joinGroup, auctionGroup, acceptAward, approveAward } = useGroups();
+  const { groups, joinGroup, auctionGroup, acceptAward, approveAward, advanceInstallments } = useGroups();
   const { toast } = useToast();
   const [cuotasToAdvance, setCuotasToAdvance] = useState<number>(0);
   const [cuotasToBid, setCuotasToBid] = useState<number>(0);
@@ -333,6 +333,11 @@ export default function GroupDetail() {
   const handleApproveAward = () => {
     if (!group) return;
     approveAward(group.id);
+  }
+
+  const handleAdvanceInstallments = () => {
+    if (!group || !isAdvanceInputValid) return;
+    advanceInstallments(group.id, cuotasToAdvance);
   }
 
   const awardStatusText: Record<UserAwardStatus, string> = {
@@ -563,7 +568,14 @@ export default function GroupDetail() {
                          </div>
                      </div>
                      <DialogFooter>
-                         <Button type="submit" disabled={!termsAcceptedAdvance}>Adelantar Cuotas</Button>
+                       <DialogClose asChild>
+                         <Button
+                            type="button"
+                            onClick={handleAdvanceInstallments}
+                            disabled={!termsAcceptedAdvance || !isAdvanceInputValid}>
+                            Adelantar Cuotas
+                         </Button>
+                       </DialogClose>
                      </DialogFooter>
                    </DialogContent>
                  </Dialog>

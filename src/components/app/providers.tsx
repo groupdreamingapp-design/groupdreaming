@@ -171,10 +171,26 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
     });
   }, [toast]);
 
+  const advanceInstallments = useCallback((groupId: string, cuotasCount: number) => {
+    setGroups(currentGroups => {
+      return currentGroups.map(g => {
+        if (g.id === groupId && g.monthsCompleted !== undefined) {
+          return { ...g, monthsCompleted: g.monthsCompleted + cuotasCount };
+        }
+        return g;
+      });
+    });
+    toast({
+        title: "¡Adelanto Exitoso!",
+        description: `Has adelantado ${cuotasCount} cuota(s) en el grupo ${groupId}.`,
+        className: 'bg-green-100 border-green-500 text-green-700'
+    });
+  }, [toast]);
+
   const formatCurrency = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount);
 
   return (
-    <GroupsContext.Provider value={{ groups, joinGroup, auctionGroup, acceptAward, approveAward }}>
+    <GroupsContext.Provider value={{ groups, joinGroup, auctionGroup, acceptAward, approveAward, advanceInstallments }}>
       {children}
     </GroupsContext.Provider>
   );
