@@ -122,7 +122,7 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
     if (immediateActivation) {
         toast({
             title: "¡Activación Inmediata!",
-            description: `¡Te has unido y el grupo ${joinedGroup?.id} se ha activado instantáneamente!`,
+            description: `¡Te has unido y el grupo ${joinedGroup?.id} se ha activado instantáneamente! Tu primera cuota ha sido debitada.`,
             className: 'bg-green-100 border-green-500 text-green-700'
         });
     } else if (newGroupWasCreated) {

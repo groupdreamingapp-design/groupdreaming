@@ -57,6 +57,7 @@ export function GroupCard({ group, isPublic = false }: GroupCardProps) {
     ? 100 : (group.status === 'Pendiente' ? 100 : 0);
   
   const membersMissing = group.totalMembers - group.membersCount;
+  const isFewMembersLeft = membersMissing > 0 && membersMissing <= 5 && !group.isImmediateActivation;
 
   const progressText = group.status === 'Abierto'
     ? `${group.membersCount} de ${group.totalMembers} miembros`
@@ -122,13 +123,26 @@ export function GroupCard({ group, isPublic = false }: GroupCardProps) {
                 {group.isImmediateActivation && (
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Badge variant="outline" className="bg-red-500/20 text-red-700 border-red-500/30">
+                      <Badge variant="outline" className="bg-red-500/20 text-red-700 border-red-500/30 animate-pulse">
                         <Zap className="mr-1 h-3 w-3" />
                         Activación Inmediata
                       </Badge>
                     </TooltipTrigger>
                      <TooltipContent>
-                      <p>Este grupo está a punto de activarse, ¡solo faltan {membersMissing}!</p>
+                      <p>Este grupo se activa al instante. ¡El débito de la cuota 1 es inmediato!</p>
+                    </TooltipContent>
+                  </Tooltip>
+                )}
+                 {isFewMembersLeft && (
+                   <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Badge variant="outline" className="bg-red-500/20 text-red-700 border-red-500/30">
+                        <Users className="mr-1 h-3 w-3" />
+                        ¡Quedan pocos lugares!
+                      </Badge>
+                    </TooltipTrigger>
+                     <TooltipContent>
+                      <p>Este grupo está a punto de llenarse. ¡Asegura tu lugar!</p>
                     </TooltipContent>
                   </Tooltip>
                 )}
