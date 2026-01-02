@@ -1,11 +1,9 @@
 
-import { UserNav } from "@/components/app/user-nav"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { MainNav } from "./main-nav"
 import { Menu } from "lucide-react"
 import { Logo } from "../icons"
 import Link from "next/link"
-import { Button } from "../ui/button"
 
 export function Header() {
   return (
@@ -30,10 +28,6 @@ export function Header() {
           </nav>
         </SheetContent>
       </Sheet>
-      <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
-        <div className="ml-auto flex-1 sm:flex-initial" />
-        <UserNav />
-      </div>
     </header>
   )
 }

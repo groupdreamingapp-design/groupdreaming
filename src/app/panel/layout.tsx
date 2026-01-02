@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Header } from "@/components/app/header";
 import { MainNav } from "@/components/app/main-nav";
 import { Logo } from "@/components/icons";
+import { UserNav } from "@/components/app/user-nav";
 
 export default function PanelLayout({
   children,
@@ -25,7 +26,7 @@ export default function PanelLayout({
             </nav>
           </div>
           <div className="mt-auto p-4">
-             {/* This could be a card for quick actions or info */}
+             <UserNav />
           </div>
         </div>
       </div>
