@@ -85,7 +85,7 @@ generatedGroups.push({
 
 const closedGroupActivationDate = new Date('2023-05-04T00:00:00.000Z');
 generatedGroups.push({
-    id: 'ID-20230504-CLOSED',
+    id: 'ID-20230504-9876',
     capital: 10000,
     plazo: 12,
     cuotaPromedio: calculateCuotaPromedio(10000, 12),
@@ -236,4 +236,5 @@ function generateNewGroup(templateGroup: Group): Group {
 
 
     
+
 
