@@ -42,5 +42,3 @@ next-env.d.ts
 
 # firebase
 firebase-debug.log
-firestore-debug.logpackage-lock.json
-package-lock.json
