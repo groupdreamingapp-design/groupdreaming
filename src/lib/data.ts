@@ -99,6 +99,23 @@ generatedGroups.push({
     isImmediateActivation: false,
 });
 
+// New test group as per user request
+generatedGroups.push({
+    id: 'ID-20250806-TEST',
+    capital: 10000,
+    plazo: 24,
+    cuotaPromedio: calculateCuotaPromedio(10000, 24),
+    membersCount: 48,
+    totalMembers: 48,
+    status: 'Activo',
+    userIsMember: true,
+    userAwardStatus: "No Adjudicado",
+    monthsCompleted: 4, // Simulate a few months have passed
+    activationDate: '2025-08-06T00:00:00.000Z',
+    acquiredInAuction: false,
+    isImmediateActivation: false,
+});
+
 
 export const initialGroups: Group[] = generatedGroups;
 
