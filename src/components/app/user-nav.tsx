@@ -1,7 +1,6 @@
-
 'use client';
 
-import { useState, createContext, useContext, ReactNode } from "react";
+import { useState, createContext, useContext, ReactNode, useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
@@ -13,7 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { user as mockUser } from "@/lib/data";
+import { useUser } from "@/firebase";
 import Link from "next/link";
 import { CheckCircle, Shield, User } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -45,12 +44,12 @@ export function useUserNav() {
 }
 
 export function UserNav() {
-  const user = mockUser;
+  const { user } = useUser();
   const { isVerified } = useUserNav();
   const router = useRouter();
   const auth = useAuth();
   
-  const userInitials = user?.name?.split(' ').map(n => n[0]).join('') || user?.email?.charAt(0).toUpperCase() || 'U';
+  const userInitials = user?.displayName?.split(' ').map(n => n[0]).join('') || user?.email?.charAt(0).toUpperCase() || 'U';
 
   const handleLogout = async () => {
     if (auth) {
@@ -64,12 +63,16 @@ export function UserNav() {
     }
   };
 
+  if (!user) {
+    return null;
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="h-9 w-9">
-            {user.avatarUrl && <AvatarImage src={user.avatarUrl} alt={user.name || user.email || 'User'} />}
+            {user.photoURL && <AvatarImage src={user.photoURL} alt={user.displayName || user.email || 'User'} />}
             <AvatarFallback>{userInitials}</AvatarFallback>
           </Avatar>
         </Button>
@@ -77,7 +80,7 @@ export function UserNav() {
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">{user?.name || 'Usuario'}</p>
+            <p className="text-sm font-medium leading-none">{user?.displayName || 'Usuario'}</p>
             <p className="text-xs leading-none text-muted-foreground">
               {user?.email}
             </p>

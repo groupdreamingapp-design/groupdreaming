@@ -65,10 +65,10 @@ export default function LandingPageClient() {
     return (
       <>
         <Button variant="ghost" asChild>
-          <Link href="/panel">Ingresar</Link>
+          <Link href="/login">Ingresar</Link>
         </Button>
         <Button asChild>
-          <Link href="/panel">Comenzar Ahora</Link>
+          <Link href="/register">Comenzar Ahora</Link>
         </Button>
       </>
     );
@@ -113,7 +113,7 @@ export default function LandingPageClient() {
               </div>
               <div className="space-x-4">
                 <Button size="lg" asChild>
-                  <Link href="/panel">
+                  <Link href="/register">
                     Únete Ahora <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
