@@ -69,13 +69,11 @@ const generateStaticAwards = (group: Group): Award[][] => {
         if (userIndex > -1) {
             potentialWinners.splice(userIndex, 1);
         }
-        // Example: place the user's award in the last 20% of the plan
-        const awardMonthIndex = Math.floor(group.plazo * 0.85); 
-        // Ensure the award is not placed in the first month
-        const safeAwardMonthIndex = Math.max(1, awardMonthIndex);
+        // Force the award to be in month 7 (index 6) for simulation
+        const awardMonthIndex = 6;
         
-        if (!awards[safeAwardMonthIndex].some(a => a.orderNumber === userOrderNumber)) {
-           awards[safeAwardMonthIndex].push({ type: 'sorteo', orderNumber: userOrderNumber });
+        if (!awards[awardMonthIndex].some(a => a.orderNumber === userOrderNumber)) {
+           awards[awardMonthIndex].push({ type: 'sorteo', orderNumber: userOrderNumber });
         }
     }
 
