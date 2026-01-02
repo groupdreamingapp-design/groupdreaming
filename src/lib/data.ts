@@ -55,7 +55,7 @@ for (const capital of capitalOptions) {
                 capital,
                 plazo,
                 cuotaPromedio,
-                membersCount,
+                membersCount: 0, // All open groups start with 0 members
                 totalMembers,
                 status: 'Abierto',
                 userIsMember: false,
@@ -83,18 +83,19 @@ generatedGroups.push({
 });
 
 
+// Simulation group for award flow
 generatedGroups.push({
-    id: 'ID-20230504-9876',
-    capital: 10000,
-    plazo: 12,
-    cuotaPromedio: calculateCuotaPromedio(10000, 12),
-    membersCount: 24,
-    totalMembers: 24,
-    status: 'Cerrado',
+    id: 'ID-20250401-SIM1',
+    capital: 20000,
+    plazo: 36,
+    cuotaPromedio: calculateCuotaPromedio(20000, 36),
+    membersCount: 96,
+    totalMembers: 96,
+    status: 'Activo',
     userIsMember: true,
     userAwardStatus: "Adjudicado - Pendiente Aceptación",
-    monthsCompleted: 12,
-    activationDate: '2023-05-04T00:00:00.000Z',
+    monthsCompleted: 4, // Simulates a few months have passed
+    activationDate: '2025-04-03T00:00:00.000Z', // Activated as requested
 });
 
 
@@ -189,8 +190,13 @@ function generateNewGroup(templateGroup: Group): Group {
     const newId = `ID-${dateString}-${sequentialNumber}`;
     
     return {
-      ...templateGroup,
+      // Copy only the template properties, not the dynamic state
       id: newId,
+      capital: templateGroup.capital,
+      plazo: templateGroup.plazo,
+      cuotaPromedio: templateGroup.cuotaPromedio,
+      totalMembers: templateGroup.totalMembers,
+      // Reset dynamic state for the new group
       membersCount: 0,
       status: 'Abierto',
       userIsMember: false,
@@ -236,6 +242,7 @@ function generateNewGroup(templateGroup: Group): Group {
 
 
     
+
 
 
 
