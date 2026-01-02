@@ -691,3 +691,5 @@ export default function GroupDetail({ params }: GroupDetailPageProps) {
     </>
   );
 }
+
+    

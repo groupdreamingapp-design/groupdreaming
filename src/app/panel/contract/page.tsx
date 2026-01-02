@@ -39,7 +39,7 @@ const contractClauses = [
     },
     {
         title: "NOVENA: LIMITACIÓN DE RESPONSABILIDAD",
-        content: "LA ADMINISTRADORA no será responsable por daños, perjuicios o pérdidas sufridas por EL SUSCRIPTOR causados por fallas en el sistema, en el servidor o en Internet, que sean ajenas a su control. Tampoco será responsable por cualquier virus que pudiera infectar el equipo de EL SUSCRIPTOR como consecuencia del acceso o uso de su sitio web. EL SUSCRIPTOR es el único responsable de la confidencialidad de su contraseña y del uso de su cuenta, y exime de responsabilidad a LA ADMINISTRADora por el acceso no autorizado o uso indebido de la misma por parte de terceros."
+        content: "LA ADMINISTRADora no será responsable por daños, perjuicios o pérdidas sufridas por EL SUSCRIPTOR causados por fallas en el sistema, en el servidor o en Internet, que sean ajenas a su control. Tampoco será responsable por cualquier virus que pudiera infectar el equipo de EL SUSCRIPTOR como consecuencia del acceso o uso de su sitio web. EL SUSCRIPTOR es el único responsable de la confidencialidad de su contraseña y del uso de su cuenta, y exime de responsabilidad a LA ADMINISTRADora por el acceso no autorizado o uso indebido de la misma por parte de terceros."
     },
     {
         title: "DÉCIMA: JURISDICCIÓN",
@@ -93,3 +93,5 @@ export default function Contract() {
         </>
     );
 }
+
+    
