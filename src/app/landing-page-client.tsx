@@ -67,12 +67,14 @@ export default function LandingPageClient() {
               <Link href="/panel">Ir a mi Panel</Link>
             </Button>
           ) : (
-            <AuthDialog open={isAuthDialogOpen} onOpenChange={setIsAuthDialogOpen}>
-              <div className="flex gap-2">
-                 <Button variant="ghost" onClick={() => setIsAuthDialogOpen(true)}>Ingresar</Button>
-                 <Button onClick={() => setIsAuthDialogOpen(true)}>Comenzar Ahora</Button>
-              </div>
-            </AuthDialog>
+            <div className="flex gap-2">
+                <Button variant="ghost" asChild>
+                  <Link href="/panel">Ingresar</Link>
+                </Button>
+                <Button asChild>
+                  <Link href="/panel">Comenzar Ahora</Link>
+                </Button>
+            </div>
           )}
         </nav>
       </header>
