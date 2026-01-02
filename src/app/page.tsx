@@ -1,17 +1,16 @@
 
 'use client';
 
-import { useUser, useAuth } from '@/firebase';
+import { useUser } from '@/firebase';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Logo } from '@/components/icons';
 import Link from 'next/link';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { ArrowRight, CheckCircle, Clock, Home, PiggyBank, Users } from 'lucide-react';
-import { AuthDialog } from '@/components/app/auth-dialog';
-import { useState } from 'react';
-import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import { useGroups } from '@/hooks/use-groups';
+import { useMemo } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 const features = [
   {
@@ -45,21 +44,9 @@ const goals = [
 
 export default function Page() {
   const { user, loading } = useUser();
-  const auth = useAuth();
-  const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
-  
-  const handleGoogleSignIn = async () => {
-    if (auth) {
-      const provider = new GoogleAuthProvider();
-      try {
-        await signInWithPopup(auth, provider);
-        // Auth state change will be handled by the UserProvider
-        setIsAuthDialogOpen(false);
-      } catch (error) {
-        console.error("Error signing in with Google: ", error);
-      }
-    }
-  };
+  const { groups } = useGroups();
+  const myGroups = useMemo(() => groups.filter(g => g.userIsMember), [groups]);
+  const exploreLink = myGroups.length > 0 ? "/panel/my-groups" : "/panel/explore";
 
   const heroImage = PlaceHolderImages.find(img => img.id === 'hero-family');
 
@@ -78,12 +65,10 @@ export default function Page() {
               <Link href="/panel">Ir a mi Panel</Link>
             </Button>
           ) : (
-            <AuthDialog open={isAuthDialogOpen} onOpenChange={setIsAuthDialogOpen}>
-               <div className="flex gap-2">
-                  <Button variant="ghost" onClick={() => setIsAuthDialogOpen(true)}>Ingresar</Button>
-                  <Button onClick={() => setIsAuthDialogOpen(true)}>Comenzar Ahora</Button>
-               </div>
-            </AuthDialog>
+             <div className="flex gap-2">
+                <Button variant="ghost" asChild><Link href="/panel">Ingresar</Link></Button>
+                <Button asChild><Link href="/panel">Comenzar Ahora</Link></Button>
+             </div>
           )}
         </nav>
       </header>
@@ -120,7 +105,7 @@ export default function Page() {
                     </Button>
                  )}
                 <Button size="lg" variant="outline" asChild>
-                   <Link href="/panel/explore">Explorar Grupos</Link>
+                   <Link href={exploreLink}>Explorar Grupos</Link>
                 </Button>
               </div>
             </div>
