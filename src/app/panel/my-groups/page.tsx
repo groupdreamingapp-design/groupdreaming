@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useMemo, useState } from "react";
@@ -42,14 +43,11 @@ export default function MyGroups() {
             <TabsList>
               {tabs.map(tab => {
                 const count = tab === "Todos" ? myGroups.length : myGroups.filter(g => g.status === tab).length;
-                if (count > 0) {
-                  return (
-                    <TabsTrigger key={tab} value={tab}>
-                      {tab} ({count})
-                    </TabsTrigger>
-                  );
-                }
-                return null;
+                return (
+                  <TabsTrigger key={tab} value={tab}>
+                    {tab} ({count})
+                  </TabsTrigger>
+                );
               })}
             </TabsList>
           </Tabs>
