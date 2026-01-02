@@ -24,11 +24,8 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useParams } from 'next/navigation';
 
 
-type GroupDetailPageProps = {
-  params: { id: string };
-};
-
 const generateStaticAwards = (group: Group): Award[][] => {
+    // Initialize a pseudo-random generator based on the group ID for consistency
     let seed = 0;
     for (let i = 0; i < group.id.length; i++) {
         seed = (seed + group.id.charCodeAt(i)) % 1000000;
@@ -41,6 +38,7 @@ const generateStaticAwards = (group: Group): Award[][] => {
     const memberOrderNumbers = Array.from({ length: group.totalMembers }, (_, i) => i + 1);
     const userOrderNumber = 42; 
 
+    // Fisher-Yates shuffle
     const shuffle = (array: number[]) => {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(customRandom() * (i + 1));
@@ -49,89 +47,74 @@ const generateStaticAwards = (group: Group): Award[][] => {
         return array;
     };
     
-    let potentialWinners = [...memberOrderNumbers];
+    // Create a pool of potential winners and shuffle it
+    let potentialWinners = shuffle([...memberOrderNumbers]);
     
-    if (group.userIsAwarded || group.status === 'Subastado') {
+    // If the user is already awarded, remove them from the main pool to avoid duplicates
+    if (group.userIsAwarded) {
         const userIndex = potentialWinners.indexOf(userOrderNumber);
         if (userIndex > -1) {
             potentialWinners.splice(userIndex, 1);
         }
     }
 
-    potentialWinners = shuffle(potentialWinners);
-    
-    if (group.userIsAwarded) {
-        const awardsPerMonth = 2;
-        const awardMonthIndex = Math.floor(group.plazo * 0.85); // Awarded in the last part of the plan for the demo
-        const insertPosition = awardMonthIndex * awardsPerMonth;
-        
-        potentialWinners.splice(insertPosition, 0, userOrderNumber);
-    }
-    
     const awards: Award[][] = Array.from({ length: group.plazo }, () => []);
+    
+    // Special handling if the user is awarded: place their award in a specific month
+    if (group.userIsAwarded) {
+        // Example: place the user's award in the last 20% of the plan
+        const awardMonthIndex = Math.floor(group.plazo * 0.85); 
+        // Ensure the award is not placed in the first month
+        const safeAwardMonthIndex = Math.max(1, awardMonthIndex);
+        
+        awards[safeAwardMonthIndex].push({ type: 'sorteo', orderNumber: userOrderNumber });
+    }
+
     let winnerPool = [...potentialWinners];
     let desertedLicitaciones = 0;
-    
-    for (let i = 0; i < group.plazo; i++) {
-        const isLastMonth = i === group.plazo - 1;
 
-        if (isLastMonth) {
-            // Final month: adjudicate everyone left, plus deserted licitaciones
-            if (winnerPool.length > 0) {
-                 winnerPool.forEach(winner => {
-                    awards[i].push({ type: 'sorteo-extra', orderNumber: winner });
-                });
-                winnerPool = [];
+    // Start awarding from the second month (index 1)
+    for (let i = 1; i < group.plazo; i++) {
+        const remainingMonths = group.plazo - i;
+        const remainingWinners = winnerPool.length - awards.flat().filter(a => winnerPool.includes(a.orderNumber)).length;
+        
+        // Handle last month: adjudicate everyone left
+        if (i === group.plazo - 1) {
+            const adjudicatedThisMonth = awards[i].map(a => a.orderNumber);
+            const remainingToAdjudicate = winnerPool.filter(w => !adjudicatedThisMonth.includes(w));
+            
+            remainingToAdjudicate.forEach(winner => {
+                 awards[i].push({ type: 'sorteo-extra', orderNumber: winner });
+            });
+
+            // Add deserted licitaciones as extra sorteos
+            for(let j=0; j < desertedLicitaciones; j++) {
+                awards[i].push({ type: 'sorteo-extra', orderNumber: 0 - j }); // Use negative numbers for placeholder
             }
+
         } else {
-            // Regular months
-            const remainingMonths = group.plazo - 1 - i;
-            const remainingWinners = winnerPool.length;
-
-            let awardsThisMonth = 2; // Default: 1 sorteo, 1 licitacion
-             if (remainingWinners > 0 && remainingMonths > 0 && (remainingWinners / remainingMonths > 2)) {
-                 awardsThisMonth = Math.ceil(remainingWinners / remainingMonths);
-                 if(awardsThisMonth % 2 !== 0) awardsThisMonth++; // Ensure pairs of sorteo/licitacion
-                 awardsThisMonth = Math.min(4, awardsThisMonth);
-            }
-
-            if (winnerPool.length > 0) {
-                 // Sorteo
+             // Regular month logic
+            const awardsThisMonth: Award[] = [];
+            
+            // Add Sorteo winner if pool is not empty and not already awarded this month
+            if (winnerPool.length > 0 && !awards[i].some(a => a.orderNumber === winnerPool[0])) {
                 awards[i].push({ type: 'sorteo', orderNumber: winnerPool.shift()! });
             }
 
-            if (winnerPool.length > 0) {
-                // Licitacion with a chance to be deserted
-                const isDeserted = customRandom() < 0.15; // 15% chance
-                if (!isDeserted) {
-                    awards[i].push({ type: 'licitacion', orderNumber: winnerPool.shift()! });
-                } else {
-                    desertedLicitaciones++;
-                }
-            }
-
-            // Handle extra awards if needed
-            for(let j = 2; j < awardsThisMonth && winnerPool.length > 0; j+=2) {
-                 if (winnerPool.length > 0) awards[i].push({ type: 'sorteo', orderNumber: winnerPool.shift()! });
-                 if (winnerPool.length > 0) awards[i].push({ type: 'licitacion', orderNumber: winnerPool.shift()! });
-            }
+            // Add Licitacion winner if pool is not empty and not already awarded this month
+             if (winnerPool.length > 0) {
+                 const isDeserted = customRandom() < 0.15 && desertedLicitaciones < 3; // 15% chance, max 3
+                 if (!isDeserted) {
+                     if (!awards[i].some(a => a.orderNumber === winnerPool[0])) {
+                        awards[i].push({ type: 'licitacion', orderNumber: winnerPool.shift()! });
+                     }
+                 } else {
+                     desertedLicitaciones++;
+                 }
+             }
         }
     }
-
-     // Add deserted licitaciones as extra sorteos in the last month
-    if (desertedLicitaciones > 0) {
-        const lastMonthIndex = group.plazo - 1;
-        for (let i = 0; i < desertedLicitaciones; i++) {
-            // Find a winner that wasn't from the last month's mass adjudication
-            const pastWinners = awards.slice(0, lastMonthIndex).flat().map(a => a.orderNumber);
-            let extraWinner = memberOrderNumbers.find(n => !pastWinners.includes(n) && !awards[lastMonthIndex].some(a => a.orderNumber === n));
-             if (extraWinner) {
-                awards[lastMonthIndex].push({ type: 'sorteo-extra', orderNumber: extraWinner });
-            }
-        }
-    }
-
-
+    
     return awards;
 };
 
@@ -610,61 +593,64 @@ export default function GroupDetail() {
                   </TableHeader>
                   <TableBody>
                     {installments.map((inst, index) => {
-                      let status: Installment['status'] = 'Futuro';
+                      let currentStatus: Installment['status'] = 'Futuro';
                       const today = new Date();
                       today.setHours(0, 0, 0, 0);
 
                       if (group.status === 'Activo' || group.status === 'Subastado') {
                           if (inst.number <= cuotasPagadas) {
-                            status = 'Pagado';
+                            currentStatus = 'Pagado';
                           } else {
                             const dueDate = parseISO(inst.dueDate);
                             if (isBefore(dueDate, today)) {
-                              status = 'Vencido';
+                              currentStatus = 'Vencido';
                             } else {
-                                // Find the very first installment that is not paid and not overdue
                                 if (index === pendingInstallmentIndex) {
-                                    status = 'Pendiente';
+                                    currentStatus = 'Pendiente';
                                 } else {
-                                    status = 'Futuro';
+                                    currentStatus = 'Futuro';
                                 }
                             }
                           }
                       }
                       
-                      const currentAwards = groupAwards[inst.number - 1];
-                      const awardDateString = (isPlanActive && currentAwards && currentAwards.length > 0) ? addDays(parseISO(inst.dueDate), 5).toISOString() : undefined;
+                      const currentAwards = groupAwards[inst.number - 1] || [];
+                      const awardDateString = (isPlanActive && currentAwards.length > 0) ? addDays(parseISO(inst.dueDate), 5).toISOString() : undefined;
+                      const showAdjudicationInfo = currentStatus === 'Pagado';
+
 
                       return (
                         <TableRow key={inst.id}>
                           <TableCell>{inst.number}</TableCell>
                           <TableCell>{inst.dueDate.startsWith('Mes') ? inst.dueDate : <ClientFormattedDate dateString={inst.dueDate} formatString="dd/MM/yyyy" />}</TableCell>
                           <TableCell>
-                            <Badge variant={status === 'Pagado' ? 'default' : status === 'Pendiente' ? 'secondary' : status === 'Vencido' ? 'destructive' : 'outline'}
+                            <Badge variant={currentStatus === 'Pagado' ? 'default' : currentStatus === 'Pendiente' ? 'secondary' : currentStatus === 'Vencido' ? 'destructive' : 'outline'}
                               className={cn(
-                                status === 'Pagado' && 'bg-green-500/20 text-green-700 border-green-500/30',
-                                status === 'Pendiente' && 'bg-yellow-500/20 text-yellow-700 border-yellow-500/30',
-                                status === 'Vencido' && 'bg-red-500/20 text-red-700 border-red-500/30',
+                                currentStatus === 'Pagado' && 'bg-green-500/20 text-green-700 border-green-500/30',
+                                currentStatus === 'Pendiente' && 'bg-yellow-500/20 text-yellow-700 border-yellow-500/30',
+                                currentStatus === 'Vencido' && 'bg-red-500/20 text-red-700 border-red-500/30',
                               )}
-                            >{status}</Badge>
+                            >{currentStatus}</Badge>
                           </TableCell>
                            <TableCell className="text-xs text-muted-foreground">
-                              {awardDateString && (
+                              {showAdjudicationInfo && awardDateString && (
                                   <div className="flex items-center gap-2">
                                        <CalendarCheck className="h-4 w-4" />
                                        <span>{<ClientFormattedDate dateString={awardDateString} formatString="dd/MM/yyyy" />}</span>
                                   </div>
                               )}
-                              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1">
-                                 {currentAwards?.map(award => (
-                                  <div key={`${award.type}-${award.orderNumber}`} className="flex items-center gap-1">
-                                    {award.type === 'sorteo' && <Ticket className="h-4 w-4 text-blue-500" />}
-                                    {award.type === 'licitacion' && <HandCoins className="h-4 w-4 text-orange-500" />}
-                                    {award.type === 'sorteo-extra' && <Sparkles className="h-4 w-4 text-fuchsia-500" />}
-                                    <span className={cn(award.orderNumber === 42 && "font-bold text-primary")}>#{award.orderNumber}</span>
-                                  </div>
-                                ))}
-                              </div>
+                              {showAdjudicationInfo && (
+                                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1">
+                                  {currentAwards?.map(award => (
+                                    <div key={`${award.type}-${award.orderNumber}`} className="flex items-center gap-1">
+                                      {award.type === 'sorteo' && <Ticket className="h-4 w-4 text-blue-500" />}
+                                      {award.type === 'licitacion' && <HandCoins className="h-4 w-4 text-orange-500" />}
+                                      {award.type === 'sorteo-extra' && <Sparkles className="h-4 w-4 text-fuchsia-500" />}
+                                      <span className={cn(award.orderNumber === 42 && "font-bold text-primary")}>#{award.orderNumber > 0 ? award.orderNumber : '??'}</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
                           </TableCell>
                           <TableCell className="text-right font-mono">{formatCurrency(inst.total)}</TableCell>
                           <TableCell className="text-center">
