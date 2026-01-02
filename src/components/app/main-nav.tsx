@@ -56,11 +56,6 @@ export function MainNav({ isMobile = false }: MainNavProps) {
       icon: Gift,
     },
      {
-      href: "/panel/contract",
-      label: "Contrato",
-      icon: FileText,
-    },
-     {
       href: "/panel/faq",
       label: "FAQ",
       icon: HelpCircle,
