@@ -1,15 +1,30 @@
 
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { MainNav } from "./main-nav"
-import { Menu } from "lucide-react"
+import { Menu, Info } from "lucide-react"
 import { Logo } from "../icons"
 import Link from "next/link"
+import { UserNav } from "./user-nav"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Button } from "../ui/button"
 
 export function Header() {
+  const infoLinks = [
+    { href: "/panel/transparency", label: "Transparencia" },
+    { href: "/panel/benefits", label: "Beneficios" },
+    { href: "/panel/rules", label: "Reglamento" },
+    { href: "/panel/faq", label: "Preguntas Frecuentes" },
+  ];
+
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
       <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
-        {/* Desktop nav is in the sidebar, this is a placeholder */}
+        {/* Desktop nav is in the sidebar */}
       </nav>
       <Sheet>
         <SheetTrigger asChild>
@@ -28,6 +43,24 @@ export function Header() {
           </nav>
         </SheetContent>
       </Sheet>
+      <div className="flex w-full items-center justify-end gap-4 md:ml-auto md:gap-2 lg:gap-4">
+         <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <Info className="h-5 w-5" />
+                <span className="sr-only">Información</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {infoLinks.map(link => (
+                 <DropdownMenuItem key={link.href} asChild>
+                    <Link href={link.href}>{link.label}</Link>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        <UserNav />
+      </div>
     </header>
   )
 }

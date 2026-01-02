@@ -3,7 +3,6 @@ import Link from "next/link";
 import { Header } from "@/components/app/header";
 import { MainNav } from "@/components/app/main-nav";
 import { Logo } from "@/components/icons";
-import { UserNav } from "@/components/app/user-nav";
 
 export default function PanelLayout({
   children,
@@ -24,9 +23,6 @@ export default function PanelLayout({
             <nav className="grid items-start px-4 text-sm font-medium">
               <MainNav />
             </nav>
-          </div>
-          <div className="mt-auto p-4 border-t">
-             <UserNav />
           </div>
         </div>
       </div>

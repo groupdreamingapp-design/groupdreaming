@@ -40,31 +40,6 @@ export function MainNav({ isMobile = false }: MainNavProps) {
       label: "Billetera",
       icon: Wallet,
     },
-    {
-      href: "/panel/verify",
-      label: "Verificación",
-      icon: Shield,
-    },
-    {
-      href: "/panel/transparency",
-      label: "Transparencia",
-      icon: PieChart,
-    },
-     {
-      href: "/panel/benefits",
-      label: "Beneficios",
-      icon: Gift,
-    },
-     {
-      href: "/panel/rules",
-      label: "Reglamento",
-      icon: Landmark,
-    },
-     {
-      href: "/panel/faq",
-      label: "FAQ",
-      icon: HelpCircle,
-    },
   ];
 
   const linkClass = (href: string) => cn(
