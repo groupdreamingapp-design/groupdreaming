@@ -57,6 +57,7 @@ export function InstallmentReceipt({ installment, group, user, awards }: Receipt
     
     const receiptId = `R${installment.number.toString().padStart(4, '0')}-${group.id.split('-')[1]}`;
     const paymentDate = new Date(); // Simulate payment date as today
+    const isAdvancedPayment = installment.total === installment.breakdown.alicuotaPura;
 
     return (
         <div className="bg-background text-foreground p-4 md:p-8">
@@ -98,24 +99,33 @@ export function InstallmentReceipt({ installment, group, user, awards }: Receipt
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            <TableRow>
-                                <TableCell>Alícuota Pura</TableCell>
-                                <TableCell className="text-right">{formatCurrency(installment.breakdown.alicuotaPura)}</TableCell>
-                            </TableRow>
-                             <TableRow>
-                                <TableCell>Gastos Administrativos (IVA incl.)</TableCell>
-                                <TableCell className="text-right">{formatCurrency(installment.breakdown.gastosAdm)}</TableCell>
-                            </TableRow>
-                             {installment.breakdown.derechoSuscripcion && (
+                            {isAdvancedPayment ? (
                                 <TableRow>
-                                    <TableCell>Derecho de Suscripción (IVA incl.)</TableCell>
-                                    <TableCell className="text-right">{formatCurrency(installment.breakdown.derechoSuscripcion)}</TableCell>
+                                    <TableCell>Alícuota Pura (Adelanto)</TableCell>
+                                    <TableCell className="text-right">{formatCurrency(installment.breakdown.alicuotaPura)}</TableCell>
                                 </TableRow>
+                            ) : (
+                                <>
+                                    <TableRow>
+                                        <TableCell>Alícuota Pura</TableCell>
+                                        <TableCell className="text-right">{formatCurrency(installment.breakdown.alicuotaPura)}</TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                        <TableCell>Gastos Administrativos (IVA incl.)</TableCell>
+                                        <TableCell className="text-right">{formatCurrency(installment.breakdown.gastosAdm)}</TableCell>
+                                    </TableRow>
+                                    {installment.breakdown.derechoSuscripcion && (
+                                        <TableRow>
+                                            <TableCell>Derecho de Suscripción (IVA incl.)</TableCell>
+                                            <TableCell className="text-right">{formatCurrency(installment.breakdown.derechoSuscripcion)}</TableCell>
+                                        </TableRow>
+                                    )}
+                                    <TableRow>
+                                        <TableCell>Seguro de Vida s/ Saldo</TableCell>
+                                        <TableCell className="text-right">{formatCurrency(installment.breakdown.seguroVida)}</TableCell>
+                                    </TableRow>
+                                </>
                             )}
-                            <TableRow>
-                                <TableCell>Seguro de Vida s/ Saldo</TableCell>
-                                <TableCell className="text-right">{formatCurrency(installment.breakdown.seguroVida)}</TableCell>
-                            </TableRow>
                         </TableBody>
                         <TableFooter>
                             <TableRow className="font-bold text-base">
@@ -130,7 +140,7 @@ export function InstallmentReceipt({ installment, group, user, awards }: Receipt
                     <div className="flex justify-between items-center">
                         <div>
                              <h3 className="text-sm font-semibold mb-2">Forma de Pago:</h3>
-                             <p>Débito de Wallet GD</p>
+                             <p>{isAdvancedPayment ? "Adelanto de Saldo" : "Débito de Wallet GD"}</p>
                         </div>
                         <div className="text-right">
                            <h3 className="text-sm font-semibold mb-2">Vencimiento Original:</h3>
@@ -139,7 +149,7 @@ export function InstallmentReceipt({ installment, group, user, awards }: Receipt
                     </div>
                 </section>
                 
-                 {awards.length > 0 && (
+                 {awards.length > 0 && !isAdvancedPayment && (
                     <section className="mt-6 pt-4 border-t">
                         <h3 className="text-sm font-semibold mb-3">Información de Adjudicación (Mes {installment.number}):</h3>
                         <div className="grid grid-cols-2 gap-4 text-xs">

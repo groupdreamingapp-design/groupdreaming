@@ -806,8 +806,25 @@ export default function GroupDetail() {
                       
                       const currentAwards = groupAwards[inst.number - 1] || [];
                       const awardDateString = (isPlanActive || group.status === 'Cerrado') && currentAwards.length > 0 && inst.dueDate && !inst.dueDate.startsWith('Mes') ? addDays(parseISO(inst.dueDate), 5).toISOString() : undefined;
-                      const showAdjudicationInfo = inst.number <= cuotasPagadas && (group.status === 'Activo' || group.status === 'Cerrado' || group.status === 'Subastado');
+                      const showAdjudicationInfo = (inst.number <= cuotasPagadas) && (group.status === 'Activo' || group.status === 'Cerrado' || group.status === 'Subastado');
 
+                      const handleReceiptClick = () => {
+                        if (isAdvanced) {
+                            const advancedReceipt: Installment = {
+                                ...inst,
+                                total: inst.breakdown.alicuotaPura,
+                                breakdown: {
+                                    alicuotaPura: inst.breakdown.alicuotaPura,
+                                    gastosAdm: 0,
+                                    seguroVida: 0,
+                                    derechoSuscripcion: 0
+                                }
+                            };
+                            setSelectedReceipt(advancedReceipt);
+                        } else {
+                            setSelectedReceipt(inst);
+                        }
+                      };
 
                       return (
                         <TableRow key={inst.id}>
@@ -851,10 +868,23 @@ export default function GroupDetail() {
                                 </div>
                               )}
                           </TableCell>
-                          <TableCell className="text-right font-mono">{formatCurrency(inst.total)}</TableCell>
+                          <TableCell className="text-right font-mono">
+                             {isAdvanced ? (
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                      <span className="cursor-help">{formatCurrency(inst.breakdown.alicuotaPura)}*</span>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p>Pago adelantado (solo alícuota pura).</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                            ) : (
+                                formatCurrency(inst.total)
+                            )}
+                          </TableCell>
                           <TableCell className="text-center">
                             {currentStatus === 'Pagado' ? (
-                                <Button variant="outline" size="sm" onClick={() => setSelectedReceipt(inst)}>
+                                <Button variant="outline" size="sm" onClick={handleReceiptClick}>
                                 Ver Recibo
                                 </Button>
                             ) : (
