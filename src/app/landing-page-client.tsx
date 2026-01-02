@@ -112,7 +112,7 @@ export default function LandingPageClient() {
                 </p>
               </div>
               <div className="space-x-4">
-                <Button size="lg" variant="secondary" asChild>
+                <Button size="lg" asChild>
                    <Link href="/panel/transparency">
                       <PieChart className="mr-2 h-4 w-4" />
                       Ver Transparencia
