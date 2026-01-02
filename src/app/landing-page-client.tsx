@@ -1,17 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { useUser } from '@/firebase/auth/use-user';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/icons';
 import Link from 'next/link';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { ArrowRight, CheckCircle, Clock, Home, PiggyBank, Users } from 'lucide-react';
-import { useGroups } from '@/hooks/use-groups';
-import { useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { AuthDialog } from '@/components/app/auth-dialog';
 
 const features = [
   {
@@ -44,12 +40,6 @@ const goals = [
 
 
 export default function LandingPageClient() {
-  const { user, loading } = useUser();
-  const { groups } = useGroups();
-  const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
-  const myGroups = useMemo(() => groups.filter(g => g.userIsMember), [groups]);
-  const exploreLink = myGroups.length > 0 ? "/panel/my-groups" : "/panel/explore";
-
   const heroImage = PlaceHolderImages.find(img => img.id === 'hero-family');
 
   return (
@@ -60,22 +50,14 @@ export default function LandingPageClient() {
           <span className="ml-2 text-xl font-bold">Group Dreaming</span>
         </Link>
         <nav className="ml-auto flex items-center gap-4 sm:gap-6">
-          {loading ? (
-             <div className="h-10 w-24 bg-muted rounded-md animate-pulse" />
-          ) : user ? (
-            <Button asChild>
-              <Link href="/panel">Ir a mi Panel</Link>
-            </Button>
-          ) : (
-            <div className="flex gap-2">
-                <Button variant="ghost" asChild>
-                  <Link href="/panel">Ingresar</Link>
-                </Button>
-                <Button asChild>
-                  <Link href="/panel">Comenzar Ahora</Link>
-                </Button>
-            </div>
-          )}
+          <div className="flex gap-2">
+              <Button variant="ghost" asChild>
+                <Link href="/panel">Ingresar</Link>
+              </Button>
+              <Button asChild>
+                <Link href="/panel">Comenzar Ahora</Link>
+              </Button>
+          </div>
         </nav>
       </header>
 
@@ -103,15 +85,13 @@ export default function LandingPageClient() {
                 </p>
               </div>
               <div className="space-x-4">
-                 {!user && (
-                    <Button size="lg" asChild>
-                      <Link href="/panel">
-                        Únete Ahora <ArrowRight className="ml-2 h-4 w-4" />
-                      </Link>
-                    </Button>
-                 )}
+                <Button size="lg" asChild>
+                  <Link href="/panel">
+                    Únete Ahora <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
                 <Button size="lg" variant="outline" asChild>
-                   <Link href={exploreLink}>Explorar Grupos</Link>
+                   <Link href="/panel/explore">Explorar Grupos</Link>
                 </Button>
               </div>
             </div>
@@ -240,3 +220,5 @@ export default function LandingPageClient() {
     </div>
   )
 }
+
+    
