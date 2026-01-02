@@ -107,7 +107,7 @@ export default function LandingPageClient() {
                     </Link>
                 </Button>
                 <Button size="lg" asChild className="shadow-lg">
-                   <Link href="/faq">
+                   <Link href="/rules">
                       <FileText className="mr-2 h-4 w-4" />
                       Reglamento
                     </Link>
