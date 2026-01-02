@@ -409,14 +409,14 @@ export default function GroupDetail() {
                         <CalendarDays className="h-5 w-5 text-blue-600" />
                         <div>
                             <p className="font-semibold">Fecha del Acto</p>
-                            <p><ClientFormattedDate dateString={nextAdjudicationDate.toISOString()} formatString="'Aproximadamente el' EEEE, dd 'de' MMMM" /></p>
+                            <p><ClientFormattedDate dateString={nextAdjudicationDate.toISOString()} formatString="EEEE, dd 'de' MMMM" /></p>
                         </div>
                     </div>
                     <div className="flex items-center gap-3">
                         <Clock className="h-5 w-5 text-blue-600" />
                         <div>
                             <p className="font-semibold">Apertura y Licitación</p>
-                            <p>El acto abre a las 8:30hs. La licitación se define a las 9:00hs.</p>
+                            <p>El acto abre 8:30hs. La licitación se define 9:00hs.</p>
                         </div>
                     </div>
                      <Button asChild className="w-full">
