@@ -275,23 +275,38 @@ export default function GroupDetail() {
   }, [installments, cuotasPagadas, isPlanActive]);
   
   const cuotasFuturas = useMemo(() => {
-    if (!isPlanActive) return 0;
-    
+    if (!isPlanActive || !group.activationDate) return 0;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
     const advancedCount = advancedInstallments[group.id] || 0;
 
-    const futureInstallments = installments.filter(inst => {
-      const isAdvanced = inst.number > group.plazo - advancedCount;
-      if(isAdvanced) return false;
+    const futureInstallments = installments.filter((inst, index) => {
+        let currentStatus: Installment['status'] = 'Futuro';
+        const isAdvanced = inst.number > group.plazo - advancedCount;
 
-      if (inst.number <= cuotasPagadas) return false;
-      
-      const dueDate = parseISO(inst.dueDate);
-      return !isBefore(dueDate, new Date());
+        if (isAdvanced) {
+            currentStatus = 'Pagado';
+        } else if (inst.number <= cuotasPagadas) {
+            currentStatus = 'Pagado';
+        } else {
+            const dueDate = parseISO(inst.dueDate);
+            if (isBefore(dueDate, today)) {
+                currentStatus = 'Vencido';
+            } else {
+                if (index === pendingInstallmentIndex) {
+                    currentStatus = 'Pendiente';
+                } else {
+                    currentStatus = 'Futuro';
+                }
+            }
+        }
+        return currentStatus === 'Futuro';
     });
 
     return futureInstallments.length;
+}, [installments, isPlanActive, cuotasPagadas, advancedInstallments, group.id, group.plazo, group.activationDate, pendingInstallmentIndex]);
 
-  }, [installments, isPlanActive, cuotasPagadas, advancedInstallments, group.id, group.plazo]);
 
   const futureInstallmentsForCalculation = useMemo(() => {
     if (!isPlanActive) return [];
@@ -594,11 +609,8 @@ export default function GroupDetail() {
                            <Switch id="terms-advance" checked={termsAcceptedAdvance} onCheckedChange={setTermsAcceptedAdvance} disabled={!isAdvanceInputValid} />
                            <div className="grid gap-1.5 leading-none">
                             <Label htmlFor="terms-advance" className={cn("font-medium", !isAdvanceInputValid && "text-muted-foreground")}>
-                                Acepto los términos y condiciones de adelanto.
+                                Acepto que el débito se realizará desde mi Wallet y es irreversible.
                             </Label>
-                            <p className="text-xs text-muted-foreground">
-                                El monto se debitará de tu billetera. Esta acción es irreversible.
-                            </p>
                            </div>
                          </div>
                      </div>
@@ -947,5 +959,7 @@ export default function GroupDetail() {
     </TooltipProvider>
   );
 }
+
+    
 
     
