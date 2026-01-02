@@ -1,4 +1,3 @@
-
 'use client';
 
 import type { Group, Installment, Award } from '@/lib/types';
@@ -163,6 +162,7 @@ export default function GroupDetail() {
   const [termsAcceptedAdvance, setTermsAcceptedAdvance] = useState(false);
   const [termsAcceptedBid, setTermsAcceptedBid] = useState(false);
   const [termsAcceptedAuction, setTermsAcceptedAuction] = useState(false);
+  const [termsAcceptedBaja, setTermsAcceptedBaja] = useState(false);
   const [selectedInstallment, setSelectedInstallment] = useState<Installment | null>(null);
 
 
@@ -540,7 +540,7 @@ export default function GroupDetail() {
                          </DialogFooter>
                        </DialogContent>
                      </Dialog>
-                     <Dialog>
+                     <Dialog onOpenChange={(open) => !open && setTermsAcceptedBaja(false)}>
                        <DialogTrigger asChild><Button size="sm" variant="destructive" disabled={!isPlanActive}><FileX2 className="mr-2 h-4 w-4" /> Dar de Baja</Button></DialogTrigger>
                        <DialogContent>
                          <DialogHeader><DialogTitle>Dar de Baja el Plan</DialogTitle><DialogDescription>Rescinde tu contrato. Aplica solo para planes no adjudicados.</DialogDescription></DialogHeader>
@@ -552,9 +552,20 @@ export default function GroupDetail() {
                                 <div className="flex justify-between font-bold border-t pt-2"><span>Monto a Devolver (al final):</span><strong>{formatCurrency(capitalAportadoPuro - penalidadBaja)}</strong></div>
                              </Card>
                               <p className="text-xs text-muted-foreground">La devolución se efectuará una vez finalizado el plazo original del grupo para no afectar al resto de los miembros.</p>
+                              <div className="items-top flex space-x-2 pt-2">
+                                <Switch id="terms-baja" checked={termsAcceptedBaja} onCheckedChange={setTermsAcceptedBaja} />
+                                <div className="grid gap-1.5 leading-none">
+                                  <Label htmlFor="terms-baja" className="font-medium">
+                                      Acepto los términos y condiciones de la baja.
+                                  </Label>
+                                  <p className="text-xs text-muted-foreground">
+                                      Entiendo que la devolución se hará al final del ciclo y que se aplicará la penalidad indicada.
+                                  </p>
+                                </div>
+                              </div>
                          </div>
                          <DialogFooter>
-                             <Button type="submit" variant="destructive">Confirmar Baja</Button>
+                             <Button type="submit" variant="destructive" disabled={!termsAcceptedBaja}>Confirmar Baja</Button>
                          </DialogFooter>
                        </DialogContent>
                      </Dialog>
