@@ -157,7 +157,7 @@ function ClientFormattedDate({ dateString, formatString }: { dateString: string,
 export default function GroupDetail() {
   const params = useParams();
   const groupId = typeof params.id === 'string' ? params.id : '';
-  const { groups, joinGroup, auctionGroup } = useGroups();
+  const { groups, joinGroup, auctionGroup, acceptAward } = useGroups();
   const { toast } = useToast();
   const [cuotasToAdvance, setCuotasToAdvance] = useState<number>(0);
   const [cuotasToBid, setCuotasToBid] = useState<number>(0);
@@ -327,6 +327,11 @@ export default function GroupDetail() {
     });
   };
 
+  const handleAcceptAward = () => {
+    if (!group) return;
+    acceptAward(group.id);
+  };
+
   const awardStatusText: Record<UserAwardStatus, string> = {
     "No Adjudicado": "Pendiente",
     "Adjudicado - Pendiente Aceptación": "Adjudicado (Pend. Aceptación)",
@@ -469,7 +474,7 @@ export default function GroupDetail() {
                             </div>
                             <DialogFooter>
                                 <DialogClose asChild><Button variant="destructive">Rechazar</Button></DialogClose>
-                                <Button className='bg-green-600 hover:bg-green-700' disabled={!awardTermsAccepted}>Aceptar Adjudicación</Button>
+                                <Button className='bg-green-600 hover:bg-green-700' disabled={!awardTermsAccepted} onClick={handleAcceptAward}>Aceptar Adjudicación</Button>
                             </DialogFooter>
                         </DialogContent>
                     </Dialog>

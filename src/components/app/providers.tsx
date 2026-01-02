@@ -142,10 +142,25 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
+  const acceptAward = useCallback((groupId: string) => {
+    setGroups(currentGroups => {
+      return currentGroups.map(g => 
+        (g.id === groupId && g.userAwardStatus === 'Adjudicado - Pendiente Aceptación') 
+          ? { ...g, userAwardStatus: 'Adjudicado - Pendiente Garantías' } 
+          : g
+      );
+    });
+    toast({
+        title: "¡Adjudicación Aceptada!",
+        description: `Por favor, procede a presentar las garantías requeridas.`,
+        className: 'bg-green-100 border-green-500 text-green-700'
+    });
+  }, [toast]);
+
   const formatCurrency = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount);
 
   return (
-    <GroupsContext.Provider value={{ groups, joinGroup, auctionGroup }}>
+    <GroupsContext.Provider value={{ groups, joinGroup, auctionGroup, acceptAward }}>
       {children}
     </GroupsContext.Provider>
   );
