@@ -91,59 +91,6 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
     });
   }, [groups, toast]);
 
-  // Effect to check for overdue payments and force auction
- 
- useEffect(() => {
-    const checkOverdue = () => {
-        setGroups(currentGroups => {
-            const groupsToUpdate = currentGroups.map(group => {
-                if (group.userIsMember && group.status === 'Activo' && !group.userIsAwarded && group.activationDate) {
-                    const today = new Date();
-                    const groupInstallments = generateInstallments(group.capital, group.plazo, group.activationDate);
-                    
-                    const overdueInstallments = groupInstallments.filter(inst => {
-                        const isPaid = inst.number <= (group.monthsCompleted || 0);
-                        const dueDate = parseISO(inst.dueDate);
-                        return !isPaid && isBefore(dueDate, today);
-                    });
-                    
-                    if (overdueInstallments.length >= 2) {
-                        // We check the second overdue installment to see if 72 hours have passed
-                        const secondOverdueDate = parseISO(overdueInstallments[1].dueDate);
-                        const hoursSinceOverdue = differenceInHours(today, secondOverdueDate);
-                        
-                        if (hoursSinceOverdue > 72) {
-                             if(group.acquiredInAuction) {
-                                if (group.status !== 'Cerrado') {
-                                    return { ...group, status: 'Cerrado' as const, userIsMember: false };
-                                }
-                             } else {
-                                if (group.status !== 'Subastado') {
-                                    return { ...group, status: 'Subastado' as const, auctionStartDate: new Date().toISOString() };
-                                }
-                             }
-                        }
-                    }
-                }
-                return group;
-            });
-
-            // Only update state if there are actual changes
-            if (JSON.stringify(groupsToUpdate) !== JSON.stringify(currentGroups)) {
-                return groupsToUpdate;
-            }
-
-            return currentGroups;
-        });
-    };
-
-    const timer = setInterval(checkOverdue, 1000 * 60 * 60); // Check every hour
-    checkOverdue(); // Initial check
-
-    return () => clearInterval(timer);
-}, []);
-
-
 
   // Effect to show toast when a group is auctioned
   useEffect(() => {

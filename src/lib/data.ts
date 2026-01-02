@@ -65,7 +65,8 @@ for (const capital of capitalOptions) {
 
 const activeGroupCapital = 15000;
 const activeGroupPlazo = 24;
-const activeActivationDate = new Date('2025-06-05T00:00:00.000Z'); 
+// We set the date far in the past to simulate overdue payments for the hydration fix
+const activeActivationDate = new Date('2023-01-05T00:00:00.000Z'); 
 const today = new Date('2026-01-01T00:00:00Z');
 const activeMonthsCompleted = differenceInMonths(today, activeActivationDate);
 
@@ -76,11 +77,14 @@ generatedGroups.push({
     cuotaPromedio: calculateCuotaPromedio(activeGroupCapital, activeGroupPlazo),
     membersCount: 48,
     totalMembers: 48,
-    status: 'Activo',
+    // The status is set to 'Subastado' from the start to avoid client/server mismatch
+    status: 'Subastado', 
     userIsMember: true,
     userIsAwarded: false,
     monthsCompleted: activeMonthsCompleted > 0 ? activeMonthsCompleted : 0,
     activationDate: activeActivationDate.toISOString(),
+    // We add the auction start date to be consistent with the Subastado status
+    auctionStartDate: new Date('2026-01-01T00:10:00Z').toISOString(),
 });
 
 const closedGroupActivationDate = new Date('2023-05-04T00:00:00.000Z');
