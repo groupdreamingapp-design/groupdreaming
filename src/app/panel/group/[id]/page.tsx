@@ -22,6 +22,7 @@ import { addDays, parseISO, format, isBefore, isToday } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { useParams } from 'next/navigation';
 
 
 type GroupDetailPageProps = {
@@ -152,8 +153,9 @@ function ClientFormattedDate({ dateString, formatString }: { dateString: string,
 }
 
 
-export default function GroupDetail({ params }: GroupDetailPageProps) {
-  const { id: groupId } = params;
+export default function GroupDetail() {
+  const params = useParams();
+  const groupId = typeof params.id === 'string' ? params.id : '';
   const { groups, joinGroup, auctionGroup } = useGroups();
   const { toast } = useToast();
   const [cuotasToAdvance, setCuotasToAdvance] = useState<number>(0);
@@ -691,5 +693,3 @@ export default function GroupDetail({ params }: GroupDetailPageProps) {
     </>
   );
 }
-
-    
