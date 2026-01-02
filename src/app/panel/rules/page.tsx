@@ -50,7 +50,7 @@ const platformRules = [
         points:
         [
             "Puedes vender tu plan a partir de la 3ra cuota paga.",
-            "El precio base se calcula sobre las cuotas puras ya abonadas.",
+            "La base se estipula automaticamente sobre el 50% de las cuotas totales emitidas ya que la plataforma de ahí podrá cobrarse los impagos y la comision correspondiente.",
             "Un plan adquirido en subasta no puede volver a ser subastado, brindando estabilidad al sistema."
         ]
     },
