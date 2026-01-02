@@ -230,14 +230,21 @@ export default function GroupDetail() {
 
   const awardMonth = userAwardInfo?.month;
   const benefitThresholdMonth = Math.floor(group.plazo * 0.8);
-  const isEligibleForBenefit = group.userIsAwarded && awardMonth && awardMonth > benefitThresholdMonth && (userAwardInfo?.type === 'sorteo' || userAwardInfo?.type === 'sorteo-especial');
-
+  
   const hasNoOverduePayments = useMemo(() => {
       if(!group.activationDate) return true;
       const groupInstallments = generateInstallments(group.capital, group.plazo, group.activationDate);
       const today = new Date();
       return !groupInstallments.some(inst => inst.number <= cuotasPagadas && isBefore(parseISO(inst.dueDate), today));
   }, [group, cuotasPagadas]);
+
+  const hasAdvancedInstallments = false; // Mock state for benefit eligibility
+
+  const isEligibleForBenefit = group.userIsAwarded && 
+      awardMonth && awardMonth > benefitThresholdMonth && 
+      (userAwardInfo?.type === 'sorteo' || userAwardInfo?.type === 'sorteo-especial') &&
+      hasNoOverduePayments &&
+      !hasAdvancedInstallments;
 
   
   const alicuotaPuraTotal = realInstallments.length > 0 ? realInstallments[0].breakdown.alicuotaPura : (group.capital / group.plazo);
@@ -368,12 +375,16 @@ export default function GroupDetail() {
                             <h4 className="font-semibold mb-2">Requisitos Cumplidos:</h4>
                             <ul className="text-sm space-y-2">
                                 <li className="flex items-center gap-2">
-                                    {isEligibleForBenefit ? <Check className="h-4 w-4 text-green-600" /> : <X className="h-4 w-4 text-red-600" />}
+                                    <Check className="h-4 w-4 text-green-600" />
                                     <span>Adjudicado por sorteo en el último 20% del plan (mes {awardMonth} de {group.plazo}).</span>
                                 </li>
                                 <li className="flex items-center gap-2">
                                     {hasNoOverduePayments ? <Check className="h-4 w-4 text-green-600" /> : <X className="h-4 w-4 text-red-600" />}
                                     <span>Sin cuotas vencidas durante el plan.</span>
+                                </li>
+                                <li className="flex items-center gap-2">
+                                    {!hasAdvancedInstallments ? <Check className="h-4 w-4 text-green-600" /> : <X className="h-4 w-4 text-red-600" />}
+                                    <span>Sin adelanto de cuotas.</span>
                                 </li>
                                  <li className="flex items-center gap-2">
                                     <Check className="h-4 w-4 text-green-600" /> 

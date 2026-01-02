@@ -29,6 +29,7 @@ const benefits = [
                 title: "Condiciones para Acceder (Bases)",
                 points: [
                     "No haber registrado cuotas vencidas ni pagado fuera de término durante toda la vigencia del plan.",
+                    "No haber realizado adelanto de cuotas durante la vigencia del plan.",
                     "No haber rechazado un acto de adjudicación previo en el mismo plan.",
                     "El beneficio aplica únicamente a adjudicaciones por sorteo, no por licitación.",
                     "El plan no debe haber sido adquirido a través de una subasta en el mercado secundario.",
@@ -92,5 +93,3 @@ export default function Benefits() {
         </>
     );
 }
-
-    
