@@ -147,48 +147,6 @@ export default function LandingPageClient() {
           </div>
         </section>
 
-
-        <section className="w-full py-12 md:py-24 lg:py-32 border-t">
-          <div className="container px-4 md:px-6">
-            <div className="grid gap-10 sm:px-10 md:gap-16 md:grid-cols-2">
-              <div className="space-y-4">
-                <div className="inline-block rounded-lg bg-muted px-3 py-1 text-sm">Transparencia</div>
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Tu confianza es nuestra prioridad</h2>
-                <p className="max-w-[700px] text-muted-foreground md:text-xl/relaxed">
-                  Operamos con total claridad. Conoce a fondo nuestro sistema, los contratos y cómo se gestionan los fondos de cada grupo. Tu tranquilidad es fundamental para nosotros.
-                </p>
-                <Button asChild>
-                  <Link href="/panel/transparency">Conoce más sobre nuestra transparencia</Link>
-                </Button>
-              </div>
-              <div className="flex flex-col items-start space-y-4">
-                 <Card className="w-full">
-                    <CardHeader className="pb-4">
-                      <CardTitle>Contrato de Adhesión</CardTitle>
-                      <CardDescription>Lee nuestros términos y condiciones de forma clara y sencilla.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <Button variant="outline" asChild>
-                        <Link href="/panel/contract">Ver Contrato</Link>
-                      </Button>
-                    </CardContent>
-                  </Card>
-                   <Card className="w-full">
-                    <CardHeader className="pb-4">
-                      <CardTitle>Preguntas Frecuentes</CardTitle>
-                      <CardDescription>Encuentra respuestas a las dudas más comunes sobre la plataforma.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <Button variant="outline" asChild>
-                        <Link href="/panel/faq">Ir a las FAQ</Link>
-                      </Button>
-                    </CardContent>
-                  </Card>
-              </div>
-            </div>
-          </div>
-        </section>
-
       </main>
       <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t">
         <p className="text-xs text-muted-foreground">&copy; 2024 Group Dreaming. Todos los derechos reservados.</p>
