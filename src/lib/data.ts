@@ -46,16 +46,14 @@ for (const capital of capitalOptions) {
             
             const totalMembers = plazo <= 24 ? 48 : plazo <= 48 ? 96 : 144;
             
-            const membersCount = 0;
             groupCounter++;
-
 
             generatedGroups.push({
                 id: newId,
                 capital,
                 plazo,
                 cuotaPromedio,
-                membersCount: 0, // All open groups start with 0 members
+                membersCount: 0,
                 totalMembers,
                 status: 'Abierto',
                 userIsMember: false,
@@ -85,7 +83,7 @@ generatedGroups.push({
 
 // Simulation group for award flow
 generatedGroups.push({
-    id: 'ID-20250401-SIM1',
+    id: 'ID-20250401-9374',
     capital: 20000,
     plazo: 36,
     cuotaPromedio: calculateCuotaPromedio(20000, 36),
@@ -179,78 +177,4 @@ export const generateExampleInstallments = (capital: number, plazo: number): Ins
         };
     });
 };
-
-function generateNewGroup(templateGroup: Group): Group {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-    const dateString = `${year}${month}${day}`;
-    const sequentialNumber = String(groupCounter++).padStart(4, '0');
-    const newId = `ID-${dateString}-${sequentialNumber}`;
     
-    return {
-      // Copy only the template properties, not the dynamic state
-      id: newId,
-      capital: templateGroup.capital,
-      plazo: templateGroup.plazo,
-      cuotaPromedio: templateGroup.cuotaPromedio,
-      totalMembers: templateGroup.totalMembers,
-      // Reset dynamic state for the new group
-      membersCount: 0,
-      status: 'Abierto',
-      userIsMember: false,
-      userAwardStatus: "No Adjudicado",
-      monthsCompleted: 0,
-      activationDate: undefined,
-      acquiredInAuction: false,
-      isImmediateActivation: false,
-    };
-}
-    
-
-
-
-
-
-    
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
