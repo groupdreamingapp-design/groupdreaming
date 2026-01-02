@@ -15,9 +15,15 @@ const goals = [
   PlaceHolderImages.find(img => img.id === 'goal-house'),
 ].filter(Boolean) as any[];
 
+const collageImages = [
+    PlaceHolderImages.find(img => img.id === 'collage-travel'),
+    PlaceHolderImages.find(img => img.id === 'collage-house-keys'),
+    PlaceHolderImages.find(img => img.id === 'collage-car-keys'),
+    PlaceHolderImages.find(img => img.id === 'collage-cafe'),
+].filter(Boolean) as any[];
+
 
 export default function LandingPageClient() {
-  const heroImage = PlaceHolderImages.find(img => img.id === 'hero-family');
   const { user, loading } = useUser();
 
   const renderAuthButtons = () => {
@@ -66,19 +72,8 @@ export default function LandingPageClient() {
       </header>
 
       <main className="flex-1">
-        <section className="relative w-full pt-24 pb-12 md:pt-32 md:pb-24 lg:pt-48 lg:pb-32">
-          {heroImage && (
-             <Image
-              src={heroImage.imageUrl}
-              alt={heroImage.description}
-              fill
-              className="object-cover"
-              priority
-              data-ai-hint={heroImage.imageHint}
-            />
-          )}
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent"></div>
-           <div className="container px-4 md:px-6 relative z-10">
+        <section className="w-full pt-24 pb-12 md:pt-32 md:pb-24 lg:pt-40 lg:pb-28 bg-background">
+           <div className="container px-4 md:px-6 z-10">
             <div className="flex flex-col items-center space-y-4 text-center">
               <div className="space-y-4">
                 <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl/none">
@@ -103,7 +98,26 @@ export default function LandingPageClient() {
           </div>
         </section>
         
-        <section className="w-full py-12 md:py-24 lg:py-32">
+        <section className="w-full pb-12 md:pb-24 lg:pb-32">
+             <div className="container px-4 md:px-6">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    {collageImages.map((image, index) => (
+                        <div key={image.id} className="relative aspect-video rounded-xl overflow-hidden shadow-lg">
+                           <Image
+                                src={image.imageUrl}
+                                alt={image.description}
+                                fill
+                                className="object-cover"
+                                data-ai-hint={image.imageHint}
+                                sizes="(max-width: 768px) 50vw, (max-width: 1024px) 25vw, 25vw"
+                            />
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </section>
+        
+        <section className="w-full py-12 md:py-24 lg:py-32 bg-muted">
           <div className="container grid items-center gap-6 px-4 md:px-6 lg:grid-cols-2 lg:gap-10">
             <div className="space-y-4">
               <h2 className="text-3xl font-bold tracking-tighter md:text-4xl/tight">Desde un auto nuevo hasta el viaje de tus sueños</h2>

@@ -39,6 +39,38 @@
       "imageHint": "modern house",
       "width": 1080,
       "height": 720
+    },
+    {
+      "id": "collage-travel",
+      "description": "A beautiful travel destination, like Santorini.",
+      "imageUrl": "https://images.unsplash.com/photo-1664012898080-ad180d7732a6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHx0cmF2ZWwlMjBncmVlY2V8ZW58MHx8fHwxNzY3MzU3NDgyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "travel greece",
+      "width": 600,
+      "height": 400
+    },
+    {
+      "id": "collage-house-keys",
+      "description": "A person receiving the keys to their new home.",
+      "imageUrl": "https://images.unsplash.com/photo-1741156386380-0236c72eb6f9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxob3VzZSUyMGtleXN8ZW58MHx8fHwxNzY3MjkwMzA1fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "house keys",
+      "width": 600,
+      "height": 400
+    },
+    {
+      "id": "collage-car-keys",
+      "description": "A person receiving the keys to their new car.",
+      "imageUrl": "https://images.unsplash.com/photo-1652509573480-a190f1c61f6d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxjYXIlMjBrZXlzfGVufDB8fHx8MTc2NzM1NzQ4Mnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "car keys",
+      "width": 600,
+      "height": 400
+    },
+    {
+      "id": "collage-cafe",
+      "description": "A new coffee shop owner proudly standing in their store.",
+      "imageUrl": "https://images.unsplash.com/photo-1594402918538-96636fcb6d8c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxjYWZlJTIwb3duZXJ8ZW58MHx8fHwxNzY3MzU3NDgzfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "cafe owner",
+      "width": 600,
+      "height": 400
     }
   ]
 }
