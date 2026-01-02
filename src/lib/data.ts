@@ -83,6 +83,21 @@ generatedGroups.push({
     activationDate: activeActivationDate.toISOString(),
 });
 
+const closedGroupActivationDate = new Date('2023-05-04T00:00:00.000Z');
+generatedGroups.push({
+    id: 'ID-20230504-CLOSED',
+    capital: 10000,
+    plazo: 12,
+    cuotaPromedio: calculateCuotaPromedio(10000, 12),
+    membersCount: 24,
+    totalMembers: 24,
+    status: 'Cerrado',
+    userIsMember: true,
+    userIsAwarded: true, // Let's assume the user was awarded in this old plan
+    monthsCompleted: 12,
+    activationDate: closedGroupActivationDate.toISOString(),
+});
+
 
 export const initialGroups: Group[] = generatedGroups;
 

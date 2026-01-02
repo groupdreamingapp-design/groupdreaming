@@ -89,12 +89,11 @@ const generateStaticAwards = (group: Group): Award[][] => {
 
             // Add deserted licitaciones as extra sorteos
             for(let j=0; j < desertedLicitaciones; j++) {
-                awards[i].push({ type: 'sorteo-extra', orderNumber: 0 - j }); // Use negative numbers for placeholder
+                awards[i].push({ type: 'sorteo-extra', orderNumber: 0 - (j + 1) }); // Use negative numbers for placeholder
             }
 
         } else {
              // Regular month logic
-            const awardsThisMonth: Award[] = [];
             
             // Add Sorteo winner if pool is not empty and not already awarded this month
             if (winnerPool.length > 0 && !awards[i].some(a => a.orderNumber === winnerPool[0])) {
@@ -103,13 +102,18 @@ const generateStaticAwards = (group: Group): Award[][] => {
 
             // Add Licitacion winner if pool is not empty and not already awarded this month
              if (winnerPool.length > 0) {
-                 const isDeserted = customRandom() < 0.15 && desertedLicitaciones < 3; // 15% chance, max 3
-                 if (!isDeserted) {
-                     if (!awards[i].some(a => a.orderNumber === winnerPool[0])) {
-                        awards[i].push({ type: 'licitacion', orderNumber: winnerPool.shift()! });
-                     }
+                 // Specific logic for the test group
+                 if (group.id === 'ID-20230504-CLOSED' && i === 3) { // Month 4 is index 3
+                    desertedLicitaciones++;
                  } else {
-                     desertedLicitaciones++;
+                    const isDeserted = customRandom() < 0.15 && desertedLicitaciones < 3; // 15% chance, max 3
+                    if (!isDeserted) {
+                        if (!awards[i].some(a => a.orderNumber === winnerPool[0])) {
+                            awards[i].push({ type: 'licitacion', orderNumber: winnerPool.shift()! });
+                        }
+                    } else {
+                        desertedLicitaciones++;
+                    }
                  }
              }
         }
@@ -158,7 +162,7 @@ export default function GroupDetail() {
 
   const installments = useMemo(() => {
     if (!group) return [];
-    if ((group.status === 'Activo' || group.status === 'Subastado') && group.activationDate) {
+    if ((group.status === 'Activo' || group.status === 'Subastado' || group.status === 'Cerrado') && group.activationDate) {
       return generateInstallments(group.capital, group.plazo, group.activationDate);
     }
     if (group.status === 'Abierto' || group.status === 'Pendiente') {
@@ -573,7 +577,7 @@ export default function GroupDetail() {
             </div>
         )}
 
-        {(group.status === 'Abierto' || group.status === 'Pendiente' || group.status === 'Activo' || group.status === 'Subastado') && (
+        {(group.status === 'Abierto' || group.status === 'Pendiente' || group.status === 'Activo' || group.status === 'Subastado' || group.status === 'Cerrado') && (
           <div className="lg:col-span-3">
             <Card>
               <CardHeader>
@@ -597,7 +601,7 @@ export default function GroupDetail() {
                       const today = new Date();
                       today.setHours(0, 0, 0, 0);
 
-                      if (group.status === 'Activo' || group.status === 'Subastado') {
+                      if (group.status === 'Activo' || group.status === 'Subastado' || group.status === 'Cerrado') {
                           if (inst.number <= cuotasPagadas) {
                             currentStatus = 'Pagado';
                           } else {
@@ -615,7 +619,7 @@ export default function GroupDetail() {
                       }
                       
                       const currentAwards = groupAwards[inst.number - 1] || [];
-                      const awardDateString = (isPlanActive && currentAwards.length > 0) ? addDays(parseISO(inst.dueDate), 5).toISOString() : undefined;
+                      const awardDateString = (isPlanActive || group.status === 'Cerrado') && currentAwards.length > 0 && inst.dueDate && !inst.dueDate.startsWith('Mes') ? addDays(parseISO(inst.dueDate), 5).toISOString() : undefined;
                       const showAdjudicationInfo = currentStatus === 'Pagado';
 
 
