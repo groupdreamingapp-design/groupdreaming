@@ -144,7 +144,8 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
           }
         });
   
-        return stateChanged ? newGroups : currentGroups;
+        if (stateChanged) return newGroups;
+        return currentGroups;
       });
   
       // Show toasts after the state update
