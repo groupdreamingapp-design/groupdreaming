@@ -6,7 +6,7 @@ import { Logo } from '@/components/icons';
 import Link from 'next/link';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { ArrowRight, CheckCircle, Clock, FileText, Home, LayoutDashboard, PieChart, PiggyBank, Users } from 'lucide-react';
+import { ArrowRight, CheckCircle, Clock, FileText, Gift, Home, LayoutDashboard, PieChart, PiggyBank, Users } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useUser } from '@/firebase';
 
@@ -110,6 +110,12 @@ export default function LandingPageClient() {
                    <Link href="/rules">
                       <FileText className="mr-2 h-4 w-4" />
                       Reglamento
+                    </Link>
+                </Button>
+                <Button size="lg" asChild className="shadow-lg">
+                   <Link href="/benefits">
+                      <Gift className="mr-2 h-4 w-4" />
+                      Beneficios
                     </Link>
                 </Button>
                 <Button size="lg" variant="secondary" asChild className="shadow-lg">
