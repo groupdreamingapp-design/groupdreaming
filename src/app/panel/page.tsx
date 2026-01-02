@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useMemo } from "react";
@@ -26,8 +27,6 @@ export default function Dashboard() {
     return statusOrder[a.status] - statusOrder[b.status];
   }), [groups]);
 
-  const activeGroups = useMemo(() => myGroups.filter(g => g.status === 'Activo'), [myGroups]);
-
   const subscribedCapital = useMemo(() => {
     return groups
         .filter(g => g.userIsMember && (g.status === 'Activo' || g.status === 'Abierto' || g.status === 'Pendiente'))
@@ -35,6 +34,7 @@ export default function Dashboard() {
   }, [groups]);
 
   const availableToSubscribe = MAX_CAPITAL - subscribedCapital;
+  const usedCapitalPercentage = (subscribedCapital / MAX_CAPITAL) * 100;
 
 
   const getProgress = (group: Group) => {
@@ -75,54 +75,32 @@ export default function Dashboard() {
     <>
       <h1 className="text-3xl font-bold font-headline">Hola, {user.name.split(' ')[0]}!</h1>
       
-       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <Card className="lg:col-span-3">
-          <CardHeader>
-            <CardTitle>Resumen Financiero</CardTitle>
+       <div className="grid gap-4 md:grid-cols-2">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Saldo Disponible</CardTitle>
+            <Wallet className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="grid md:grid-cols-3 gap-6">
-              <div className="flex flex-col gap-4">
-                <div className="flex items-center gap-4">
-                  <Wallet className="h-8 w-8 text-muted-foreground" />
-                  <div>
-                    <p className="text-sm text-muted-foreground">Saldo Disponible</p>
-                    <p className="text-2xl font-bold">{formatCurrency(availableBalance)}</p>
-                  </div>
-                </div>
-              </div>
-              <div className="flex flex-col gap-4">
-                 {activeGroups.length > 0 ? (
-                    <div className="flex items-center gap-4">
-                      <Repeat className="h-8 w-8 text-muted-foreground" />
-                      <div>
-                        <p className="text-sm text-muted-foreground">Próxima Cuota</p>
-                        <p className="text-2xl font-bold">{formatCurrency(615)}</p>
-                        <p className="text-xs text-muted-foreground">Vence en 15 días</p>
-                      </div>
-                    </div>
-                 ) : (
-                    <div className="flex items-center gap-4 rounded-lg bg-muted p-4 h-full">
-                        <Info className="h-8 w-8 text-muted-foreground" />
-                         <div>
-                            <p className="text-sm font-semibold">Todo listo para empezar</p>
-                            <p className="text-xs text-muted-foreground">Aún no tienes cuotas a pagar. ¡Únete a un grupo para comenzar!</p>
-                        </div>
-                    </div>
-                 )}
-              </div>
-              <div className="flex flex-col gap-4">
-                 <div className="flex items-center gap-4">
-                  <PieChart className="h-8 w-8 text-muted-foreground" />
-                  <div>
-                    <p className="text-sm text-muted-foreground">Cupo de Capital Disponible</p>
-                    <p className="text-2xl font-bold">{formatCurrency(availableToSubscribe)}</p>
-                    <p className="text-xs text-muted-foreground">Total: {formatCurrency(MAX_CAPITAL)}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <div className="text-2xl font-bold">{formatCurrency(availableBalance)}</div>
+            <p className="text-xs text-muted-foreground">Fondos listos para usar en la plataforma</p>
           </CardContent>
+        </Card>
+        <Card>
+           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Cupo Máximo de Capital a Suscribir</CardTitle>
+              <PieChart className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+                <div className="space-y-2">
+                     <Progress value={usedCapitalPercentage} />
+                     <div className="grid grid-cols-3 text-xs">
+                        <div><span className="font-semibold">Utilizado:</span> {formatCurrency(subscribedCapital)}</div>
+                        <div className="text-center"><span className="font-semibold">Disponible:</span> {formatCurrency(availableToSubscribe)}</div>
+                        <div className="text-right"><span className="font-semibold">Total:</span> {formatCurrency(MAX_CAPITAL)}</div>
+                     </div>
+                </div>
+            </CardContent>
         </Card>
       </div>
 
