@@ -19,6 +19,23 @@ type GroupCardProps = {
   isPublic?: boolean;
 };
 
+// Component to safely format dates on the client side, avoiding hydration mismatch.
+function ClientFormattedDate({ dateString, formatString }: { dateString: string, formatString: string }) {
+  const [formattedDate, setFormattedDate] = useState(dateString);
+
+  useEffect(() => {
+    try {
+      const date = parseISO(dateString);
+      setFormattedDate(format(date, formatString, { locale: es }));
+    } catch (error) {
+      setFormattedDate(dateString); // Fallback to original string on error
+    }
+  }, [dateString, formatString]);
+
+  return <>{formattedDate}</>;
+}
+
+
 const statusConfig = {
   Abierto: { icon: Users, color: "bg-blue-500", text: "text-blue-500" },
   Pendiente: { icon: Hourglass, color: "bg-yellow-500", text: "text-yellow-700" },
@@ -30,16 +47,6 @@ const statusConfig = {
 export function GroupCard({ group, isPublic = false }: GroupCardProps) {
   const { icon: StatusIcon } = statusConfig[group.status];
   const formatCurrency = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount);
-  
-  const [formattedActivationDate, setFormattedActivationDate] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (group.activationDate) {
-      const date = parseISO(group.activationDate);
-      setFormattedActivationDate(format(date, 'dd/MM/yy'));
-    }
-  }, [group.activationDate]);
-
 
   const progressValue = group.status === 'Abierto'
     ? (group.membersCount / group.totalMembers) * 100
@@ -58,7 +65,7 @@ export function GroupCard({ group, isPublic = false }: GroupCardProps) {
     ? `Validando (${group.totalMembers}/${group.totalMembers})`
     : 'Grupo finalizado';
     
-  const cardLink = group.userIsMember ? `/panel/group/${group.id}` : `/panel/group-public/${group.id}`;
+  const cardLink = group.userIsMember ? `/panel/group/${group.id}` : (isPublic ? `/explore` : `/panel/group-public/${group.id}`);
 
   const renderAction = () => {
     if (isPublic) {
@@ -158,7 +165,7 @@ export function GroupCard({ group, isPublic = false }: GroupCardProps) {
                  {group.activationDate && (
                   <div className="flex items-center gap-2">
                     <CalendarCheck className="h-4 w-4 text-muted-foreground" />
-                    <span>Activo desde: {formattedActivationDate || '...'}</span>
+                    <span>Activo desde: <ClientFormattedDate dateString={group.activationDate} formatString="dd/MM/yy" /></span>
                   </div>
                 )}
               </div>
