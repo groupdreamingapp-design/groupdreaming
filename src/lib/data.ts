@@ -88,8 +88,8 @@ generatedGroups.push({
     capital: 20000,
     plazo: 36,
     cuotaPromedio: calculateCuotaPromedio(20000, 36),
-    membersCount: 96,
-    totalMembers: 96,
+    membersCount: 72,
+    totalMembers: 72,
     status: 'Activo',
     userIsMember: true,
     userAwardStatus: "Adjudicado - Pendiente Aceptación", // Set for testing the award flow
