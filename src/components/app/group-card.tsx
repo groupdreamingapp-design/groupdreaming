@@ -7,13 +7,14 @@ import type { Group } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Users, Clock, CheckCircle2, Lock, Hourglass, ArrowRight, Trophy, Gavel, CalendarCheck, Zap } from "lucide-react";
+import { Users, Clock, CheckCircle2, Lock, Hourglass, ArrowRight, Trophy, Gavel, CalendarCheck, Zap, Percent } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { format, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { useState, useEffect } from "react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
+import { calculateTotalFinancialCost } from "@/lib/data";
 
 type GroupCardProps = {
   group: Group;
@@ -48,6 +49,7 @@ const statusConfig = {
 export function GroupCard({ group, isPublic = false }: GroupCardProps) {
   const { icon: StatusIcon } = statusConfig[group.status];
   const formatCurrency = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount);
+  const totalFinancialCost = calculateTotalFinancialCost(group.capital, group.plazo);
 
   const progressValue = group.status === 'Abierto'
     ? (group.membersCount / group.totalMembers) * 100
@@ -185,6 +187,17 @@ export function GroupCard({ group, isPublic = false }: GroupCardProps) {
                     <span>Activo desde: <ClientFormattedDate dateString={group.activationDate} formatString="dd/MM/yy" /></span>
                   </div>
                 )}
+                <div className="flex items-center gap-2">
+                    <Percent className="h-4 w-4 text-muted-foreground" />
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <span className="cursor-help">CFT Promedio: <strong>{totalFinancialCost.toFixed(2)}%</strong></span>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            <p>Costo Financiero Total promedio del plan.</p>
+                        </TooltipContent>
+                    </Tooltip>
+                </div>
               </div>
             </div>
           </CardContent>

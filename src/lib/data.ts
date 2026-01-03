@@ -24,6 +24,30 @@ const calculateCuotaPromedio = (capital: number, plazo: number): number => {
     return alicuotaPura + gastosAdm + seguroVidaPromedio + derechoSuscripcionPromedio;
 }
 
+export const calculateTotalFinancialCost = (capital: number, plazo: number): number => {
+    if (capital === 0) return 0;
+    
+    // 1. Gastos Administrativos
+    const totalGastosAdm = (capital * 0.10) * IVA;
+    
+    // 2. Derecho de Suscripción
+    const totalDerechoSuscripcion = (capital * 0.03) * IVA;
+    
+    // 3. Seguro de Vida (sumatoria aproximada)
+    const alicuotaPura = capital / plazo;
+    let sumatoriaSaldos = 0;
+    for (let i = 0; i < plazo; i++) {
+        sumatoriaSaldos += (capital - (alicuotaPura * i));
+    }
+    const totalSeguroVida = sumatoriaSaldos * 0.0009;
+    
+    // Costo total sobre el capital
+    const costoTotal = totalGastosAdm + totalDerechoSuscripcion + totalSeguroVida;
+    
+    // Porcentaje sobre el capital
+    return (costoTotal / capital) * 100;
+}
+
 const capitalOptions = [5000, 10000, 15000, 20000, 25000];
 const plazoOptions = [12, 24, 36, 48, 60, 72, 84];
 
