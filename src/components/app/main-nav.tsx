@@ -45,6 +45,11 @@ export function MainNav({ isMobile = false }: MainNavProps) {
       label: "Billetera",
       icon: Wallet,
     },
+     {
+      href: "/panel/comparisons",
+      label: "Comparativas",
+      icon: PieChart,
+    },
   ];
 
   const linkClass = (href: string) => cn(

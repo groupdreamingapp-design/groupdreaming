@@ -10,7 +10,7 @@ import { Notifications } from "./notifications"
 
 export function Header() {
   const infoLinks = [
-    { href: "/panel/transparency", label: "Transparencia", icon: PieChart },
+    { href: "/panel/comparisons", label: "Comparativas", icon: PieChart },
     { href: "/panel/benefits", label: "Beneficios", icon: Gift },
     { href: "/panel/rules", label: "Reglamento", icon: Landmark },
     { href: "/panel/faq", label: "Preguntas Frecuentes", icon: HelpCircle },
