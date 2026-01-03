@@ -8,7 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Download, Upload, Calendar as CalendarIcon, ListRestart, DollarSign, Clock, TrendingUp, TrendingDown, Loader2, AlertTriangle } from "lucide-react";
+import { Download, Upload, Calendar as CalendarIcon, ListRestart, DollarSign, Clock, TrendingUp, TrendingDown, Loader2, AlertTriangle, Ticket } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { format, parseISO, startOfDay, endOfDay } from "date-fns";
@@ -16,6 +16,9 @@ import type { DateRange } from "react-day-picker";
 import { PaymentMethods } from '@/components/app/payment-methods';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { es } from 'date-fns/locale';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useToast } from '@/hooks/use-toast';
 
 interface MepRate {
     moneda: string;
@@ -99,6 +102,52 @@ function DolarMepCard() {
     )
 }
 
+function CouponCard() {
+    const [couponCode, setCouponCode] = useState('');
+    const { toast } = useToast();
+
+    const handleApplyCoupon = () => {
+        if (!couponCode) {
+            toast({
+                variant: 'destructive',
+                title: 'Error',
+                description: 'Por favor, ingresa un código de cupón.'
+            });
+            return;
+        }
+        
+        // Simulate API call and success
+        toast({
+            title: '¡Cupón Canjeado!',
+            description: `El cupón "${couponCode}" se ha aplicado correctamente.`,
+        });
+        setCouponCode('');
+    };
+    
+    return (
+         <Card>
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-base">
+                    <Ticket className="h-5 w-5 text-primary" />
+                    Canjear Cupón de Beneficio
+                </CardTitle>
+                <CardDescription>Ingresa un código para aplicar descuentos o beneficios.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <div className="flex w-full max-w-sm items-center space-x-2">
+                    <Input 
+                        type="text" 
+                        placeholder="Ej: BIENVENIDO20" 
+                        value={couponCode}
+                        onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                    />
+                    <Button type="button" onClick={handleApplyCoupon}>Canjear</Button>
+                </div>
+            </CardContent>
+        </Card>
+    )
+}
+
 export default function Wallet() {
   const [typeFilter, setTypeFilter] = useState<TransactionTypeFilter>('todos');
   const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
@@ -136,7 +185,7 @@ export default function Wallet() {
         <p className="text-muted-foreground">Tu centro de control financiero en Group Dreaming.</p>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <Card className="lg:col-span-1">
           <CardHeader>
             <CardTitle>Saldo Disponible</CardTitle>
@@ -157,6 +206,8 @@ export default function Wallet() {
         </Card>
         
         <DolarMepCard />
+        
+        <CouponCard />
 
         <Card className="md:col-span-2 lg:col-span-1">
            <CardHeader>
