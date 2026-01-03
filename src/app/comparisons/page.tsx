@@ -2,13 +2,14 @@
 'use client';
 
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, DollarSign, Megaphone, FileText, ShieldCheck } from "lucide-react";
+import { ArrowLeft, DollarSign, Megaphone, FileText, ShieldCheck, Clock, Zap } from "lucide-react";
 import Link from "next/link";
 import { useUser } from "@/firebase";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { Separator } from "@/components/ui/separator";
 
-const comparisonPoints = [
+const traditionalPoints = [
     {
         icon: DollarSign,
         title: "Libre Disponibilidad",
@@ -30,6 +31,25 @@ const comparisonPoints = [
         description: "Eliges tu propia compañía de seguros, ahorrando hasta un 40% mensual. No más primas infladas por seguros prendarios obligatorios.",
     }
 ];
+
+const personalSavingPoints = [
+    {
+        icon: Clock,
+        title: "El Factor Tiempo",
+        description: "Si ahorrás solo $500 por mes para algo que sale $12.000, tardás 24 meses exactos. En GD, tenés la probabilidad estadística de tenerlo en el mes 2, 5 o 10. Estás 'comprando tiempo'.",
+    },
+    {
+        icon: Zap,
+        title: "Disciplina Financiera",
+        description: "El compromiso con un grupo ayuda a mantener la constancia que el ahorro individual suele perder ante la primera tentación de gasto.",
+    },
+    {
+        icon: ShieldCheck,
+        title: "Protección MEP",
+        description: "Ahorrar billetes físicos tiene riesgos de seguridad. En GD, tu dinero está bancarizado, digitalizado y convertido a valor MEP, protegido contra la devaluación y con trazabilidad total.",
+    }
+];
+
 
 export default function ComparisonsPage() {
     const { user, loading } = useUser();
@@ -66,7 +86,29 @@ export default function ComparisonsPage() {
                     </p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                    {comparisonPoints.map((point, index) => (
+                    {traditionalPoints.map((point, index) => (
+                        <div key={index} className="flex flex-col items-center text-center">
+                             <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 mb-4">
+                                <point.icon className="h-6 w-6 text-primary" />
+                            </div>
+                            <h3 className="text-lg font-bold mb-2">{point.title}</h3>
+                            <p className="text-sm text-muted-foreground">{point.description}</p>
+                        </div>
+                    ))}
+                </div>
+            </section>
+
+            <Separator className="my-12" />
+
+            <section className="w-full py-12">
+                <div className="text-center space-y-4 mb-12">
+                    <h2 className="text-3xl font-bold tracking-tighter md:text-4xl/tight">Group Dreaming vs. Ahorro Personal ("Bajo el colchón")</h2>
+                    <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl">
+                        No ahorres solo, apaláncate en el grupo.
+                    </p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    {personalSavingPoints.map((point, index) => (
                         <div key={index} className="flex flex-col items-center text-center">
                              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 mb-4">
                                 <point.icon className="h-6 w-6 text-primary" />
