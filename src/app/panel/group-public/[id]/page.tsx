@@ -3,13 +3,13 @@
 
 import { useParams, useRouter } from 'next/navigation';
 import { useGroups } from '@/hooks/use-groups';
-import { generateExampleInstallments } from '@/lib/data';
+import { generateExampleInstallments, calculateTotalFinancialCost } from '@/lib/data';
 import type { Installment } from '@/lib/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from '@/components/ui/dialog';
-import { ArrowLeft, Users, Clock, Scale, Users2, FileX2, CheckCircle, Ticket, HandCoins, ShieldAlert } from 'lucide-react';
+import { ArrowLeft, Users, Clock, Scale, Users2, FileX2, CheckCircle, Ticket, HandCoins, ShieldAlert, BadgePercent } from 'lucide-react';
 import Link from 'next/link';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useUserNav } from '@/components/app/user-nav';
@@ -44,6 +44,7 @@ export default function GroupPublicDetail() {
   }
 
   const exampleInstallments = generateExampleInstallments(group.capital, group.plazo);
+  const totalFinancialCost = calculateTotalFinancialCost(group.capital, group.plazo);
 
   const formatCurrency = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD' }).format(amount);
   const formatCurrencyNoDecimals = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount);
@@ -148,13 +149,13 @@ export default function GroupPublicDetail() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-3">
+        <div className="lg:col-span-2">
              <Card>
                 <CardHeader>
                   <CardTitle>Información General</CardTitle>
                   <CardDescription>Datos clave sobre este plan de ahorro.</CardDescription>
                 </CardHeader>
-                <CardContent className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                <CardContent className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
                     <div className="flex items-center gap-2"><Users className="h-4 w-4 text-primary" /><span>Miembros: <strong>{group.membersCount}/{group.totalMembers}</strong></span></div>
                     <div className="flex items-center gap-2"><Clock className="h-4 w-4 text-primary" /><span>Plazo: <strong>{group.plazo} meses</strong></span></div>
                     <div className="flex items-center gap-2"><Scale className="h-4 w-4 text-primary" /><span>Cuota Promedio: <strong>{formatCurrency(group.cuotaPromedio)}</strong></span></div>
@@ -169,6 +170,19 @@ export default function GroupPublicDetail() {
                 </CardContent>
             </Card>
         </div>
+
+        <Card className="lg:col-span-1">
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-base">
+                    <BadgePercent className="h-5 w-5 text-primary" />
+                    Costo Financiero Total (CFT) Promedio
+                </CardTitle>
+            </CardHeader>
+            <CardContent>
+                <p className="text-2xl font-bold text-primary">{totalFinancialCost.toFixed(2)}%</p>
+                <p className="text-xs text-muted-foreground mt-1">Este es el costo total aproximado sobre el capital por gastos administrativos y seguros. Este porcentaje puede reducirse significativamente al licitar, adelantar cuotas u obtener beneficios.</p>
+            </CardContent>
+        </Card>
 
         <div className="lg:col-span-3">
           <Card>
@@ -228,5 +242,3 @@ export default function GroupPublicDetail() {
     </>
   );
 }
-
-    
