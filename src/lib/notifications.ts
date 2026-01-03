@@ -16,6 +16,15 @@ export const initialNotifications: Notification[] = [
         icon: Trophy
     },
     {
+        id: 'notif-8',
+        title: 'Tu cuota está próxima a vencer',
+        description: 'La cuota #5 del grupo ID-20250806-TEST vence en 3 días. Asegúrate de tener saldo disponible.',
+        date: subHours(now, 8).toISOString(),
+        read: false,
+        type: 'warning',
+        icon: AlertTriangle
+    },
+    {
         id: 'notif-2',
         title: 'Tu garantía fue aprobada',
         description: 'La documentación para el grupo ID-20250501-AWRD ha sido aprobada. El capital se acreditará en tu wallet en 24hs.',
@@ -36,7 +45,7 @@ export const initialNotifications: Notification[] = [
      {
         id: 'notif-4',
         title: 'Pago de cuota exitoso',
-        description: 'Se debitó exitosamente la cuota #5 de tu plan ID-20250806-TEST.',
+        description: 'Se debitó exitosamente la cuota #4 de tu plan ID-20250806-TEST.',
         date: subDays(now, 2).toISOString(),
         read: true,
         type: 'success',
