@@ -6,15 +6,9 @@ import { Logo } from '@/components/icons';
 import Link from 'next/link';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { ArrowRight, CheckCircle, Clock, FileText, Gift, Home, LayoutDashboard, PieChart, PiggyBank, Users, DollarSign, Megaphone, ShieldCheck } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { ArrowRight, CheckCircle, Clock, FileText, Gift, Home, LayoutDashboard, PieChart, PiggyBank, Users, DollarSign, Megaphone, ShieldCheck, Search, Landmark } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { useUser } from '@/firebase';
-
-const goals = [
-  PlaceHolderImages.find(img => img.id === 'goal-car'),
-  PlaceHolderImages.find(img => img.id === 'goal-travel'),
-  PlaceHolderImages.find(img => img.id === 'goal-house'),
-].filter(Boolean) as any[];
 
 const collageImages = [
     PlaceHolderImages.find(img => img.id === 'collage-travel'),
@@ -22,6 +16,39 @@ const collageImages = [
     PlaceHolderImages.find(img => img.id === 'collage-car-keys'),
     PlaceHolderImages.find(img => img.id === 'collage-cafe'),
 ].filter(Boolean) as any[];
+
+const sections = [
+    {
+        title: "Explorar Grupos",
+        description: "Encuentra el plan de ahorro perfecto que se adapte a tus metas y presupuesto.",
+        href: "/explore",
+        icon: Search
+    },
+    {
+        title: "Programa de Beneficios",
+        description: "Descubre las recompensas e incentivos que tenemos por tu fidelidad y compromiso.",
+        href: "/benefits",
+        icon: Gift
+    },
+    {
+        title: "Reglamento",
+        description: "Conoce las reglas claras que hacen de nuestro sistema una comunidad de confianza.",
+        href: "/rules",
+        icon: Landmark
+    },
+    {
+        title: "Transparencia",
+        description: "Entiende en detalle cómo funciona el sistema y a dónde va cada parte de tu cuota.",
+        href: "/transparency",
+        icon: PieChart
+    },
+    {
+        title: "Comparativas",
+        description: "Analiza las ventajas clave de Group Dreaming frente a los sistemas tradicionales.",
+        href: "/comparisons",
+        icon: FileText
+    }
+];
 
 export default function LandingPageClient() {
   const { user, loading } = useUser();
@@ -98,87 +125,42 @@ export default function LandingPageClient() {
                   El poder de la comunidad para construir tus sueños.
                 </h1>
               </div>
-              <div className="space-x-4 pt-4">
-                <Button size="lg" asChild className="shadow-lg">
-                   <Link href="/comparisons">
-                      <PieChart className="mr-2 h-4 w-4" />
-                      Ver Comparativas
-                    </Link>
-                </Button>
-                <Button size="lg" asChild className="shadow-lg">
-                   <Link href="/rules">
-                      <FileText className="mr-2 h-4 w-4" />
-                      Reglamento
-                    </Link>
-                </Button>
-                <Button size="lg" asChild className="shadow-lg">
-                   <Link href="/benefits">
-                      <Gift className="mr-2 h-4 w-4" />
-                      Beneficios
-                    </Link>
-                </Button>
-                <Button size="lg" variant="secondary" asChild className="shadow-lg">
-                   <Link href="/explore">Explorar Grupos</Link>
-                </Button>
-              </div>
             </div>
           </div>
         </section>
         
         <section className="w-full py-12 md:py-16 lg:py-20 bg-background">
             <div className="container px-4 md:px-6">
-                <p className="mx-auto max-w-[700px] text-center text-foreground md:text-xl">
+                <p className="mx-auto max-w-[700px] text-center text-foreground md:text-xl mb-12">
                   Group Dreaming es una plataforma de ahorro colectivo basada en la confianza y la ayuda mutua. Representamos la alternativa solidaria a los sistemas financieros tradicionales, brindando una solución transparente y accesible para que puedas alcanzar tus metas económicas, desde tu primer auto hasta tu propia casa, impulsado por la fuerza del grupo.
                 </p>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+                    {sections.map((section, index) => (
+                         <Card key={index} className="flex flex-col group hover:border-primary transition-all">
+                            <CardHeader>
+                                <div className="flex items-center gap-4">
+                                     <div className="bg-primary/10 p-3 rounded-lg group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                                        <section.icon className="h-6 w-6 text-primary group-hover:text-primary-foreground transition-colors" />
+                                    </div>
+                                    <CardTitle>{section.title}</CardTitle>
+                                </div>
+                            </CardHeader>
+                            <CardContent className="flex-grow">
+                                <CardDescription>{section.description}</CardDescription>
+                            </CardContent>
+                            <CardFooter>
+                                <Button variant="ghost" asChild className="-ml-4">
+                                    <Link href={section.href}>
+                                        Ver más <ArrowRight className="ml-2 h-4 w-4" />
+                                    </Link>
+                                </Button>
+                            </CardFooter>
+                        </Card>
+                    ))}
+                    {/* Placeholder for alignment on large screens */}
+                    <div className="hidden lg:flex lg:col-start-2"></div>
+                </div>
             </div>
-        </section>
-
-        <section className="w-full py-12 md:py-24 lg:py-32 bg-muted">
-          <div className="container grid items-center gap-6 px-4 md:px-6 lg:grid-cols-2 lg:gap-10">
-            <div className="space-y-4">
-              <h2 className="text-3xl font-bold tracking-tighter md:text-4xl/tight">Desde un auto nuevo hasta el viaje de tus sueños</h2>
-              <p className="max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                Nuestros grupos flexibles se adaptan a cualquier meta que tengas. El capital que necesitas, en el plazo que te conviene.
-              </p>
-               <ul className="grid gap-2 py-4">
-                <li>
-                  <CheckCircle className="mr-2 inline-block h-4 w-4 text-primary" />
-                  Planes desde 12 hasta 84 meses.
-                </li>
-                <li>
-                  <CheckCircle className="mr-2 inline-block h-4 w-4 text-primary" />
-                  Capitales que se ajustan a tus necesidades.
-                </li>
-                <li>
-                  <CheckCircle className="mr-2 inline-block h-4 w-4 text-primary" />
-                  Adjudicación mensual por sorteo y licitación.
-                </li>
-                <li>
-                  <CheckCircle className="mr-2 inline-block h-4 w-4 text-primary" />
-                  Libre disponibilidad del capital una vez adjudicado.
-                </li>
-              </ul>
-               <Button asChild size="lg">
-                  <Link href="/explore">
-                    Ver Grupos Disponibles
-                  </Link>
-                </Button>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-                {goals.map((goal, index) => (
-                    <div key={goal.id} className={`rounded-xl overflow-hidden shadow-lg ${index === 2 ? 'col-span-2' : ''}`}>
-                      <Image
-                        src={goal.imageUrl}
-                        alt={goal.description}
-                        width={goal.width}
-                        height={goal.height}
-                        className="aspect-video object-cover"
-                        data-ai-hint={goal.imageHint}
-                      />
-                    </div>
-                ))}
-            </div>
-          </div>
         </section>
 
       </main>
