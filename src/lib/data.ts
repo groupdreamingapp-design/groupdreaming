@@ -59,24 +59,6 @@ const month = String(todayForId.getMonth() + 1).padStart(2, '0');
 const day = String(todayForId.getDate()).padStart(2, '0');
 const dateString = `${year}${month}${day}`;
 
-// Demo group for 20 users
-generatedGroups.push({
-    id: 'ID-DEMO20-0001',
-    capital: 10000,
-    plazo: 20,
-    cuotaPromedio: calculateCuotaPromedio(10000, 20),
-    membersCount: 19,
-    totalMembers: 20,
-    status: 'Abierto',
-    userIsMember: false,
-    userAwardStatus: 'No Adjudicado',
-    monthsCompleted: 0,
-    activationDate: undefined,
-    acquiredInAuction: false,
-    isImmediateActivation: true,
-});
-
-
 for (const capital of capitalOptions) {
     for (const plazo of plazoOptions) {
         const cuotaPromedio = calculateCuotaPromedio(capital, plazo);

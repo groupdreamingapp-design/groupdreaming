@@ -73,9 +73,14 @@ export default function LandingPageClient() {
     }
 
     return (
-      <Button asChild>
-        <Link href="/login">Ingresar o Probar Demo</Link>
-      </Button>
+      <div className='flex gap-2'>
+        <Button asChild variant="ghost">
+          <Link href="/login">Ingresar</Link>
+        </Button>
+        <Button asChild>
+          <Link href="/register">Comenzar Ahora</Link>
+        </Button>
+      </div>
     );
   };
 

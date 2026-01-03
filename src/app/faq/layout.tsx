@@ -22,8 +22,11 @@ export default function PublicPagesLayout({
         </Link>
         <nav className="ml-auto flex items-center gap-4 sm:gap-6">
           <div className="flex gap-2">
+            <Button asChild variant="ghost">
+                <Link href={`/login?redirect=${pathname}`}>Ingresar</Link>
+            </Button>
             <Button asChild>
-                <Link href={`/login?redirect=${pathname}`}>Ingresar o Probar Demo</Link>
+                <Link href={`/register?redirect=${pathname}`}>Comenzar Ahora</Link>
             </Button>
           </div>
         </nav>
