@@ -68,13 +68,43 @@ export default function Verification() {
     const [hasCameraPermission, setHasCameraPermission] = useState(true);
     const videoRef = useRef<HTMLVideoElement>(null);
 
-
     const { register, handleSubmit, control, formState: { errors } } = useForm<VerificationForm>({
         resolver: zodResolver(verificationSchema),
         defaultValues: {
             pep: 'false',
         },
     });
+
+    useEffect(() => {
+        if (biometricStep === 'capturing') {
+            const getCameraPermission = async () => {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                    setHasCameraPermission(true);
+                    if (videoRef.current) {
+                        videoRef.current.srcObject = stream;
+                    }
+                    // Simulate capture and success
+                    setTimeout(() => {
+                        if (videoRef.current && videoRef.current.srcObject) {
+                            const tracks = (videoRef.current.srcObject as MediaStream).getTracks();
+                            tracks.forEach(track => track.stop());
+                        }
+                        setBiometricStep('success');
+                    }, 3000);
+                } catch (error) {
+                    console.error("Error accessing camera: ", error);
+                    setHasCameraPermission(false);
+                    setBiometricStep('failed');
+                }
+            };
+            getCameraPermission();
+        }
+    }, [biometricStep]);
+    
+    const handleStartBiometric = () => {
+        setBiometricStep('capturing');
+    }
 
     const onSubmit = (data: VerificationForm) => {
         setIsSubmitting(true);
@@ -93,29 +123,6 @@ export default function Verification() {
         }, 2000);
     };
 
-    const handleStartBiometric = async () => {
-        setBiometricStep('capturing');
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-            setHasCameraPermission(true);
-            if (videoRef.current) {
-                videoRef.current.srcObject = stream;
-            }
-            // Simulate capture and success
-            setTimeout(() => {
-                if (videoRef.current && videoRef.current.srcObject) {
-                    const tracks = (videoRef.current.srcObject as MediaStream).getTracks();
-                    tracks.forEach(track => track.stop());
-                }
-                setBiometricStep('success');
-            }, 3000);
-        } catch (error) {
-            console.error("Error accessing camera: ", error);
-            setHasCameraPermission(false);
-            setBiometricStep('failed');
-        }
-    };
-    
     const handleRetryBiometric = () => {
         setBiometricStep('idle');
         setHasCameraPermission(true);
