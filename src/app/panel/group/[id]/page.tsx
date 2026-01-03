@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import type { Group, Installment, Award, UserAwardStatus } from '@/lib/types';
@@ -79,7 +80,7 @@ const generateStaticAwards = (group: Group): Award[][] => {
     let winnerPool = [...potentialWinners];
     let desertedLicitaciones = 0;
 
-    // Start awarding from the second month (index 1) up to the second to last month
+    // Month 1 is for capitalization, so awards start from month 2 (index 1)
     for (let i = 1; i < group.plazo - 1; i++) {
         
         let alreadyAwardedInMonth = awards[i].map(a => a.orderNumber);
@@ -820,9 +821,10 @@ export default function GroupDetail() {
                           }
                       }
                       
-                      const currentAwards = groupAwards[inst.number - 1] || [];
-                      const awardDateString = (isPlanActive || group.status === 'Cerrado') && currentAwards.length > 0 && inst.dueDate && !inst.dueDate.startsWith('Mes') ? addDays(parseISO(inst.dueDate), 5).toISOString() : undefined;
-                      const showAdjudicationInfo = inst.number <= cuotasPagadas && (group.status === 'Activo' || group.status === 'Cerrado' || group.status === 'Subastado');
+                      const awardsForReceipt = groupAwards[inst.number - 2] || [];
+                      const awardDateString = (isPlanActive || group.status === 'Cerrado') && awardsForReceipt.length > 0 && inst.dueDate && !inst.dueDate.startsWith('Mes') ? addDays(parseISO(inst.dueDate), 5).toISOString() : undefined;
+                      const showAdjudicationInfo = inst.number <= cuotasPagadas + 1 && (group.status === 'Activo' || group.status === 'Cerrado' || group.status === 'Subastado');
+
 
                       const handleReceiptClick = () => {
                         if (isAdvanced) {
@@ -856,15 +858,15 @@ export default function GroupDetail() {
                             >{currentStatus}</Badge>
                           </TableCell>
                            <TableCell className="text-xs text-muted-foreground">
-                              {showAdjudicationInfo && awardDateString && (
+                              {showAdjudicationInfo && awardDateString && awardsForReceipt.length > 0 && (
                                   <div className="flex items-center gap-2">
                                        <CalendarCheck className="h-4 w-4" />
                                        <span>{<ClientFormattedDate dateString={awardDateString} formatString="dd/MM/yyyy" />}</span>
                                   </div>
                               )}
-                              {showAdjudicationInfo && currentAwards.length > 0 && (
+                              {showAdjudicationInfo && awardsForReceipt.length > 0 && (
                                 <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1">
-                                  {currentAwards?.map(award => (
+                                  {awardsForReceipt?.map(award => (
                                     <div key={`${award.type}-${award.orderNumber}`} className="flex items-center gap-1">
                                       {award.type === 'sorteo' && <Ticket className="h-4 w-4 text-blue-500" />}
                                       {award.type === 'licitacion' && <HandCoins className="h-4 w-4 text-orange-500" />}

@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { Logo } from "@/components/icons";
@@ -151,7 +152,7 @@ export function InstallmentReceipt({ installment, group, user, awards }: Receipt
                 </section>
                 
                 <section className="mt-6 pt-4 border-t">
-                    {awards.length > 0 && !isAdvancedPayment ? (
+                    {previousMonthNumber > 0 && awards.length > 0 && !isAdvancedPayment ? (
                         <div>
                             <h3 className="text-sm font-semibold mb-3">Información de Adjudicación (Mes Anterior: {previousMonthNumber}):</h3>
                             <div className="grid grid-cols-2 gap-4 text-xs">
@@ -177,7 +178,7 @@ export function InstallmentReceipt({ installment, group, user, awards }: Receipt
                         </div>
                     ) : (
                         <p className="text-xs text-muted-foreground text-center">
-                           {installment.number === 1 ? "Los resultados del primer acto de adjudicación se reflejarán en su próximo recibo." : "No hubo adjudicaciones para informar del mes anterior."}
+                           {installment.number === 1 ? "El primer acto de adjudicación se reflejará en su próximo recibo." : "No hubo adjudicaciones para informar del mes anterior."}
                         </p>
                     )}
                 </section>
