@@ -6,6 +6,7 @@ import { Logo } from "../icons"
 import Link from "next/link"
 import { UserNav } from "./user-nav"
 import { Button } from "../ui/button"
+import { Notifications } from "./notifications"
 
 export function Header() {
   const infoLinks = [
@@ -49,6 +50,7 @@ export function Header() {
                 </Button>
             ))}
          </div>
+        <Notifications />
         <UserNav />
       </div>
     </header>

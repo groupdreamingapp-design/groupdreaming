@@ -1,4 +1,5 @@
 
+import type { LucideIcon } from 'lucide-react';
 
 export type User = {
   id: string;
@@ -77,4 +78,16 @@ export type Installment = {
     derechoSuscripcion?: number;
   };
   awards?: Award[];
+};
+
+export type NotificationType = 'info' | 'success' | 'warning' | 'error';
+
+export type Notification = {
+  id: string;
+  title: string;
+  description: string;
+  date: string;
+  read: boolean;
+  type: NotificationType;
+  icon: LucideIcon;
 };

@@ -1,9 +1,10 @@
+
 'use client';
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
-import { Gavel, LayoutDashboard, Search, Wallet, Users, Bot, PieChart, Shield, FileText, HelpCircle, Gift, Landmark } from "lucide-react"
+import { Gavel, LayoutDashboard, Search, Wallet, Users, Bot, PieChart, Shield, FileText, HelpCircle, Gift, Landmark, Bell } from "lucide-react"
 import { Badge } from "@/components/ui/badge";
 
 type MainNavProps = {
@@ -23,6 +24,11 @@ export function MainNav({ isMobile = false }: MainNavProps) {
       href: "/panel/my-groups",
       label: "Mis Grupos",
       icon: Users,
+    },
+    {
+      href: "/panel/notifications",
+      label: "Notificaciones",
+      icon: Bell,
     },
     {
       href: "/panel/explore",
