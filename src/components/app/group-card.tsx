@@ -18,7 +18,6 @@ import { calculateTotalFinancialCost } from "@/lib/data";
 
 type GroupCardProps = {
   group: Group;
-  isPublic?: boolean;
 };
 
 // Component to safely format dates on the client side, avoiding hydration mismatch.
@@ -46,7 +45,7 @@ const statusConfig = {
   Subastado: { icon: Gavel, color: "bg-red-500", text: "text-red-700" },
 };
 
-export function GroupCard({ group, isPublic = false }: GroupCardProps) {
+export function GroupCard({ group }: GroupCardProps) {
   const { icon: StatusIcon } = statusConfig[group.status];
   const formatCurrency = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount);
   const totalFinancialCost = calculateTotalFinancialCost(group.capital, group.plazo);
@@ -69,19 +68,9 @@ export function GroupCard({ group, isPublic = false }: GroupCardProps) {
     ? `Validando (${group.totalMembers}/${group.totalMembers})`
     : 'Grupo finalizado';
     
-  const cardLink = group.userIsMember ? `/panel/group/${group.id}` : (isPublic ? `/explore/group/${group.id}` : `/panel/group-public/${group.id}`);
+  const cardLink = group.userIsMember ? `/panel/group/${group.id}` : `/panel/group-public/${group.id}`;
 
   const renderAction = () => {
-    if (isPublic) {
-      return (
-        <Button asChild variant="secondary" size="sm">
-          <Link href={cardLink}>
-            Ver Detalles <ArrowRight className="ml-2 h-4 w-4" />
-          </Link>
-        </Button>
-      );
-    }
-    
     if (group.userIsMember) {
         return (
             <Button asChild variant="secondary" size="sm">
@@ -148,7 +137,7 @@ export function GroupCard({ group, isPublic = false }: GroupCardProps) {
                     </TooltipContent>
                   </Tooltip>
                 )}
-                {group.userAwardStatus === 'Adjudicado - Aprobado' && !isPublic && (
+                {group.userAwardStatus === 'Adjudicado - Aprobado' && (
                     <div className="absolute -top-3 -right-3 animate-bounce">
                         <Trophy className="h-6 w-6 text-yellow-500 fill-yellow-400" />
                     </div>

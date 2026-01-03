@@ -236,8 +236,7 @@ export default function ExploreGroups() {
             {processedGroups.map(group => (
               <GroupCard 
                 key={group.id} 
-                group={group} 
-                isPublic={false}
+                group={group}
               />
             ))}
           </div>
