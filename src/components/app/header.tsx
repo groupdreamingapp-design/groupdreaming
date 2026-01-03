@@ -1,7 +1,7 @@
 
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { MainNav } from "./main-nav"
-import { Menu, PieChart, Gift, Landmark, HelpCircle } from "lucide-react"
+import { Menu, PieChart, Gift, Landmark, HelpCircle, DollarSign } from "lucide-react"
 import { Logo } from "../icons"
 import Link from "next/link"
 import { UserNav } from "./user-nav"
@@ -11,6 +11,7 @@ import { Notifications } from "./notifications"
 export function Header() {
   const infoLinks = [
     { href: "/panel/transparency", label: "Transparencia", icon: PieChart },
+    { href: "/panel/dolar-mep", label: "Dólar MEP", icon: DollarSign },
     { href: "/panel/benefits", label: "Beneficios", icon: Gift },
     { href: "/panel/rules", label: "Reglamento", icon: Landmark },
     { href: "/panel/faq", label: "Preguntas Frecuentes", icon: HelpCircle },
