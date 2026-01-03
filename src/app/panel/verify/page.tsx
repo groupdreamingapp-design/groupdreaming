@@ -48,6 +48,7 @@ const verificationSchema = z.object({
   monthlyIncome: z.number().min(1, "Ingresa tu ingreso mensual"),
   pep: z.enum(['true', 'false']),
   fundsOrigin: z.boolean().refine(val => val === true, { message: "Debes aceptar la declaración de fondos" }),
+  healthDeclaration: z.boolean().refine(val => val === true, { message: "Debes aceptar la declaración de salud" }),
   
   // Documents
   dniFront: z.any().refine(file => file.length > 0, 'El frente del DNI es requerido.'),
@@ -228,6 +229,35 @@ export default function Verification() {
                                 <Label htmlFor="email">Correo Electrónico</Label>
                                 <Input id="email" type="email" {...register("email")} />
                                 {errors.email && <p className="text-red-500 text-xs">{errors.email.message}</p>}
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2"><HeartHandshake className="text-primary" /> Declaración de Salud (Seguro de Vida)</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                           <div className="md:col-span-2 flex items-start space-x-3 pt-4">
+                                <Controller
+                                    name="healthDeclaration"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <Checkbox id="healthDeclaration" checked={field.value} onCheckedChange={field.onChange} />
+                                    )}
+                                />
+                               <div className="grid gap-1.5 leading-none">
+                                    <div className="flex items-center gap-2">
+                                        <Label htmlFor="healthDeclaration">Declaro bajo juramento que gozo de buena salud y no poseo enfermedades preexistentes a la fecha de suscripción.</Label>
+                                        <Tooltip>
+                                            <TooltipTrigger type="button"><Info className="h-4 w-4 text-muted-foreground" /></TooltipTrigger>
+                                            <TooltipContent className="max-w-xs">
+                                                <p>Esta declaración es vital para el seguro de vida colectivo que protege al grupo. Las enfermedades preexistentes no declaradas pueden anular la cobertura, afectando la liquidación del plan en caso de siniestro.</p>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    </div>
+                                    {errors.healthDeclaration && <p className="text-red-500 text-xs">{errors.healthDeclaration.message}</p>}
+                               </div>
                             </div>
                         </CardContent>
                     </Card>

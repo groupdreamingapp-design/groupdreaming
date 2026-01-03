@@ -11,7 +11,7 @@ const contractClauses = [
     },
     {
         title: "SEGUNDA: OBJETO",
-        content: "El objeto es la adhesión de EL SUSCRIPTOR a un grupo de ahorro administrado por LA ADMINISTRADORA, con el fin de obtener una suma de dinero equivalente al 'Valor Móvil' del capital del grupo suscrito, mediante el pago de cuotas periódicas y la adjudicación por sorteo o licitación."
+        content: "El objeto es la adhesión de EL SUSCRIPTOR a un grupo de ahorro administrado por LA ADMINISTRADora, con el fin de obtener una suma de dinero equivalente al 'Valor Móvil' del capital del grupo suscrito, mediante el pago de cuotas periódicas y la adjudicación por sorteo o licitación."
     },
     {
         title: "TERCERA: FUNCIONAMIENTO DEL SISTEMA",
@@ -93,7 +93,3 @@ export default function Contract() {
         </>
     );
 }
-
-    
-
-    
