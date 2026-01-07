@@ -1,5 +1,7 @@
+
 'use client';
 
+import { useMemo, useState } from 'react';
 import { StatCard } from "@/components/app/stat-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -8,6 +10,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { cn } from "@/lib/utils";
 import { ArrowLeft, Banknote, CalendarClock, CheckCircle, Percent, Phone, RefreshCw, Shield, WalletCards, Waves } from "lucide-react";
 import Link from "next/link";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useGroups } from '@/hooks/use-groups';
 
 
 const collectionData = [
@@ -57,6 +61,18 @@ const statusStyles: { [key: string]: string } = {
 
 
 export default function CollectionMap() {
+    const { groups } = useGroups();
+    const [selectedGroup, setSelectedGroup] = useState('all');
+
+    const activeGroups = useMemo(() => groups.filter(g => g.status === 'Activo'), [groups]);
+
+    const filteredCollectionData = useMemo(() => {
+        if (selectedGroup === 'all') {
+            return collectionData;
+        }
+        return collectionData.filter(item => item.group === selectedGroup);
+    }, [selectedGroup]);
+
     return (
         <>
             <div className="mb-8">
@@ -101,9 +117,24 @@ export default function CollectionMap() {
             </div>
 
             <Card>
-                <CardHeader>
-                    <CardTitle>Detalle de Cobranzas del Mes</CardTitle>
-                    <CardDescription>Esta tabla se alimenta de los webhooks y archivos de conciliación de los proveedores de pago.</CardDescription>
+                <CardHeader className="flex-row items-center justify-between">
+                    <div>
+                        <CardTitle>Detalle de Cobranzas del Mes</CardTitle>
+                        <CardDescription>Esta tabla se alimenta de los webhooks y archivos de conciliación de los proveedores de pago.</CardDescription>
+                    </div>
+                    <div className="w-full max-w-sm">
+                        <Select value={selectedGroup} onValueChange={setSelectedGroup}>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Filtrar por grupo" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all">Todos los grupos</SelectItem>
+                                {activeGroups.map(group => (
+                                    <SelectItem key={group.id} value={group.id}>{group.id} ({group.capital})</SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
                 </CardHeader>
                 <CardContent>
                     <Table>
@@ -118,7 +149,7 @@ export default function CollectionMap() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {collectionData.map((item, index) => (
+                            {filteredCollectionData.map((item, index) => (
                                 <TableRow key={index}>
                                     <TableCell className="font-medium">{item.user}</TableCell>
                                     <TableCell>{item.group}</TableCell>
