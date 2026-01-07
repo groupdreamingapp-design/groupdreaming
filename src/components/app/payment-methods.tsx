@@ -1,13 +1,9 @@
 
 'use client';
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardDescription, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
+import { Card, CardDescription, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Wallet as WalletIcon, Banknote, CreditCard, ShieldCheck } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 import Link from "next/link";
 
 // A simple component to represent the Mercado Pago logo
@@ -34,93 +30,23 @@ export function PaymentMethods() {
                 </div>
             </div>
             
-            <Tabs defaultValue="wallet-gd" className="w-full">
-                <TabsList className="grid w-full grid-cols-4">
-                    <TabsTrigger value="wallet-gd"><WalletIcon className="mr-2 h-4 w-4"/>Wallet GD</TabsTrigger>
-                    <TabsTrigger value="bank"><Banknote className="mr-2 h-4 w-4"/>Cuentas</TabsTrigger>
-                    <TabsTrigger value="card"><CreditCard className="mr-2 h-4 w-4"/>Tarjetas</TabsTrigger>
-                    <TabsTrigger value="wallet-virtual">Billeteras</TabsTrigger>
-                </TabsList>
-                <TabsContent value="wallet-gd" className="mt-4">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Wallet Group Dreaming</CardTitle>
-                            <CardDescription>Usa tu saldo disponible en la plataforma. Es la opción por defecto y la más recomendada.</CardDescription>
-                        </CardHeader>
-                        <CardFooter>
-                            <Button>Establecer como Principal</Button>
-                        </CardFooter>
-                    </Card>
-                </TabsContent>
-                <TabsContent value="bank" className="mt-4">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Cuentas Bancarias (CBU/CVU)</CardTitle>
-                            <CardDescription>Vincula una cuenta bancaria o de billetera virtual para los débitos.</CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="cbu">CBU/CVU</Label>
-                                <Input id="cbu" placeholder="0000000000000000000000" />
-                            </div>
-                             <div className="space-y-2">
-                                <Label htmlFor="alias">Alias (Opcional)</Label>
-                                <Input id="alias" placeholder="mi.alias.de.cuenta" />
-                            </div>
-                        </CardContent>
-                        <CardFooter>
-                            <Button>Agregar Cuenta</Button>
-                        </CardFooter>
-                    </Card>
-                </TabsContent>
-                <TabsContent value="card" className="mt-4">
-                     <Card>
-                        <CardHeader>
-                            <CardTitle>Tarjetas de Crédito o Débito</CardTitle>
-                            <CardDescription>Agrega una tarjeta para tus pagos. Se aplicará un costo de procesamiento.</CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                             <div className="space-y-2">
-                                <Label htmlFor="card-number">Número de Tarjeta</Label>
-                                <Input id="card-number" placeholder="**** **** **** ****" />
-                            </div>
-                            <div className="grid grid-cols-3 gap-4">
-                                <div className="space-y-2">
-                                    <Label htmlFor="expiry-date">Vencimiento</Label>
-                                    <Input id="expiry-date" placeholder="MM/AA" />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="cvc">CVC</Label>
-                                    <Input id="cvc" placeholder="123" />
-                                </div>
-                            </div>
-                        </CardContent>
-                        <CardFooter>
-                            <Button>Agregar Tarjeta</Button>
-                        </CardFooter>
-                    </Card>
-                </TabsContent>
-                 <TabsContent value="wallet-virtual" className="mt-4">
-                     <Card>
-                        <CardHeader>
-                            <CardTitle>Billeteras Virtuales</CardTitle>
-                            <CardDescription>Conecta tu cuenta para autorizar el débito automático de tus cuotas.</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <p className="text-sm text-muted-foreground mb-4">
-                                Al hacer clic en "Vincular", serás redirigido a Mercado Pago para autorizar a <strong>Group Dreaming</strong> a realizar débitos automáticos en tu cuenta para el pago de tus cuotas.
-                            </p>
-                            <Button asChild variant="outline" className="w-full justify-start text-base p-6">
-                               <Link href="#">
-                                  <MercadoPagoLogo />
-                                  Vincular cuenta de Mercado Pago
-                               </Link>
-                            </Button>
-                        </CardContent>
-                    </Card>
-                </TabsContent>
-            </Tabs>
+            <Card>
+                <CardHeader>
+                    <CardTitle>Vincular con Mercado Pago</CardTitle>
+                    <CardDescription>Conecta tu cuenta de Mercado Pago para autorizar el débito automático de tus cuotas.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <p className="text-sm text-muted-foreground mb-4">
+                        Al hacer clic en "Vincular", serás redirigido a Mercado Pago para autorizar a <strong>Group Dreaming</strong> a realizar débitos automáticos en tu cuenta para el pago de tus cuotas.
+                    </p>
+                    <Button asChild variant="outline" className="w-full justify-start text-base p-6">
+                        <Link href="#">
+                        <MercadoPagoLogo />
+                        Vincular cuenta de Mercado Pago
+                        </Link>
+                    </Button>
+                </CardContent>
+            </Card>
         </div>
     );
 }
-

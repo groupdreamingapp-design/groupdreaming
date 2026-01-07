@@ -1,4 +1,3 @@
-
 'use client';
 
 import { PaymentMethods } from '@/components/app/payment-methods';
@@ -13,14 +12,14 @@ export default function ProfilePage() {
                     <Shield className="h-8 w-8 text-primary" />
                     Mi Perfil y Pagos
                 </h1>
-                <p className="text-muted-foreground">Gestiona tu información personal y tus métodos de pago.</p>
+                <p className="text-muted-foreground">Gestiona tu información personal y tu método de pago.</p>
             </div>
 
             <Card>
                 <CardHeader>
-                    <CardTitle>Métodos de Pago</CardTitle>
+                    <CardTitle>Método de Pago Principal</CardTitle>
                     <CardDescription>
-                        Configura el método de pago principal para el débito automático de tus cuotas.
+                        Configura el método de pago para el débito automático de tus cuotas.
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
