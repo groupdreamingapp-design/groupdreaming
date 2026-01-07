@@ -1,10 +1,10 @@
 
 'use client';
 
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { user, transactions } from "@/lib/data"
 import { useGroups } from "@/hooks/use-groups";
-import { Repeat, Wallet, PieChart, Info } from "lucide-react"
+import { Repeat, Wallet, PieChart, Info, Loader2 } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
@@ -18,6 +18,11 @@ const MAX_CAPITAL = 100000;
 
 export default function Dashboard() {
   const { groups } = useGroups();
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const formatCurrency = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount);
 
@@ -29,10 +34,11 @@ export default function Dashboard() {
   }), [groups]);
 
   const subscribedCapital = useMemo(() => {
+    if (!isClient) return 0; // Return 0 on server
     return groups
         .filter(g => g.userIsMember && (g.status === 'Activo' || g.status === 'Abierto' || g.status === 'Pendiente'))
         .reduce((acc, g) => acc + g.capital, 0);
-  }, [groups]);
+  }, [groups, isClient]);
 
   const availableToSubscribe = MAX_CAPITAL - subscribedCapital;
   const usedCapitalPercentage = (subscribedCapital / MAX_CAPITAL) * 100;
@@ -93,6 +99,11 @@ export default function Dashboard() {
               <PieChart className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
+              {!isClient ? (
+                <div className="flex items-center justify-center h-16">
+                  <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+                </div>
+              ) : (
                 <div className="space-y-2">
                      <Progress value={usedCapitalPercentage} />
                      <div className="grid grid-cols-3 text-xs">
@@ -101,6 +112,7 @@ export default function Dashboard() {
                         <div className="text-right"><span className="font-semibold">Total:</span> {formatCurrency(MAX_CAPITAL)}</div>
                      </div>
                 </div>
+              )}
             </CardContent>
         </Card>
       </div>
