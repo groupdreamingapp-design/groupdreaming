@@ -1,50 +1,116 @@
 
 'use client';
 
-import { Card, CardDescription, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ShieldCheck } from "lucide-react";
-import Link from "next/link";
+import { ShieldCheck, Banknote } from "lucide-react";
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Checkbox } from '@/components/ui/checkbox';
+import { useToast } from '@/hooks/use-toast';
+import { useState } from 'react';
 
-// A simple component to represent the Mercado Pago logo
-const MercadoPagoLogo = () => (
-    <svg width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2">
-        <path d="M22.0294 13.0182C22.0294 11.2307 20.5794 9.78069 18.7919 9.78069C17.0044 9.78069 15.5544 11.2307 15.5544 13.0182V26.8532L18.7919 28.5294L22.0294 26.8532V13.0182Z" fill="#00B1EA"/>
-        <path d="M32.4457 13.0182C32.4457 11.2307 30.9957 9.78069 29.2082 9.78069C27.4207 9.78069 25.9707 11.2307 25.9707 13.0182V26.8532L29.2082 28.5294L32.4457 26.8532V13.0182Z" fill="#00B1EA"/>
-        <path d="M38.2188 29.549C38.2188 28.5303 37.7719 27.5688 37.0125 26.9062L29.2094 20.575L21.8531 26.4594C21.4313 26.8125 21 27.2844 21 27.8438V34.5094L29.2094 38.2188L37.4188 34.5094V29.7688L38.2188 29.549Z" fill="#009EE3"/>
-        <path d="M9.78125 29.549C9.78125 28.5303 10.2281 27.5688 10.9875 26.9062L18.7906 20.575L26.1469 26.4594C26.5687 26.8125 27 27.2844 27 27.8438V34.5094L18.7906 38.2188L10.5813 34.5094V29.7688L9.78125 29.549Z" fill="#009EE3"/>
-    </svg>
-);
+const cbuSchema = z.object({
+    cbu: z.string().length(22, "El CBU debe tener 22 dígitos."),
+    mandate: z.boolean().refine(val => val === true, {
+        message: "Debes aceptar la adhesión al débito automático."
+    })
+});
 
+type CbuFormValues = z.infer<typeof cbuSchema>;
 
 export function PaymentMethods() {
+    const { toast } = useToast();
+    const [isLoading, setIsLoading] = useState(false);
+    
+    const form = useForm<CbuFormValues>({
+        resolver: zodResolver(cbuSchema),
+        defaultValues: {
+            cbu: "",
+            mandate: false
+        }
+    });
+
+    const onSubmit = (data: CbuFormValues) => {
+        setIsLoading(true);
+        console.log("CBU Guardado:", data.cbu);
+        
+        // Simulate API call
+        setTimeout(() => {
+            setIsLoading(false);
+            toast({
+                title: "¡CBU Guardado!",
+                description: "Tu CBU ha sido guardado y configurado para el débito automático.",
+            });
+        }, 1500);
+    }
+
     return (
         <div className="w-full">
-            <div className="flex items-start justify-between space-x-2 rounded-lg border bg-background p-4 mb-6">
-                <ShieldCheck className="h-5 w-5 text-primary mt-1" />
-                <div className="flex-1">
-                    <p className="text-sm font-semibold">El débito automático de cuotas es obligatorio</p>
-                    <p className="text-xs text-muted-foreground">
-                        Para garantizar la solidez del sistema, el pago de tu cuota se debita automáticamente en la fecha de vencimiento desde tu método de pago principal.
-                    </p>
-                </div>
-            </div>
+            <Alert className="mb-6">
+                <ShieldCheck className="h-4 w-4" />
+                <AlertTitle>El débito automático es obligatorio</AlertTitle>
+                <AlertDescription>
+                    Para garantizar la solidez y el correcto funcionamiento del sistema, el pago de tu cuota se debita automáticamente en la fecha de vencimiento desde tu CBU principal.
+                </AlertDescription>
+            </Alert>
             
             <Card>
                 <CardHeader>
-                    <CardTitle>Vincular con Mercado Pago</CardTitle>
-                    <CardDescription>Conecta tu cuenta de Mercado Pago para autorizar el débito automático de tus cuotas.</CardDescription>
+                    <CardTitle className="flex items-center gap-2">
+                        <Banknote className="h-5 w-5" />
+                        Vincular CBU para Débito Automático
+                    </CardTitle>
+                    <CardDescription>La cuenta debe estar a nombre del titular de la cuenta en Group Dreaming.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <p className="text-sm text-muted-foreground mb-4">
-                        Al hacer clic en "Vincular", serás redirigido a Mercado Pago para autorizar a <strong>Group Dreaming</strong> a realizar débitos automáticos en tu cuenta para el pago de tus cuotas.
-                    </p>
-                    <Button asChild variant="outline" className="w-full justify-start text-base p-6">
-                        <Link href="#">
-                        <MercadoPagoLogo />
-                        Vincular cuenta de Mercado Pago
-                        </Link>
-                    </Button>
+                    <Form {...form}>
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                            <FormField
+                                control={form.control}
+                                name="cbu"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>CBU (Clave Bancaria Uniforme)</FormLabel>
+                                        <FormControl>
+                                            <Input type="number" placeholder="Ingresa los 22 dígitos de tu CBU" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="mandate"
+                                render={({ field }) => (
+                                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow">
+                                        <FormControl>
+                                            <Checkbox
+                                                checked={field.value}
+                                                onCheckedChange={field.onChange}
+                                            />
+                                        </FormControl>
+                                        <div className="space-y-1 leading-none">
+                                            <FormLabel>
+                                                Adhesión al Débito Automático
+                                            </FormLabel>
+                                            <p className="text-xs text-muted-foreground">
+                                                Autorizo a GROUP DREAMING S.A.S. a debitar de esta cuenta bancaria los importes correspondientes a las cuotas de mis planes de ahorro colectivo en sus respectivos vencimientos.
+                                            </p>
+                                            <FormMessage />
+                                        </div>
+                                    </FormItem>
+                                )}
+                            />
+                            <Button type="submit" className="w-full" disabled={isLoading}>
+                                {isLoading ? 'Guardando...' : 'Guardar CBU'}
+                            </Button>
+                        </form>
+                    </Form>
                 </CardContent>
             </Card>
         </div>

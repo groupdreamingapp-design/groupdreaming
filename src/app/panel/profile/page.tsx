@@ -12,22 +12,20 @@ export default function ProfilePage() {
                     <Shield className="h-8 w-8 text-primary" />
                     Mi Perfil y Pagos
                 </h1>
-                <p className="text-muted-foreground">Gestiona tu información personal y tu método de pago.</p>
+                <p className="text-muted-foreground">Gestiona tu información personal y tu método de pago principal.</p>
             </div>
 
             <Card>
                 <CardHeader>
                     <CardTitle>Método de Pago Principal</CardTitle>
                     <CardDescription>
-                        Configura el método de pago para el débito automático de tus cuotas.
+                        Configura el CBU de tu cuenta bancaria para el débito automático de tus cuotas mensuales.
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
                     <PaymentMethods />
                 </CardContent>
             </Card>
-
-            {/* TODO: Add other profile sections like personal information, password change, etc. */}
         </div>
     )
 }
