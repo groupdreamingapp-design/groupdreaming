@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useGroups } from '@/hooks/use-groups';
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { GroupCard } from "@/components/app/group-card";
@@ -13,8 +13,20 @@ import type { Group, GroupStatus } from "@/lib/types";
 export default function MyGroups() {
   const { groups } = useGroups();
   const [activeTab, setActiveTab] = useState<GroupStatus | "Todos">("Todos");
+  const [tabCounts, setTabCounts] = useState<Record<string, number | string>>({});
 
   const myGroups = useMemo(() => groups.filter(g => g.userIsMember), [groups]);
+
+  const tabs: (GroupStatus | "Todos")[] = ["Todos", "Activo", "Subastado", "Abierto", "Pendiente", "Cerrado"];
+
+  useEffect(() => {
+    // Calculate counts on the client-side to avoid hydration mismatch
+    const counts: Record<string, number> = {};
+    for (const tab of tabs) {
+      counts[tab] = tab === "Todos" ? myGroups.length : myGroups.filter(g => g.status === tab).length;
+    }
+    setTabCounts(counts);
+  }, [myGroups]);
 
   const filteredGroups = useMemo(() => {
     if (activeTab === "Todos") {
@@ -25,8 +37,6 @@ export default function MyGroups() {
     }
     return myGroups.filter(g => g.status === activeTab);
   }, [myGroups, activeTab]);
-
-  const tabs: (GroupStatus | "Todos")[] = ["Todos", "Activo", "Subastado", "Abierto", "Pendiente", "Cerrado"];
 
   return (
     <>
@@ -42,7 +52,7 @@ export default function MyGroups() {
           <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as GroupStatus | "Todos")} className="pt-4">
             <TabsList>
               {tabs.map(tab => {
-                const count = tab === "Todos" ? myGroups.length : myGroups.filter(g => g.status === tab).length;
+                const count = tabCounts[tab] ?? '...';
                 return (
                   <TabsTrigger key={tab} value={tab}>
                     {tab} ({count})
