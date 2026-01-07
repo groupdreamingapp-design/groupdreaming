@@ -138,56 +138,6 @@ generatedGroups.push({
     isImmediateActivation: false,
 });
 
-// New test group as per user request
-generatedGroups.push({
-    id: 'ID-20250806-TEST',
-    capital: 10000,
-    plazo: 24,
-    cuotaPromedio: calculateCuotaPromedio(10000, 24),
-    membersCount: 48,
-    totalMembers: 48,
-    status: 'Activo',
-    userIsMember: true,
-    userAwardStatus: "No Adjudicado",
-    monthsCompleted: 4, // Simulate a few months have passed
-    activationDate: '2025-08-06T00:00:00.000Z',
-    acquiredInAuction: false,
-    isImmediateActivation: false,
-});
-
-// New group for auction example
-generatedGroups.push({
-    id: 'ID-20250108-AUCTION',
-    capital: 25000,
-    plazo: 48,
-    cuotaPromedio: calculateCuotaPromedio(25000, 48),
-    membersCount: 96,
-    totalMembers: 96,
-    status: 'Subastado',
-    userIsMember: false,
-    userAwardStatus: "No Adjudicado",
-    monthsCompleted: 12,
-    activationDate: '2025-01-08T00:00:00.000Z',
-    auctionStartDate: '2026-01-02T14:00:00.000Z',
-    acquiredInAuction: false,
-    isImmediateActivation: false,
-});
-
-// A closed group example
-generatedGroups.push({
-    id: 'ID-20230504-CLOSED',
-    capital: 15000,
-    plazo: 48,
-    cuotaPromedio: calculateCuotaPromedio(15000, 48),
-    membersCount: 48,
-    totalMembers: 48,
-    status: 'Cerrado',
-    userIsMember: true,
-    userAwardStatus: 'Adjudicado - Aprobado',
-    monthsCompleted: 48,
-    activationDate: '2023-05-04T00:00:00.000Z',
-    acquiredInAuction: true,
-});
 
 export const initialGroups: Group[] = generatedGroups;
 
