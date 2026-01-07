@@ -4,7 +4,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
-import { Gavel, LayoutDashboard, Search, Wallet, Users, Bot, PieChart, Shield, FileText, HelpCircle, Gift, Landmark, Bell, DollarSign } from "lucide-react"
+import { Gavel, LayoutDashboard, Search, Users, PieChart, Shield, HelpCircle, Gift, Landmark, Bell } from "lucide-react"
 import { Badge } from "@/components/ui/badge";
 
 type MainNavProps = {
@@ -41,9 +41,9 @@ export function MainNav({ isMobile = false }: MainNavProps) {
       icon: Gavel,
     },
     {
-      href: "/panel/wallet",
-      label: "Billetera",
-      icon: Wallet,
+      href: "/panel/profile",
+      label: "Mi Perfil",
+      icon: Shield,
     },
      {
       href: "/panel/comparisons",

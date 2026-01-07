@@ -30,17 +30,6 @@ export type Group = {
   isImmediateActivation?: boolean;
 };
 
-export type TransactionType = "Depósito" | "Retiro" | "Pago de Cuota" | "Licitación" | "Subasta" | "Liquidación";
-
-export type Transaction = {
-  id: string;
-  date: string;
-  type: TransactionType;
-  description: string;
-  amount: number;
-  status: "Completado" | "Pendiente";
-};
-
 export type Auction = {
   id: string;
   groupId: string;

@@ -1,7 +1,7 @@
 
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { MainNav } from "./main-nav"
-import { Menu, PieChart, Gift, Landmark, HelpCircle, DollarSign } from "lucide-react"
+import { Menu, PieChart, Gift, Landmark, HelpCircle } from "lucide-react"
 import { Logo } from "../icons"
 import Link from "next/link"
 import { UserNav } from "./user-nav"

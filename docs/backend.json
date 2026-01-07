@@ -1,3 +1,4 @@
+
 {
   "entities": {
     "User": {
@@ -132,79 +133,6 @@
         "groupId",
         "joinDate",
         "contributionAmount"
-      ]
-    },
-    "Wallet": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "Wallet",
-      "type": "object",
-      "description": "Represents a user's digital wallet within the Dream Pool platform.",
-      "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the wallet.",
-          "format": "uuid"
-        },
-        "userId": {
-          "type": "string",
-          "description": "Reference to User. (Relationship: User 1:1 Wallet)"
-        },
-        "balance": {
-          "type": "number",
-          "description": "The current balance of the wallet (in USD)."
-        },
-        "creationDate": {
-          "type": "string",
-          "description": "The date and time the wallet was created.",
-          "format": "date-time"
-        }
-      },
-      "required": [
-        "id",
-        "userId",
-        "balance",
-        "creationDate"
-      ]
-    },
-    "Transaction": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "Transaction",
-      "type": "object",
-      "description": "Represents a transaction within the Dream Pool platform (e.g., deposit, withdrawal, contribution).",
-      "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the transaction.",
-          "format": "uuid"
-        },
-        "walletId": {
-          "type": "string",
-          "description": "Reference to Wallet. (Relationship: Wallet 1:N Transaction)"
-        },
-        "transactionDate": {
-          "type": "string",
-          "description": "The date and time the transaction occurred.",
-          "format": "date-time"
-        },
-        "transactionType": {
-          "type": "string",
-          "description": "The type of transaction (e.g., deposit, withdrawal, contribution, fee)."
-        },
-        "amount": {
-          "type": "number",
-          "description": "The amount of the transaction (in USD)."
-        },
-        "description": {
-          "type": "string",
-          "description": "A description of the transaction."
-        }
-      },
-      "required": [
-        "id",
-        "walletId",
-        "transactionDate",
-        "transactionType",
-        "amount"
       ]
     },
     "Auction": {
@@ -371,50 +299,6 @@
         }
       },
       {
-        "path": "/users/{userId}/wallets/{walletId}",
-        "definition": {
-          "entityName": "Wallet",
-          "schema": {
-            "$ref": "#/backend/entities/Wallet"
-          },
-          "description": "Stores wallet information for each user. Path-based ownership ensures only the user can access their own wallet.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The unique identifier for the user."
-            },
-            {
-              "name": "walletId",
-              "description": "The unique identifier for the wallet."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/users/{userId}/wallets/{walletId}/transactions/{transactionId}",
-        "definition": {
-          "entityName": "Transaction",
-          "schema": {
-            "$ref": "#/backend/entities/Transaction"
-          },
-          "description": "Stores transaction history for each wallet. Path-based ownership ensures only the user can access their own transaction history.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The unique identifier for the user."
-            },
-            {
-              "name": "walletId",
-              "description": "The unique identifier for the wallet."
-            },
-            {
-              "name": "transactionId",
-              "description": "The unique identifier for the transaction."
-            }
-          ]
-        }
-      },
-      {
         "path": "/auctions/{auctionId}",
         "definition": {
           "entityName": "Auction",
@@ -463,6 +347,6 @@
         }
       }
     ],
-    "reasoning": "The Firestore data structure is designed to ensure security, scalability, and ease of debugging, in line with the principles of Authorization Independence, Clarity of Intent, DBAC (Database-Based Access Control), and QAPs (Rules are not Filters). It avoids hierarchical authorization dependencies by denormalizing relevant authorization data and employs structural segregation to maintain a homogeneous security posture within collections.\n\n*Authorization Independence*:\nAuthorization Independence is achieved primarily through denormalization. For example, membership information for `GroupDreamingPool` is copied into each `UserGroupMembership` document. This eliminates the need for security rules to fetch parent documents, enabling atomic operations and simplifying the rules.\n\n*Structural Segregation*:\nDifferent data types with different access requirements are stored in separate collections. User profiles are stored under `/users/{userId}`, ensuring only the user can access their data. Group Dreaming Pools are stored under `/group_dreaming_pools/{groupId}`. The auctions on the secondary market are stored under `/auctions/{auctionId}`.\n\n*Access Modeling*:\nPrivate data is modeled using path-based ownership, such as `/users/{userId}/wallets/{walletId}`. Collaborative data (group memberships) uses a membership map, denormalized as needed. Global roles are managed by existence in dedicated collections (e.g., `/roles_admin/{uid}`).\n\n*QAPs Support*:\nSecure `list` operations are supported using structural segregation and membership maps. For instance, listing all groups a user is a member of involves querying the `/user_group_memberships` collection with a `where` clause on the `userId` field. Denormalization of membership data into subcollections allows for efficient and secure filtering without complex rule logic or database `get()` calls.\n\nThe structure supports the described app features and avoids complex rule structures."
+    "reasoning": "The Firestore data structure is designed to ensure security, scalability, and ease of debugging, in line with the principles of Authorization Independence, Clarity of Intent, DBAC (Database-Based Access Control), and QAPs (Rules are not Filters). It avoids hierarchical authorization dependencies by denormalizing relevant authorization data and employs structural segregation to maintain a homogeneous security posture within collections.\n\n*Authorization Independence*:\nAuthorization Independence is achieved primarily through denormalization. For example, membership information for `GroupDreamingPool` is copied into each `UserGroupMembership` document. This eliminates the need for security rules to fetch parent documents, enabling atomic operations and simplifying the rules.\n\n*Structural Segregation*:\nDifferent data types with different access requirements are stored in separate collections. User profiles are stored under `/users/{userId}`, ensuring only the user can access their data. Group Dreaming Pools are stored under `/group_dreaming_pools/{groupId}`. The auctions on the secondary market are stored under `/auctions/{auctionId}`.\n\n*Access Modeling*:\nPrivate data is modeled using path-based ownership. Collaborative data (group memberships) uses a membership map, denormalized as needed. Global roles are managed by existence in dedicated collections (e.g., `/roles_admin/{uid}`).\n\n*QAPs Support*:\nSecure `list` operations are supported using structural segregation and membership maps. For instance, listing all groups a user is a member of involves querying the `/user_group_memberships` collection with a `where` clause on the `userId` field. Denormalization of membership data into subcollections allows for efficient and secure filtering without complex rule logic or database `get()` calls.\n\nThe structure supports the described app features and avoids complex rule structures."
   }
 }

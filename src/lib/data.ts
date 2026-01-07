@@ -1,5 +1,5 @@
 
-import type { Group, User, Transaction, Auction, Installment, Award } from './types';
+import type { Group, User, Auction, Installment, Award } from './types';
 import { PlaceHolderImages } from './placeholder-images';
 import { format, addMonths, setDate, addDays, parseISO, lastDayOfMonth, differenceInMonths, startOfToday } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -78,20 +78,6 @@ plazoOptions.forEach(plazo => {
 });
 
 export const initialGroups: Group[] = generatedGroups;
-
-
-export const transactions: Transaction[] = [
-    {
-        id: 'tx-0',
-        date: new Date().toISOString(),
-        type: 'Depósito',
-        description: 'Depósito inicial de fondos de prueba',
-        amount: 50000,
-        status: 'Completado'
-    }
-];
-
-const staticBaseDate = new Date('2026-01-10T12:00:00Z');
 
 
 export let auctions: Omit<Auction, 'precioBase'>[] = [];

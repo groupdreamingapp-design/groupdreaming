@@ -1,3 +1,4 @@
+
 /**
  * This ruleset enforces a security model for the Dream Pool platform,
  * balancing user privacy with collaborative and public data access.
@@ -9,8 +10,7 @@
  * are restricted to a specific role.
  *
  * Data Structure:
- * - /users/{userId}: Contains all private user data, including subcollections
- *   for wallets and transactions. Access is strictly limited to the user owner.
+ * - /users/{userId}: Contains all private user data. Access is strictly limited to the user owner.
  * - /group_dreaming_pools/{groupId}: Publicly readable metadata for dream pools.
  *   Modifications are restricted to admins.
  * - /user_group_memberships/{membershipId}: A join collection linking users to
@@ -77,36 +77,6 @@ service cloud.firestore {
       allow create: if isOwner(userId) && request.resource.data.id == userId;
       allow update: if isOwner(userId) && resource != null;
       allow delete: if isOwner(userId) && resource != null;
-
-      /**
-       * @description Manages a user's wallets.
-       * @path /users/{userId}/wallets/{walletId}
-       * @allow The owner (auth.uid: 'user_abc') can create and read their own wallets. (create, get, list)
-       * @deny Another user cannot access 'user_abc's wallets in any way. (get, list, create, update, delete)
-       * @principle Enforces document ownership for a user's private subcollections.
-       */
-      match /wallets/{walletId} {
-        allow get: if isOwner(userId);
-        allow list: if isOwner(userId);
-        allow create: if isOwner(userId) && request.resource.data.userId == userId;
-        allow update: if isOwner(userId) && resource != null && request.resource.data.userId == resource.data.userId;
-        allow delete: if isOwner(userId) && resource != null;
-
-        /**
-         * @description Manages a wallet's transaction history.
-         * @path /users/{userId}/wallets/{walletId}/transactions/{transactionId}
-         * @allow The owner (auth.uid: 'user_abc') can create and list their own transactions. (create, list)
-         * @deny Another user cannot access 'user_abc's transactions. (get, list, create, update, delete)
-         * @principle Enforces document ownership deep within a user's private data tree.
-         */
-        match /transactions/{transactionId} {
-          allow get: if isOwner(userId);
-          allow list: if isOwner(userId);
-          allow create: if isOwner(userId) && request.resource.data.walletId == walletId;
-          allow update: if isOwner(userId) && resource != null && request.resource.data.walletId == resource.data.walletId;
-          allow delete: if isOwner(userId) && resource != null;
-        }
-      }
     }
 
     /**

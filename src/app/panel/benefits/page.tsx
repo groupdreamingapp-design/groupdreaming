@@ -144,23 +144,15 @@ export default function Benefits() {
                             </li>
                              <li className="flex items-start gap-3">
                                 <ShieldCheck className="h-4 w-4 mt-1 text-primary shrink-0" />
-                                <span>Ofrecen ventajas como descuentos en futuros planes, reintegros en tu billetera o premios especiales.</span>
+                                <span>Ofrecen ventajas como descuentos en futuros planes o premios especiales.</span>
                             </li>
                             <li className="flex items-start gap-3">
                                 <ShieldCheck className="h-4 w-4 mt-1 text-primary shrink-0" />
-                                <span>Para usarlos, simplemente copia el código y canjéalo en la sección "Canjear Cupón" de tu Billetera.</span>
+                                <span>Puedes canjearlos al suscribirte a un nuevo plan.</span>
                             </li>
                         </ul>
                     </div>
                 </CardContent>
-                <CardFooter>
-                    <Button asChild>
-                        <Link href="/panel/wallet">
-                            <Ticket className="mr-2 h-4 w-4" />
-                            Ir a mi Billetera para canjear
-                        </Link>
-                    </Button>
-                </CardFooter>
             </Card>
         </>
     );
