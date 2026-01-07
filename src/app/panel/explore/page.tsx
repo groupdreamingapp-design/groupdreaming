@@ -16,7 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 
 const capitalOptions = [5000, 10000, 15000, 20000, 25000];
-const plazoOptions = [12, 24, 36, 48, 60, 72, 84];
+const plazoOptions = [48, 84];
 const cuotaRanges = [
   { label: "$0 - $200", min: 0, max: 200 },
   { label: "$201 - $400", min: 201, max: 400 },
