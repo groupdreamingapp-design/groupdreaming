@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { Shield, UserPlus } from 'lucide-react';
-import { useFirestore } from '@/firebase';
+import { useFirestore, errorEmitter, FirestorePermissionError } from '@/firebase';
 import { doc, setDoc } from 'firebase/firestore';
 
 const adminSchema = z.object({
@@ -28,7 +28,7 @@ export default function AdminPage() {
     resolver: zodResolver(adminSchema),
   });
 
-  const onSubmit = async (data: AdminFormValues) => {
+  const onSubmit = (data: AdminFormValues) => {
     if (!firestore) {
         toast({
             variant: "destructive",
@@ -38,25 +38,38 @@ export default function AdminPage() {
         return;
     }
     setIsLoading(true);
-    try {
-      const adminRef = doc(firestore, 'roles_admin', data.userId);
-      // We set an empty object because existence is what matters.
-      await setDoc(adminRef, {});
-      
-      toast({
-        title: "¡Éxito!",
-        description: `El usuario ${data.userId} ahora es administrador.`,
+
+    const adminRef = doc(firestore, 'roles_admin', data.userId);
+    
+    // We set an empty object because existence is what matters for this role.
+    const adminData = {};
+
+    setDoc(adminRef, adminData)
+      .then(() => {
+        toast({
+          title: "¡Éxito!",
+          description: `El usuario ${data.userId} ahora es administrador.`,
+        });
+        reset();
+      })
+      .catch((error: any) => {
+        const permissionError = new FirestorePermissionError({
+          path: adminRef.path,
+          operation: 'create',
+          requestResourceData: adminData,
+        });
+        errorEmitter.emit('permission-error', permissionError);
+        
+        // We still show a generic toast, but the detailed error is now in the console overlay.
+        toast({
+          variant: "destructive",
+          title: "Error de Permisos",
+          description: "No tienes permiso para realizar esta acción.",
+        });
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
-      reset();
-    } catch (error: any) {
-      toast({
-        variant: "destructive",
-        title: "Error al crear administrador",
-        description: error.message || "Ocurrió un error inesperado.",
-      });
-    } finally {
-      setIsLoading(false);
-    }
   };
 
   return (
