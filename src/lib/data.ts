@@ -59,14 +59,14 @@ const viviendaActivationDate = new Date('2024-05-04T00:00:00.000Z');
 const viviendaMonthsCompleted = differenceInMonths(today, viviendaActivationDate);
 
 // "Mi emprendimiento" group - Active with last installment overdue
-const emprendimientoActivationDate = new Date('2025-03-17T00:00:00.000Z');
+const emprendimientoActivationDate = new Date('2024-03-17T00:00:00.000Z');
 const emprendimientoMonthsDue = differenceInMonths(today, emprendimientoActivationDate);
 const emprendimientoMonthsCompleted = Math.max(0, emprendimientoMonthsDue - 1);
 
 
 export const initialGroups: Group[] = [
   {
-    id: `ID-001-20260501-0001`,
+    id: `ID-001-20240501-0001`,
     name: viviendaTemplate.name,
     capital: viviendaTemplate.capital,
     plazo: viviendaTemplate.plazo,
@@ -78,13 +78,13 @@ export const initialGroups: Group[] = [
     status: 'Activo',
     userIsMember: true,
     userAwardStatus: "No Adjudicado",
-    monthsCompleted: 1, // Let's say 1 month has passed since activation
-    activationDate: '2026-05-04T00:00:00.000Z',
+    monthsCompleted: viviendaMonthsCompleted,
+    activationDate: viviendaActivationDate.toISOString(),
     acquiredInAuction: false,
     isImmediateActivation: false,
   },
   {
-    id: `ID-003-20250315-0001`,
+    id: `ID-003-20240315-0001`,
     name: emprendimientoTemplate.name,
     capital: emprendimientoTemplate.capital,
     plazo: emprendimientoTemplate.plazo,
@@ -96,8 +96,8 @@ export const initialGroups: Group[] = [
     status: 'Activo',
     userIsMember: true,
     userAwardStatus: "No Adjudicado",
-    monthsCompleted: 1, // Simulating that it's 2 months active but only 1 is paid
-    activationDate: '2025-03-17T00:00:00.000Z',
+    monthsCompleted: emprendimientoMonthsCompleted,
+    activationDate: emprendimientoActivationDate.toISOString(),
     acquiredInAuction: false,
     isImmediateActivation: false,
   },
