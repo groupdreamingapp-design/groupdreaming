@@ -16,7 +16,7 @@ function generateNewGroup(template: GroupTemplate): Group {
     const datePart = format(today, 'yyyyMMdd');
 
     const sequenceKey = `${template.purposeCode}-${datePart}`;
-    groupSequence[sequenceKey] = (groupSequence[sequenceKey] || 1) + 1;
+    groupSequence[sequenceKey] = (groupSequence[sequenceKey] || 0) + 1;
     const sequencePart = String(groupSequence[sequenceKey]).padStart(4, '0');
 
     const newId = `ID-${template.purposeCode}-${datePart}-${sequencePart}`;
