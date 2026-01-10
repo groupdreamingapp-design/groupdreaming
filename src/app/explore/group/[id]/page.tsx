@@ -38,7 +38,7 @@ function GroupDetailContent() {
     }
   }, [user, userLoading, router, groupId]);
 
-  if (userLoading) {
+  if (userLoading || user) {
     return <div className="flex justify-center items-center h-full">Cargando...</div>;
   }
 
@@ -61,22 +61,7 @@ function GroupDetailContent() {
   const formatCurrencyNoDecimals = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount);
 
   const renderCTA = () => {
-    // Wait until the auth state is fully resolved
-    if (userLoading) {
-      return (
-        <div className="h-10 w-[210px]"></div> // Placeholder to prevent layout shift
-      );
-    }
-
-    if (user) {
-        // This case should be rare due to the useEffect redirect, but it's a good fallback.
-        return (
-            <Button asChild>
-                <Link href={`/panel/group-public/${group.id}`}>Ir al Grupo</Link>
-            </Button>
-        );
-    }
-    
+    // This is a public page, so we only show login/register buttons.
     return (
         <div className='flex gap-2'>
             <Button variant="ghost" asChild>
