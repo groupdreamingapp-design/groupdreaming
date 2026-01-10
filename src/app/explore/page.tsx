@@ -10,6 +10,7 @@ import { ListRestart } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useUser } from "@/firebase";
 import { useRouter } from "next/navigation";
+import { Label } from "@/components/ui/label";
 
 
 type SortKey = 'capital_asc' | 'capital_desc' | 'plazo_asc' | 'plazo_desc' | 'cuota_asc' | 'cuota_desc' | 'miembros_faltantes';
