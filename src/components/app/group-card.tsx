@@ -6,16 +6,18 @@ import type { Group } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Users, Clock, CheckCircle2, Lock, Hourglass, ArrowRight, Trophy, Gavel, CalendarCheck, Zap, Percent } from "lucide-react";
+import { Users, Clock, CheckCircle2, Lock, Hourglass, ArrowRight, Trophy, Gavel, CalendarCheck, Zap, Percent, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { format, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
 import { calculateTotalFinancialCost } from "@/lib/data";
 import Image from "next/image";
 import { useUser } from "@/firebase";
+import { useGroups } from "@/hooks/use-groups";
+
 
 type GroupCardProps = {
   group: Group;
@@ -46,11 +48,23 @@ const statusConfig = {
   Subastado: { icon: Gavel, color: "bg-red-500", text: "text-red-700" },
 };
 
+const MAX_CAPITAL = 100000;
+
 export function GroupCard({ group }: GroupCardProps) {
   const { user } = useUser();
+  const { groups } = useGroups();
   const { icon: StatusIcon } = statusConfig[group.status];
   const formatCurrency = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount);
   const totalFinancialCost = calculateTotalFinancialCost(group.capital, group.plazo);
+
+  const subscribedCapital = useMemo(() => {
+    if (!user) return 0;
+    return groups
+        .filter(g => g.userIsMember && (g.status === 'Activo' || g.status === 'Abierto' || g.status === 'Pendiente'))
+        .reduce((acc, g) => acc + g.capital, 0);
+  }, [groups, user]);
+
+  const exceedsCapital = (subscribedCapital + group.capital) > MAX_CAPITAL;
 
   const progressValue = group.status === 'Abierto'
     ? (group.membersCount / group.totalMembers) * 100
@@ -92,6 +106,23 @@ export function GroupCard({ group }: GroupCardProps) {
     }
 
      if (user) {
+        if (exceedsCapital) {
+           return (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="w-full">
+                  <Button size="sm" disabled className="w-full">
+                    <AlertCircle className="mr-2 h-4 w-4" />
+                    Cupo Excedido
+                  </Button>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>El capital de este grupo excede tu cupo máximo para suscribir.</p>
+              </TooltipContent>
+            </Tooltip>
+           )
+        }
         return (
             <Button asChild size="sm" disabled={group.status !== 'Abierto'}>
                 <Link href={cardLink}>Unirme</Link>

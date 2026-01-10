@@ -40,10 +40,6 @@ function generateNewGroup(template: GroupTemplate): Group {
     };
 }
 
-const MAX_CAPITAL = 100000;
-const formatCurrency = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount);
-
-
 export function GroupsProvider({ children }: { children: ReactNode }) {
   const [groups, setGroups] = useState<Group[]>(initialGroups);
   const [advancedInstallments, setAdvancedInstallments] = useState<Record<string, number>>({});
@@ -83,82 +79,67 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
   }, []); // Empty dependency array ensures this runs only once on mount
 
   const joinGroup = useCallback((groupId: string) => {
-    const groupToJoin = groups.find(g => g.id === groupId);
-    if (!groupToJoin) return;
-    
-    const subscribedCapital = groups
-        .filter(g => g.userIsMember && (g.status === 'Activo' || g.status === 'Abierto' || g.status === 'Pendiente'))
-        .reduce((acc, g) => acc + g.capital, 0);
-
-    if (subscribedCapital + groupToJoin.capital > MAX_CAPITAL) {
-        toast({
-            variant: "destructive",
-            title: "Límite de Capital Excedido",
-            description: `No puedes unirte. Con este grupo, tu capital suscrito excedería el límite de ${formatCurrency(MAX_CAPITAL)}. Solicita un aumento a la administración.`,
-        });
-        return;
-    }
-    
     let joinedGroup: Group | null = null;
     let newGroupWasCreated = false;
     let immediateActivation = false;
 
     setGroups(currentGroups => {
-      let newGroups = [...currentGroups];
-      const groupIndex = newGroups.findIndex(g => g.id === groupId);
-      
-      if (groupIndex === -1) return currentGroups;
+        const groupIndex = currentGroups.findIndex(g => g.id === groupId);
+        if (groupIndex === -1) return currentGroups;
 
-      const updatedGroup = { ...newGroups[groupIndex] };
-      
-      if (updatedGroup.status !== 'Abierto' || updatedGroup.userIsMember) return currentGroups;
-      
-      updatedGroup.membersCount++;
-      updatedGroup.userIsMember = true;
-      joinedGroup = updatedGroup;
-      
-      if (updatedGroup.membersCount === updatedGroup.totalMembers) {
-         if (updatedGroup.isImmediateActivation) {
-            updatedGroup.status = 'Activo';
-            updatedGroup.activationDate = new Date().toISOString();
-            immediateActivation = true;
-        } else {
-            updatedGroup.status = 'Pendiente';
+        const groupToJoin = currentGroups[groupIndex];
+        if (groupToJoin.status !== 'Abierto' || groupToJoin.userIsMember) return currentGroups;
+
+        const updatedGroup = { ...groupToJoin, membersCount: groupToJoin.membersCount + 1, userIsMember: true };
+        joinedGroup = updatedGroup;
+
+        const newGroups = [...currentGroups];
+        newGroups[groupIndex] = updatedGroup;
+        
+        if (updatedGroup.membersCount === updatedGroup.totalMembers) {
+            if (updatedGroup.isImmediateActivation) {
+                updatedGroup.status = 'Activo';
+                updatedGroup.activationDate = new Date().toISOString();
+                immediateActivation = true;
+            } else {
+                updatedGroup.status = 'Pendiente';
+            }
+            
+            const template = groupTemplates.find(t => t.name === updatedGroup.name);
+            if (template) {
+                const newGroup = generateNewGroup(template);
+                newGroups.push(newGroup);
+                newGroupWasCreated = true;
+            }
         }
         
-        const template = groupTemplates.find(t => t.name === updatedGroup.name);
-        if (template) {
-            const newGroup = generateNewGroup(template);
-            newGroups.push(newGroup);
-            newGroupWasCreated = true;
-        }
-      }
-      
-      newGroups[groupIndex] = updatedGroup;
-      return newGroups;
+        return newGroups;
     });
 
-    if (joinedGroup) {
-      if (immediateActivation) {
-          toast({
-              title: "¡Activación Inmediata!",
-              description: `¡Te has unido y el grupo ${joinedGroup?.id} se ha activado instantáneamente! Tu primera cuota ha sido debitada.`,
-              className: 'bg-green-100 border-green-500 text-green-700'
-          });
-      } else if (newGroupWasCreated) {
-        toast({
-          title: "¡Grupo Completo!",
-          description: `El grupo ${joinedGroup?.id} está lleno y se activará pronto. Ya hemos creado un nuevo grupo '${joinedGroup?.name}' para que más personas puedan unirse.`,
-          className: 'bg-blue-100 border-blue-500 text-blue-700'
-        });
-      } else {
-        toast({
-          title: "¡Felicitaciones!",
-          description: `Te has unido al grupo ${joinedGroup.id}.`,
-        });
-      }
-    }
-  }, [groups, toast]);
+    // Use a timeout to ensure the toast is called after the render cycle
+    setTimeout(() => {
+        if (joinedGroup) {
+            if (immediateActivation) {
+                toast({
+                    title: "¡Activación Inmediata!",
+                    description: `¡Te has unido y el grupo ${joinedGroup.id} se ha activado instantáneamente! Tu primera cuota ha sido debitada.`,
+                    className: 'bg-green-100 border-green-500 text-green-700'
+                });
+            } else if (newGroupWasCreated) {
+                toast({
+                    title: "¡Grupo Completo!",
+                    description: `El grupo ${joinedGroup.id} está lleno y se activará pronto. Ya hemos creado un nuevo grupo '${joinedGroup.name}' para que más personas puedan unirse.`,
+                    className: 'bg-blue-100 border-blue-500 text-blue-700'
+                });
+            } else {
+                toast({
+                    title: "¡Felicitaciones!",
+                    description: `Te has unido al grupo ${joinedGroup.id}.`,
+                });
+            }
+        }
+    }, 0);
+  }, [toast]);
   
   const auctionGroup = useCallback((groupId: string) => {
     setGroups(currentGroups => {
