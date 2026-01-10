@@ -39,34 +39,24 @@ const financialFlow = [
 
 const operationalFlow = [
     {
-        title: "Formación del Grupo",
-        icon: Users,
-        description: "Los miembros se unen a un grupo abierto hasta que se alcanza el número total requerido. No hay límite de tiempo para esta fase."
-    },
-    {
-        title: "Capitalización Inicial",
+        title: "Mes 1: Formación y Capitalización",
         icon: PlayCircle,
-        description: "Una vez lleno, el grupo se activa. Se cobra la primera cuota a todos los miembros para capitalizar el fondo general. No hay adjudicaciones en este primer mes."
+        description: "Los miembros se unen y se cobra la primera cuota para formar el fondo común. Este mes es solo para capitalizar el grupo; no hay adjudicaciones."
     },
     {
-        title: "Primer Acto de Adjudicación",
+        title: "Mes 2: Primer Acto de Adjudicación",
         icon: Award,
-        description: "A partir del segundo mes, se realizan los actos de adjudicación mensuales, donde se entrega el capital a un miembro por sorteo y a otro por licitación."
+        description: "¡Comienza el juego! Se realiza el primer acto de adjudicación. Se entrega el capital a un miembro por sorteo y a otro por licitación."
     },
     {
-        title: "Ciclo Mensual de Operaciones",
+        title: "Mes 3 a 11: Ciclo Mensual",
         icon: Repeat,
-        description: "Cada mes el ciclo se repite: pago de cuotas, acto de adjudicación y la posibilidad de operar en el Mercado Secundario (subastas) para comprar o vender planes."
+        description: "El ciclo se repite. Cada mes se cobra la cuota y se realizan dos nuevas adjudicaciones (una por sorteo, una por licitación)."
     },
     {
-        title: "Gran Adjudicación Final",
+        title: "Mes 12: Gran Adjudicación Final",
         icon: Gavel,
-        description: "En la última cuota, se realiza un 'Sorteo Especial' para adjudicar los cupos que hayan quedado vacantes durante el plan (ej: licitaciones desiertas), garantizando que todos sean adjudicados."
-    },
-    {
-        title: "Cierre y Liquidación del Grupo",
-        icon: Lock,
-        description: "Una vez que todos los miembros han sido adjudicados y todas las cuotas pagadas, el grupo se cierra. El remanente del Fondo de Reserva se transfiere a la plataforma."
+        description: "Se cobra la última cuota y se realiza un 'Sorteo Especial' para adjudicar todos los cupos restantes, garantizando que el 100% de los miembros reciba su capital."
     }
 ];
 
@@ -111,16 +101,13 @@ export function TransparencyContent() {
             <section>
                 <div className="text-center mb-8">
                     <h2 className="text-2xl font-semibold tracking-tight">Transparencia Operativa</h2>
-                    <p className="text-muted-foreground">El viaje de tu grupo, paso a paso.</p>
+                    <p className="text-muted-foreground">El viaje de tu grupo, paso a paso (ejemplo de 12 meses).</p>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {operationalFlow.map((step, index) => (
                         <Card key={index} className="flex flex-col">
                             <CardHeader>
                                 <div className="flex items-center gap-3">
-                                    <div className="flex items-center justify-center h-10 w-10 rounded-full bg-primary/10 text-primary font-bold">
-                                        {index + 1}
-                                    </div>
                                     <div className="flex-grow">
                                         <CardTitle className="text-lg flex items-center gap-2">
                                             <step.icon className="h-5 w-5 text-primary" />
