@@ -46,12 +46,12 @@ const operationalFlow = [
     {
         title: "Mes 2: Primer Acto de Adjudicación",
         icon: Award,
-        description: "¡Comienza el juego! Se realiza el primer acto de adjudicación. Se entrega el capital a un miembro por sorteo y a otro por licitación."
+        description: "Se realiza el primer acto de adjudicación. Se entrega el capital a un miembro por sorteo y a otro por licitación."
     },
     {
         title: "Mes 3 a 11: Ciclo Mensual",
         icon: Repeat,
-        description: "El ciclo se repite. Cada mes se cobra la cuota y se realizan dos nuevas adjudicaciones (una por sorteo, una por licitación)."
+        description: "El ciclo se repite. Cada mes se cobra la cuota y se realizan dos nuevas adjudicaciones. A partir de la cuota 3, los miembros pueden vender su plan en el Mercado Secundario (subastas)."
     },
     {
         title: "Mes 12: Gran Adjudicación Final",
