@@ -3,7 +3,7 @@
 import React, { DependencyList, createContext, useContext, ReactNode, useMemo, useState, useEffect } from 'react';
 import { FirebaseApp } from 'firebase/app';
 import { Firestore } from 'firebase/firestore';
-import { Auth, User, onAuthStateChanged, signOut } from 'firebase/auth';
+import { Auth, User, onAuthStateChanged, signOut, setPersistence, browserSessionPersistence } from 'firebase/auth';
 import { FirebaseErrorListener } from '@/components/FirebaseErrorListener'
 
 interface FirebaseProviderProps {
@@ -66,6 +66,12 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
     isUserLoading: true, // Start loading until first auth event
     userError: null,
   });
+
+  useEffect(() => {
+    if (auth) {
+      setPersistence(auth, browserSessionPersistence);
+    }
+  }, [auth]);
 
   // Effect to subscribe to Firebase auth state changes
   useEffect(() => {
