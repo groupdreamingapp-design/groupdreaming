@@ -1,20 +1,15 @@
 
 'use client';
 
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo } from 'react';
 import { useParams } from 'next/navigation';
 import { useGroups } from '@/hooks/use-groups';
 import { generateInstallments } from '@/lib/data';
-import type { Installment } from '@/lib/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, FileX2, Banknote, Target, TrendingUp } from 'lucide-react';
+import { ArrowLeft, FileX2 } from 'lucide-react';
 import Link from 'next/link';
-import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { ChartContainer, ChartTooltipContent } from '@/components/ui/chart';
-import { StatCard } from '@/components/app/stat-card';
-
 
 export default function FinancialHealthPage() {
     const params = useParams();
@@ -23,35 +18,41 @@ export default function FinancialHealthPage() {
     
     const group = useMemo(() => groups.find(g => g.id === groupId), [groups, groupId]);
 
-    const formatCurrency = (amount: number, compact = false) => {
-        if (compact) {
-             return new Intl.NumberFormat('en-US', {
-                style: 'currency',
-                currency: 'USD',
-                notation: 'compact',
-                maximumFractionDigits: 1,
-            }).format(amount);
-        }
+    const formatCurrency = (amount: number) => {
         return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount);
     }
     
-    const chartData = useMemo(() => {
-        if (!group || !group.activationDate) return [];
+    const collectionData = useMemo(() => {
+        if (!group || !group.activationDate || !group.monthsCompleted) return [];
 
         const installments = generateInstallments(group.capital, group.plazo, group.activationDate);
-        const paidInstallmentsCount = (group.monthsCompleted || 0) - (group.missedPayments || 0);
+        const alicuotaPura = installments[0]?.breakdown.alicuotaPura || 0;
+        let accumulated = 0;
 
-        return installments.slice(0, group.monthsCompleted).map(inst => {
-            const isPaid = inst.number <= paidInstallmentsCount;
-            const alicuotaPura = inst.breakdown.alicuotaPura;
-            // Simulate that for overdue installments, only 95% of members paid.
-            const membersWhoPaid = isPaid ? group.totalMembers : Math.floor(group.totalMembers * 0.95); 
-            const collected = alicuotaPura * membersWhoPaid;
+        return Array.from({ length: group.monthsCompleted }, (_, i) => {
+            const cuotaNumber = i + 1;
+            const membersWhoPaid = group.totalMembers - (group.missedPayments || 0); // Simplified for this example
             
+            // For the month with a missed payment, simulate one less person paying
+            const monthlyAlicuotaPaid = (cuotaNumber === group.monthsCompleted && group.missedPayments && group.missedPayments > 0)
+                ? alicuotaPura * (group.totalMembers - group.missedPayments)
+                : alicuotaPura * group.totalMembers;
+
+            // Simulate some bid and advance payments for demonstration
+            const totalLicitaciones = (cuotaNumber > 1 && Math.random() > 0.6) ? alicuotaPura * (Math.floor(Math.random() * 5) + 5) : 0;
+            const totalAdelantos = (cuotaNumber > 2 && Math.random() > 0.8) ? alicuotaPura * (Math.floor(Math.random() * 3) + 2) : 0;
+            
+            const impagos = (alicuotaPura * group.totalMembers) - monthlyAlicuotaPaid;
+
+            accumulated += monthlyAlicuotaPaid + totalLicitaciones + totalAdelantos;
+
             return {
-                month: `Mes ${inst.number}`,
-                recaudado: collected,
-                esperado: alicuotaPura * group.totalMembers
+                cuotaNumber,
+                totalAlicuota: monthlyAlicuotaPaid,
+                totalLicitaciones,
+                totalAdelantos,
+                impagos,
+                acumulado: accumulated,
             };
         });
     }, [group]);
@@ -82,12 +83,6 @@ export default function FinancialHealthPage() {
               </div>
         )
     }
-    
-    const totalCollected = chartData.reduce((acc, item) => acc + item.recaudado, 0);
-    const totalExpectedSoFar = chartData.reduce((acc, item) => acc + item.esperado, 0);
-    const collectionPercentage = totalExpectedSoFar > 0 ? (totalCollected / totalExpectedSoFar) * 100 : 0;
-    const nextAwardCapital = group.capital * 2;
-
 
     return (
         <>
@@ -101,86 +96,35 @@ export default function FinancialHealthPage() {
                 <h1 className="text-3xl font-bold font-headline">Salud Financiera del Grupo</h1>
                 <p className="text-muted-foreground">Un análisis del fondo general para adjudicaciones (Grupo {group.id}).</p>
             </div>
-
-            <div className="grid gap-4 md:grid-cols-3 mb-8">
-                <StatCard
-                    title="Fondo General Recaudado"
-                    value={formatCurrency(totalCollected)}
-                    icon={Banknote}
-                    description="Total de alícuotas puras pagadas a la fecha."
-                />
-                <StatCard
-                    title="Próxima Adjudicación (Capital)"
-                    value={formatCurrency(nextAwardCapital)}
-                    icon={Target}
-                    description={`El fondo debe tener ${formatCurrency(nextAwardCapital)} para el próximo acto.`}
-                />
-                 <StatCard
-                    title="Progreso de Recaudación"
-                    value={`${collectionPercentage.toFixed(2)}%`}
-                    icon={TrendingUp}
-                    description={`Se recaudó ${formatCurrency(totalCollected)} de ${formatCurrency(totalExpectedSoFar)} esperados.`}
-                />
-            </div>
             
             <Card>
                 <CardHeader>
-                    <CardTitle>Recaudación Mensual de Alícuotas Puras</CardTitle>
-                    <CardDescription>
-                        Visualización de los fondos recaudados cada mes para las adjudicaciones.
-                    </CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <ChartContainer config={{
-                        recaudado: { label: "Recaudado", color: "hsl(var(--chart-1))" },
-                        esperado: { label: "Esperado", color: "hsl(var(--muted))" },
-                    }} className="h-[400px] w-full">
-                        <BarChart data={chartData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-                            <CartesianGrid vertical={false} />
-                            <XAxis
-                                dataKey="month"
-                                tickLine={false}
-                                axisLine={false}
-                                tickMargin={8}
-                            />
-                            <YAxis 
-                                tickFormatter={(value) => formatCurrency(Number(value), true)}
-                            />
-                            <Tooltip
-                                cursor={false}
-                                content={<ChartTooltipContent indicator="dot" />}
-                            />
-                            <Bar dataKey="esperado" fill="var(--color-esperado)" radius={4} />
-                            <Bar dataKey="recaudado" fill="var(--color-recaudado)" radius={4} />
-                        </BarChart>
-                    </ChartContainer>
-                </CardContent>
-            </Card>
-
-            <Card className="mt-8">
-                <CardHeader>
-                    <CardTitle>Tabla de Datos</CardTitle>
-                    <CardDescription>Detalle de la recaudación mensual.</CardDescription>
+                    <CardTitle>Tabla de Recaudación del Fondo General</CardTitle>
+                    <CardDescription>Detalle de la capitalización del grupo mes a mes.</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>Mes</TableHead>
-                                <TableHead className="text-right">Recaudado</TableHead>
-                                <TableHead className="text-right">Esperado</TableHead>
-                                <TableHead className="text-right">Diferencia</TableHead>
+                                <TableHead>Nº de Cuota</TableHead>
+                                <TableHead className="text-right">Total Alícuota</TableHead>
+                                <TableHead className="text-right">Total Licitaciones</TableHead>
+                                <TableHead className="text-right">Total Adelantos</TableHead>
+                                <TableHead className="text-right">Impagos</TableHead>
+                                <TableHead className="text-right">Acumulado</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {chartData.map((data, index) => (
-                                <TableRow key={index}>
-                                    <TableCell>{data.month}</TableCell>
-                                    <TableCell className="text-right">{formatCurrency(data.recaudado)}</TableCell>
-                                    <TableCell className="text-right">{formatCurrency(data.esperado)}</TableCell>
-                                    <TableCell className={`text-right font-medium ${data.recaudado < data.esperado ? 'text-red-500' : 'text-green-500'}`}>
-                                        {formatCurrency(data.recaudado - data.esperado)}
+                            {collectionData.map((data) => (
+                                <TableRow key={data.cuotaNumber}>
+                                    <TableCell>{data.cuotaNumber}</TableCell>
+                                    <TableCell className="text-right">{formatCurrency(data.totalAlicuota)}</TableCell>
+                                    <TableCell className="text-right">{formatCurrency(data.totalLicitaciones)}</TableCell>
+                                    <TableCell className="text-right">{formatCurrency(data.totalAdelantos)}</TableCell>
+                                    <TableCell className={`text-right font-medium ${data.impagos > 0 ? 'text-red-500' : 'text-muted-foreground'}`}>
+                                        {formatCurrency(data.impagos)}
                                     </TableCell>
+                                    <TableCell className="text-right font-bold">{formatCurrency(data.acumulado)}</TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
