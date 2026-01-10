@@ -41,13 +41,13 @@ function generateNewGroup(template: GroupTemplate): Group {
 }
 
 const MAX_CAPITAL = 100000;
+const formatCurrency = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount);
+
 
 export function GroupsProvider({ children }: { children: ReactNode }) {
   const [groups, setGroups] = useState<Group[]>(initialGroups);
   const [advancedInstallments, setAdvancedInstallments] = useState<Record<string, number>>({});
   const { toast } = useToast();
-  const myGroupsCountRef = useRef(groups.filter(g => g.userIsMember).length);
-  const lastJoinedGroupRef = useRef<Group | null>(null);
   
   useEffect(() => {
     // This effect runs only on the client-side after hydration
@@ -82,44 +82,28 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
     setGroups(updatedGroups);
   }, []); // Empty dependency array ensures this runs only once on mount
 
-  useEffect(() => {
-    const currentMyGroups = groups.filter(g => g.userIsMember);
-    if (currentMyGroups.length > myGroupsCountRef.current && lastJoinedGroupRef.current) {
-        if (!lastJoinedGroupRef.current.isImmediateActivation) {
-             // Defer toast until after render cycle
-             setTimeout(() => {
-                toast({
-                    title: "¡Felicitaciones!",
-                    description: `Te has unido al grupo ${lastJoinedGroupRef.current!.id}.`,
-                });
-            }, 0);
-        }
-    }
-    myGroupsCountRef.current = currentMyGroups.length;
-  }, [groups, toast]);
-
   const joinGroup = useCallback((groupId: string) => {
+    const groupToJoin = groups.find(g => g.id === groupId);
+    if (!groupToJoin) return;
+    
+    const subscribedCapital = groups
+        .filter(g => g.userIsMember && (g.status === 'Activo' || g.status === 'Abierto' || g.status === 'Pendiente'))
+        .reduce((acc, g) => acc + g.capital, 0);
+
+    if (subscribedCapital + groupToJoin.capital > MAX_CAPITAL) {
+        toast({
+            variant: "destructive",
+            title: "Límite de Capital Excedido",
+            description: `No puedes unirte. Con este grupo, tu capital suscrito excedería el límite de ${formatCurrency(MAX_CAPITAL)}. Solicita un aumento a la administración.`,
+        });
+        return;
+    }
+    
     let joinedGroup: Group | null = null;
     let newGroupWasCreated = false;
     let immediateActivation = false;
 
     setGroups(currentGroups => {
-        const groupToJoin = currentGroups.find(g => g.id === groupId);
-        if (!groupToJoin) return currentGroups;
-
-        const subscribedCapital = currentGroups
-            .filter(g => g.userIsMember && (g.status === 'Activo' || g.status === 'Abierto' || g.status === 'Pendiente'))
-            .reduce((acc, g) => acc + g.capital, 0);
-
-        if (subscribedCapital + groupToJoin.capital > MAX_CAPITAL) {
-            toast({
-                variant: "destructive",
-                title: "Límite de Capital Excedido",
-                description: `No puedes unirte. Con este grupo, tu capital suscrito excedería el límite de ${formatCurrency(MAX_CAPITAL)}. Solicita un aumento a la administración.`,
-            });
-            return currentGroups;
-        }
-        
       let newGroups = [...currentGroups];
       const groupIndex = newGroups.findIndex(g => g.id === groupId);
       
@@ -131,6 +115,7 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
       
       updatedGroup.membersCount++;
       updatedGroup.userIsMember = true;
+      joinedGroup = updatedGroup;
       
       if (updatedGroup.membersCount === updatedGroup.totalMembers) {
          if (updatedGroup.isImmediateActivation) {
@@ -150,29 +135,30 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
       }
       
       newGroups[groupIndex] = updatedGroup;
-      joinedGroup = updatedGroup;
-      
       return newGroups;
     });
 
     if (joinedGroup) {
-        lastJoinedGroupRef.current = joinedGroup;
-    }
-    
-    if (immediateActivation) {
+      if (immediateActivation) {
+          toast({
+              title: "¡Activación Inmediata!",
+              description: `¡Te has unido y el grupo ${joinedGroup?.id} se ha activado instantáneamente! Tu primera cuota ha sido debitada.`,
+              className: 'bg-green-100 border-green-500 text-green-700'
+          });
+      } else if (newGroupWasCreated) {
         toast({
-            title: "¡Activación Inmediata!",
-            description: `¡Te has unido y el grupo ${joinedGroup?.id} se ha activado instantáneamente! Tu primera cuota ha sido debitada.`,
-            className: 'bg-green-100 border-green-500 text-green-700'
+          title: "¡Grupo Completo!",
+          description: `El grupo ${joinedGroup?.id} está lleno y se activará pronto. Ya hemos creado un nuevo grupo '${joinedGroup?.name}' para que más personas puedan unirse.`,
+          className: 'bg-blue-100 border-blue-500 text-blue-700'
         });
-    } else if (newGroupWasCreated) {
-      toast({
-        title: "¡Grupo Completo!",
-        description: `El grupo ${joinedGroup?.id} está lleno y se activará pronto. Ya hemos creado un nuevo grupo '${joinedGroup?.name}' para que más personas puedan unirse.`,
-        className: 'bg-blue-100 border-blue-500 text-blue-700'
-      });
+      } else {
+        toast({
+          title: "¡Felicitaciones!",
+          description: `Te has unido al grupo ${joinedGroup.id}.`,
+        });
+      }
     }
-  }, [toast]);
+  }, [groups, toast]);
   
   const auctionGroup = useCallback((groupId: string) => {
     setGroups(currentGroups => {
@@ -225,7 +211,6 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
     });
   }, [toast]);
 
-  const formatCurrency = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount);
 
   return (
     <GroupsContext.Provider value={{ groups, joinGroup, auctionGroup, acceptAward, approveAward, advanceInstallments, advancedInstallments }}>
