@@ -4,6 +4,7 @@ import { PlaceHolderImages } from './placeholder-images';
 
 export const groupTemplates: GroupTemplate[] = [
   {
+    purposeCode: "001",
     name: 'Mi Hogar',
     capital: 50000,
     plazo: 120,
@@ -11,6 +12,7 @@ export const groupTemplates: GroupTemplate[] = [
     imageHint: 'modern house',
   },
   {
+    purposeCode: "002",
     name: 'Mi Auto',
     capital: 25000,
     plazo: 84,
@@ -18,6 +20,7 @@ export const groupTemplates: GroupTemplate[] = [
     imageHint: 'car keys',
   },
   {
+    purposeCode: "003",
     name: 'Mi Emprendimiento',
     capital: 15000,
     plazo: 48,
@@ -25,6 +28,7 @@ export const groupTemplates: GroupTemplate[] = [
     imageHint: 'small business',
   },
   {
+    purposeCode: "004",
     name: 'Un gustito',
     capital: 5000,
     plazo: 24,

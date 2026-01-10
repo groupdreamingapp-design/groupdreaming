@@ -49,9 +49,9 @@ export const calculateTotalFinancialCost = (capital: number, plazo: number): num
 }
 
 const createGroupFromTemplate = (template: GroupTemplate): Group => {
-  // Use a predictable part of the name for a stable ID
-  const namePart = template.name.replace(/[^a-zA-Z0-9]/g, '').substring(0, 5).toUpperCase();
-  const newId = `ID-${namePart}`;
+  const today = new Date();
+  const datePart = format(today, 'yyyyMMdd');
+  const newId = `ID-${template.purposeCode}-${datePart}-0001`;
 
   return {
     id: newId,
@@ -147,4 +147,3 @@ export const generateExampleInstallments = (capital: number, plazo: number): Ins
         };
     });
 };
-

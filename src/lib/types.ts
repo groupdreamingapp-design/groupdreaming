@@ -85,6 +85,7 @@ export type Notification = {
 };
 
 export type GroupTemplate = {
+  purposeCode: string;
   name: string;
   capital: number;
   plazo: number;

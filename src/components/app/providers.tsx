@@ -2,22 +2,24 @@
 'use client';
 
 import { useState, useCallback, ReactNode, useEffect, useRef } from 'react';
-import { initialGroups } from '@/lib/data';
+import { initialGroups, calculateCuotaPromedio } from '@/lib/data';
 import type { Group, GroupTemplate } from '@/lib/types';
 import { GroupsContext } from '@/hooks/use-groups';
 import { useToast } from '@/hooks/use-toast';
 import { groupTemplates } from '@/lib/group-templates';
+import { format } from 'date-fns';
 
+let groupSequence: Record<string, number> = {};
 
 function generateNewGroup(template: GroupTemplate): Group {
     const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-    
-    // Make the new ID distinct from the base one but still predictable
-    const namePart = template.name.replace(/[^a-zA-Z0-9]/g, '').substring(0, 5).toUpperCase();
-    const newId = `ID-${namePart}-NUEVO`;
+    const datePart = format(today, 'yyyyMMdd');
+
+    const sequenceKey = `${template.purposeCode}-${datePart}`;
+    groupSequence[sequenceKey] = (groupSequence[sequenceKey] || 1) + 1;
+    const sequencePart = String(groupSequence[sequenceKey]).padStart(4, '0');
+
+    const newId = `ID-${template.purposeCode}-${datePart}-${sequencePart}`;
     
     return {
       id: newId,
@@ -26,8 +28,8 @@ function generateNewGroup(template: GroupTemplate): Group {
       plazo: template.plazo,
       imageUrl: template.imageUrl,
       imageHint: template.imageHint,
-      cuotaPromedio: template.plazo > 0 ? (template.capital / template.plazo) : 0,
-      totalMembers: Math.ceil(template.plazo * 1.5),
+      cuotaPromedio: calculateCuotaPromedio(template.capital, template.plazo),
+      totalMembers: template.plazo * 2,
       membersCount: 0,
       status: 'Abierto',
       userIsMember: false,
@@ -105,13 +107,9 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
         
         const template = groupTemplates.find(t => t.name === updatedGroup.name);
         if (template) {
-            // Check if a "NUEVO" version already exists before adding another
-            const newGroupExists = newGroups.some(g => g.id === `ID-${template.name.replace(/[^a-zA-Z0-9]/g, '').substring(0, 5).toUpperCase()}-NUEVO`);
-            if (!newGroupExists) {
-              const newGroup = generateNewGroup(template);
-              newGroups.push(newGroup);
-              newGroupWasCreated = true;
-            }
+            const newGroup = generateNewGroup(template);
+            newGroups.push(newGroup);
+            newGroupWasCreated = true;
         }
       }
       
