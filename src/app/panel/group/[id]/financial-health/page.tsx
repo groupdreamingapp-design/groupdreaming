@@ -8,7 +8,7 @@ import { generateStaticAwards } from '@/lib/data';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, FileX2, PiggyBank, Target, TrendingDown, TrendingUp } from 'lucide-react';
+import { ArrowLeft, FileX2, PiggyBank, Target, TrendingDown, TrendingUp, Zap } from 'lucide-react';
 import Link from 'next/link';
 import { StatCard } from '@/components/app/stat-card';
 
@@ -38,6 +38,7 @@ export default function FinancialHealthPage() {
         let accumulated = 0;
         let totalImpagos = 0;
         let totalLicitado = 0;
+        let totalAdelantado = 0;
 
         const collectionData = installments.map((_, i) => {
             const cuotaNumber = i + 1;
@@ -54,13 +55,18 @@ export default function FinancialHealthPage() {
             totalLicitado += totalLicitaciones;
 
             const totalAdelantos = (cuotaNumber > 2 && Math.random() > 0.8) ? alicuotaPura * (Math.floor(Math.random() * 5) + 2) : 0;
+            totalAdelantado += totalAdelantos;
             
             const impagos = alicuotaPura * missedPaymentsThisMonth;
             totalImpagos += impagos;
             
             let adjudicadoDelMes = 0;
             if (cuotaNumber > 1) {
-                adjudicadoDelMes = totalLicitaciones > 0 ? group.capital * 2 : group.capital;
+                 if (totalLicitaciones > 0) {
+                    adjudicadoDelMes = group.capital * 2;
+                } else {
+                    adjudicadoDelMes = group.capital;
+                }
             }
 
             accumulated = accumulated + monthlyAlicuotaPaid + totalLicitaciones + totalAdelantos - adjudicadoDelMes;
@@ -80,7 +86,8 @@ export default function FinancialHealthPage() {
             totalAcumulado: accumulated,
             totalImpagos: totalImpagos,
             capitalNecesario: group.capital * 2,
-            totalLicitado: totalLicitado
+            totalLicitado: totalLicitado,
+            totalAdelantado: totalAdelantado,
         };
         
         return { collectionData, kpis };
@@ -126,15 +133,15 @@ export default function FinancialHealthPage() {
                 <p className="text-muted-foreground">Un análisis del fondo general para adjudicaciones (Grupo {group.id}).</p>
             </div>
             
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 mb-8">
                 <StatCard 
-                    title="Capital Acumulado (Fondo General)"
+                    title="Fondo General Acumulado"
                     value={formatCurrency(kpis.totalAcumulado || 0)}
                     icon={PiggyBank}
                     description="Saldo actual del fondo para adjudicaciones."
                 />
                  <StatCard 
-                    title="Capital Impago Acumulado"
+                    title="Impagos Acumulados"
                     value={formatCurrency(kpis.totalImpagos || 0)}
                     icon={TrendingDown}
                     description="Se recupera vía subasta forzosa."
@@ -149,7 +156,13 @@ export default function FinancialHealthPage() {
                     title="Total Licitado Acumulado"
                     value={formatCurrency(kpis.totalLicitado || 0)}
                     icon={TrendingUp}
-                    description="Capital extra inyectado por los miembros."
+                    description="Capital extra por competencia."
+                />
+                 <StatCard 
+                    title="Total Adelantado Acumulado"
+                    value={formatCurrency(kpis.totalAdelantado || 0)}
+                    icon={Zap}
+                    description="Capital extra por adelantos."
                 />
             </div>
 
