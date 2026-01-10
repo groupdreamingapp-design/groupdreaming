@@ -1,8 +1,8 @@
 
 'use client';
 
-import { useParams, useRouter, usePathname } from 'next/navigation';
-import { initialGroups, generateExampleInstallments, calculateTotalFinancialCost } from '@/lib/data';
+import { useParams, usePathname } from 'next/navigation';
+import { generateExampleInstallments, calculateTotalFinancialCost } from '@/lib/data';
 import type { Installment } from '@/lib/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -11,7 +11,6 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { ArrowLeft, Users, Clock, Scale, Users2, FileX2, CheckCircle, Ticket, HandCoins, ShieldAlert, Zap, Percent, BadgePercent } from 'lucide-react';
 import Link from 'next/link';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useUserNav } from '@/components/app/user-nav';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useState, useMemo, useEffect } from 'react';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -19,14 +18,16 @@ import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import { useUser } from '@/firebase';
 import { Badge } from '@/components/ui/badge';
+import { useGroups } from '@/hooks/use-groups';
+import { GroupsProvider } from '@/components/app/providers';
 
-export default function GroupPublicDetail() {
+function GroupDetailContent() {
   const params = useParams();
-  const router = useRouter();
   const pathname = usePathname();
+  const { groups } = useGroups();
   
   const groupId = typeof params.id === 'string' ? params.id : '';
-  const group = useMemo(() => initialGroups.find(g => g.id === groupId), [groupId]);
+  const group = useMemo(() => groups.find(g => g.id === groupId), [groups, groupId]);
 
   if (!group) {
     return (
@@ -67,7 +68,7 @@ export default function GroupPublicDetail() {
         </Link>
         <div className="flex justify-between items-start">
             <div>
-                <h1 className="text-3xl font-bold font-headline">{formatCurrencyNoDecimals(group.capital)}</h1>
+                <h1 className="text-3xl font-bold font-headline">{group.name} - {formatCurrencyNoDecimals(group.capital)}</h1>
                 <p className="text-muted-foreground">en {group.plazo} meses (Grupo {group.id})</p>
             </div>
             {renderCTA()}
@@ -170,4 +171,13 @@ export default function GroupPublicDetail() {
       </div>
     </>
   );
+}
+
+
+export default function GroupPublicDetail() {
+  return (
+    <GroupsProvider>
+      <GroupDetailContent />
+    </GroupsProvider>
+  )
 }
