@@ -37,10 +37,12 @@ export const groupTemplates: GroupTemplate[] = [
   },
   {
     purposeCode: "005",
-    name: 'Pulmoncito anual',
+    name: 'Familia y amigos',
     capital: 1000,
     plazo: 12,
     imageUrl: PlaceHolderImages.find(img => img.id === 'goal-unexpected-income')?.imageUrl || '',
     imageHint: 'surprise money',
   },
 ];
+
+    

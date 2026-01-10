@@ -52,7 +52,7 @@ const viviendaTemplate = groupTemplates.find(t => t.purposeCode === '001')!;
 const autoTemplate = groupTemplates.find(t => t.purposeCode === '002')!;
 const emprendimientoTemplate = groupTemplates.find(t => t.purposeCode === '003')!;
 const gustitoTemplate = groupTemplates.find(t => t.purposeCode === '004')!;
-const pulmoncitoAnualTemplate = groupTemplates.find(t => t.purposeCode === '005')!;
+const familiaYAmigosTemplate = groupTemplates.find(t => t.purposeCode === '005')!;
 
 
 export const initialGroups: Group[] = [
@@ -155,13 +155,13 @@ export const initialGroups: Group[] = [
   },
   {
     id: `ID-005-20240815-0001`,
-    name: pulmoncitoAnualTemplate.name,
-    capital: pulmoncitoAnualTemplate.capital,
-    plazo: pulmoncitoAnualTemplate.plazo,
-    imageUrl: pulmoncitoAnualTemplate.imageUrl,
-    imageHint: pulmoncitoAnualTemplate.imageHint,
-    cuotaPromedio: calculateCuotaPromedio(pulmoncitoAnualTemplate.capital, pulmoncitoAnualTemplate.plazo),
-    totalMembers: pulmoncitoAnualTemplate.plazo * 2,
+    name: familiaYAmigosTemplate.name,
+    capital: familiaYAmigosTemplate.capital,
+    plazo: familiaYAmigosTemplate.plazo,
+    imageUrl: familiaYAmigosTemplate.imageUrl,
+    imageHint: familiaYAmigosTemplate.imageHint,
+    cuotaPromedio: calculateCuotaPromedio(familiaYAmigosTemplate.capital, familiaYAmigosTemplate.plazo),
+    totalMembers: familiaYAmigosTemplate.plazo * 2,
     membersCount: 1,
     status: 'Abierto',
     userIsMember: false,
@@ -360,3 +360,5 @@ export const generateStaticAwards = (group: Group): Award[][] => {
     
     return awards;
 };
+
+    
