@@ -1,15 +1,14 @@
-
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
 import { useGroups } from '@/hooks/use-groups';
 import { generateExampleInstallments, calculateTotalFinancialCost } from '@/lib/data';
-import type { Installment } from '@/lib/types';
+import type { Installment, Group } from '@/lib/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from '@/components/ui/dialog';
-import { ArrowLeft, Users, Clock, Scale, Users2, FileX2, CheckCircle, Ticket, HandCoins, ShieldAlert, BadgePercent, Zap } from 'lucide-react';
+import { ArrowLeft, Users, Clock, Scale, Users2, FileX2, CheckCircle, Ticket, HandCoins, ShieldAlert, BadgePercent, Zap, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useUserNav } from '@/components/app/user-nav';
@@ -19,6 +18,9 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+
+const MAX_CAPITAL = 100000;
 
 export default function GroupPublicDetail() {
   const params = useParams();
@@ -30,6 +32,17 @@ export default function GroupPublicDetail() {
   
   const groupId = typeof params.id === 'string' ? params.id : '';
   const group = useMemo(() => groups.find(g => g.id === groupId), [groups, groupId]);
+
+  const subscribedCapital = useMemo(() => {
+    return groups
+        .filter(g => g.userIsMember && (g.status === 'Activo' || g.status === 'Abierto' || g.status === 'Pendiente'))
+        .reduce((acc, g) => acc + g.capital, 0);
+  }, [groups]);
+
+  const exceedsCapital = useMemo(() => {
+    if (!group) return false;
+    return (subscribedCapital + group.capital) > MAX_CAPITAL;
+  }, [subscribedCapital, group]);
 
   if (!group) {
     return (
@@ -60,6 +73,103 @@ export default function GroupPublicDetail() {
     setHasReadContract(false);
   }
 
+  const renderJoinButton = () => {
+    if (exceedsCapital) {
+      return (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="w-full">
+                <Button size="lg" disabled className="w-auto">
+                  <AlertCircle className="mr-2 h-4 w-4" />
+                  Cupo Excedido
+                </Button>
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>El capital de este grupo excede tu cupo máximo para suscribir.</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      );
+    }
+    return (
+      <Dialog onOpenChange={(open) => !open && resetDialog()}>
+        <DialogTrigger asChild>
+            <Button size="lg">
+                <CheckCircle className="mr-2" /> Unirme a este grupo
+            </Button>
+        </DialogTrigger>
+        <DialogContent>
+            <DialogHeader>
+                <DialogTitle>Confirmar Unión al Grupo {group.id}</DialogTitle>
+                  <DialogDescription>Estás a punto de unirte a un plan de {formatCurrencyNoDecimals(group.capital)} en {group.plazo} meses.</DialogDescription>
+            </DialogHeader>
+
+            {isVerified ? (
+                <div className="space-y-4">
+                    <p className="text-sm text-muted-foreground">
+                        Se generará el débito de la primera cuota en tu método de pago principal.
+                    </p>
+                    <Alert>
+                        <CheckCircle className="h-4 w-4" />
+                        <AlertTitle>¡Identidad Verificada!</AlertTitle>
+                        <AlertDescription>
+                            Tu cuenta está verificada y lista para operar.
+                        </AlertDescription>
+                    </Alert>
+                      <div className="items-top flex space-x-2 pt-2">
+                        <Checkbox 
+                          id="terms" 
+                          checked={termsAccepted} 
+                          onCheckedChange={(checked) => setTermsAccepted(!!checked)}
+                          disabled={!hasReadContract}
+                        />
+                        <div className="grid gap-1.5 leading-none">
+                          <Label 
+                            htmlFor="terms" 
+                            className={cn("text-sm font-medium leading-none", !hasReadContract && "text-muted-foreground cursor-not-allowed")}
+                          >
+                            He leído y acepto el <Button variant="link" className="p-0 h-auto" asChild><Link href="/panel/contract" target="_blank" onClick={() => setHasReadContract(true)}>Contrato de Adhesión</Link></Button>.
+                          </Label>
+                          {!hasReadContract && (
+                            <p className="text-xs text-amber-600 font-semibold">
+                              Debes hacer clic en 'Contrato de Adhesión' para poder aceptar los términos.
+                            </p>
+                          )}
+                        </div>
+                    </div>
+                </div>
+            ) : (
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-4">
+                        Para continuar, primero debes completar el proceso de verificación de identidad. Es un requisito legal para garantizar la seguridad de todos los miembros.
+                    </p>
+                      <Alert variant="destructive">
+                        <ShieldAlert className="h-4 w-4" />
+                        <AlertTitle>Verificación de Identidad Requerida</AlertTitle>
+                        <AlertDescription>
+                            Tu cuenta aún no ha sido verificada. Por favor, completa el formulario para poder unirte a un grupo.
+                        </AlertDescription>
+                    </Alert>
+                </div>
+            )}
+            
+            <DialogFooter>
+                <DialogClose asChild><Button variant="ghost">Cancelar</Button></DialogClose>
+                {isVerified ? (
+                    <Button onClick={handleJoinGroup} disabled={!termsAccepted}>Confirmar y Unirme</Button>
+                ) : (
+                    <Button asChild>
+                        <Link href="/panel/verify">Ir a Verificar</Link>
+                    </Button>
+                )}
+            </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
   return (
     <>
       <div className="mb-4">
@@ -72,79 +182,7 @@ export default function GroupPublicDetail() {
                 <p className="text-muted-foreground">en {group.plazo} meses (Grupo {group.id})</p>
             </div>
             
-            <Dialog onOpenChange={(open) => !open && resetDialog()}>
-                <DialogTrigger asChild>
-                    <Button size="lg">
-                        <CheckCircle className="mr-2" /> Unirme a este grupo
-                    </Button>
-                </DialogTrigger>
-                <DialogContent>
-                    <DialogHeader>
-                        <DialogTitle>Confirmar Unión al Grupo {group.id}</DialogTitle>
-                         <DialogDescription>Estás a punto de unirte a un plan de {formatCurrencyNoDecimals(group.capital)} en {group.plazo} meses.</DialogDescription>
-                    </DialogHeader>
-
-                    {isVerified ? (
-                        <div className="space-y-4">
-                            <p className="text-sm text-muted-foreground">
-                                Se generará el débito de la primera cuota en tu método de pago principal.
-                            </p>
-                            <Alert>
-                                <CheckCircle className="h-4 w-4" />
-                                <AlertTitle>¡Identidad Verificada!</AlertTitle>
-                                <AlertDescription>
-                                    Tu cuenta está verificada y lista para operar.
-                                </AlertDescription>
-                            </Alert>
-                             <div className="items-top flex space-x-2 pt-2">
-                                <Checkbox 
-                                  id="terms" 
-                                  checked={termsAccepted} 
-                                  onCheckedChange={(checked) => setTermsAccepted(!!checked)}
-                                  disabled={!hasReadContract}
-                                />
-                                <div className="grid gap-1.5 leading-none">
-                                  <Label 
-                                    htmlFor="terms" 
-                                    className={cn("text-sm font-medium leading-none", !hasReadContract && "text-muted-foreground cursor-not-allowed")}
-                                  >
-                                   He leído y acepto el <Button variant="link" className="p-0 h-auto" asChild><Link href="/panel/contract" target="_blank" onClick={() => setHasReadContract(true)}>Contrato de Adhesión</Link></Button>.
-                                  </Label>
-                                  {!hasReadContract && (
-                                    <p className="text-xs text-amber-600 font-semibold">
-                                      Debes hacer clic en 'Contrato de Adhesión' para poder aceptar los términos.
-                                    </p>
-                                  )}
-                                </div>
-                            </div>
-                        </div>
-                    ) : (
-                         <div>
-                            <p className="text-sm text-muted-foreground mb-4">
-                                Para continuar, primero debes completar el proceso de verificación de identidad. Es un requisito legal para garantizar la seguridad de todos los miembros.
-                            </p>
-                             <Alert variant="destructive">
-                                <ShieldAlert className="h-4 w-4" />
-                                <AlertTitle>Verificación de Identidad Requerida</AlertTitle>
-                                <AlertDescription>
-                                    Tu cuenta aún no ha sido verificada. Por favor, completa el formulario para poder unirte a un grupo.
-                                </AlertDescription>
-                            </Alert>
-                        </div>
-                    )}
-                    
-                    <DialogFooter>
-                        <DialogClose asChild><Button variant="ghost">Cancelar</Button></DialogClose>
-                        {isVerified ? (
-                            <Button onClick={handleJoinGroup} disabled={!termsAccepted}>Confirmar y Unirme</Button>
-                        ) : (
-                            <Button asChild>
-                                <Link href="/panel/verify">Ir a Verificar</Link>
-                            </Button>
-                        )}
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
+            {renderJoinButton()}
 
         </div>
       </div>
