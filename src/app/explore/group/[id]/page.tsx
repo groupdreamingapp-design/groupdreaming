@@ -24,23 +24,9 @@ export default function GroupPublicDetail() {
   const params = useParams();
   const router = useRouter();
   const pathname = usePathname();
-  const { user, loading: userLoading } = useUser();
-  const [termsAccepted, setTermsAccepted] = useState(false);
-  const [hasReadContract, setHasReadContract] = useState(false);
   
   const groupId = typeof params.id === 'string' ? params.id : '';
   const group = useMemo(() => initialGroups.find(g => g.id === groupId), [groupId]);
-
-  useEffect(() => {
-    if (!userLoading && user) {
-        // If user is logged in, redirect them to the panel version of this page
-        router.replace(`/panel/group-public/${groupId}`);
-    }
-  }, [user, userLoading, router, groupId]);
-
-  if (userLoading || user) {
-    return <div className="flex items-center justify-center h-full">Cargando...</div>;
-  }
 
   if (!group) {
     return (
