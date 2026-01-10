@@ -49,12 +49,12 @@ export const calculateTotalFinancialCost = (capital: number, plazo: number): num
 }
 
 const createGroupFromTemplate = (template: GroupTemplate): Group => {
-  const today = new Date();
-  const dateString = `${today.getFullYear()}${(today.getMonth() + 1).toString().padStart(2, '0')}${today.getDate().toString().padStart(2, '0')}`;
-  const randomSuffix = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
-  
+  // Use a predictable part of the name for a stable ID
+  const namePart = template.name.replace(/[^a-zA-Z0-9]/g, '').substring(0, 5).toUpperCase();
+  const newId = `ID-${namePart}`;
+
   return {
-    id: `ID-${template.name.substring(0, 3).toUpperCase()}-${dateString}-${randomSuffix}`,
+    id: newId,
     name: template.name,
     capital: template.capital,
     plazo: template.plazo,
@@ -147,3 +147,4 @@ export const generateExampleInstallments = (capital: number, plazo: number): Ins
         };
     });
 };
+

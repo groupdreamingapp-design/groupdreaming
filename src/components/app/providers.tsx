@@ -14,10 +14,10 @@ function generateNewGroup(template: GroupTemplate): Group {
     const year = today.getFullYear();
     const month = String(today.getMonth() + 1).padStart(2, '0');
     const day = String(today.getDate()).padStart(2, '0');
-    const dateString = `${year}${month}${day}`;
     
-    const randomNumbers = String(Math.floor(Math.random() * 10000)).padStart(4, '0');
-    const newId = `ID-${template.name.substring(0,3).toUpperCase()}-${dateString}-${randomNumbers}`;
+    // Make the new ID distinct from the base one but still predictable
+    const namePart = template.name.replace(/[^a-zA-Z0-9]/g, '').substring(0, 5).toUpperCase();
+    const newId = `ID-${namePart}-NUEVO`;
     
     return {
       id: newId,
@@ -105,9 +105,13 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
         
         const template = groupTemplates.find(t => t.name === updatedGroup.name);
         if (template) {
-            const newGroup = generateNewGroup(template);
-            newGroups.push(newGroup);
-            newGroupWasCreated = true;
+            // Check if a "NUEVO" version already exists before adding another
+            const newGroupExists = newGroups.some(g => g.id === `ID-${template.name.replace(/[^a-zA-Z0-9]/g, '').substring(0, 5).toUpperCase()}-NUEVO`);
+            if (!newGroupExists) {
+              const newGroup = generateNewGroup(template);
+              newGroups.push(newGroup);
+              newGroupWasCreated = true;
+            }
         }
       }
       
