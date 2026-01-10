@@ -7,7 +7,7 @@ import type { Group, GroupTemplate } from '@/lib/types';
 import { GroupsContext } from '@/hooks/use-groups';
 import { useToast } from '@/hooks/use-toast';
 import { groupTemplates } from '@/lib/group-templates';
-import { format } from 'date-fns';
+import { format, differenceInMonths, parseISO, addHours } from 'date-fns';
 
 let groupSequence: Record<string, number> = {};
 
@@ -49,6 +49,39 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
   const myGroupsCountRef = useRef(groups.filter(g => g.userIsMember).length);
   const lastJoinedGroupRef = useRef<Group | null>(null);
   
+  useEffect(() => {
+    // This effect runs only on the client-side after hydration
+    const today = new Date();
+    const updatedGroups = initialGroups.map(group => {
+      if (group.status === 'Activo' && group.activationDate) {
+        const activationDate = parseISO(group.activationDate);
+        let monthsPassed = differenceInMonths(today, activationDate);
+        
+        // Logic for "Subasta Forzosa"
+        const installments = generateInstallments(group.capital, group.plazo, group.activationDate);
+        const overdueInstallments = installments.filter(inst => {
+            const dueDate = parseISO(inst.dueDate);
+            return isBefore(dueDate, today) && inst.number > (monthsPassed - (group.missedPayments || 0));
+        });
+
+        if (overdueInstallments.length >= 2) {
+            const secondOverdueDate = parseISO(overdueInstallments[1].dueDate);
+            const seventyTwoHoursAgo = addHours(today, -72);
+            if (isBefore(secondOverdueDate, seventyTwoHoursAgo)) {
+                return { ...group, status: 'Subastado', auctionStartDate: new Date().toISOString() };
+            }
+        }
+        
+        // Apply missed payments
+        const monthsCompleted = Math.max(0, monthsPassed - (group.missedPayments || 0));
+
+        return { ...group, monthsCompleted };
+      }
+      return group;
+    });
+    setGroups(updatedGroups);
+  }, []); // Empty dependency array ensures this runs only once on mount
+
   useEffect(() => {
     const currentMyGroups = groups.filter(g => g.userIsMember);
     if (currentMyGroups.length > myGroupsCountRef.current && lastJoinedGroupRef.current) {

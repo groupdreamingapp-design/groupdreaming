@@ -31,6 +31,7 @@ export type Group = {
   acquiredInAuction?: boolean;
   auctionStartDate?: string;
   isImmediateActivation?: boolean;
+  missedPayments?: number;
 };
 
 export type Auction = {

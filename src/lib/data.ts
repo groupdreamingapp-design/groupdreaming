@@ -1,5 +1,5 @@
 
-import type { Group, User, Auction, Installment, Award, GroupTemplate } from './types';
+import type { Group, User, Auction, Installment, GroupTemplate } from './types';
 import { PlaceHolderImages } from './placeholder-images';
 import { format, addMonths, setDate, addDays, parseISO, lastDayOfMonth, differenceInMonths, startOfToday } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -52,6 +52,7 @@ const viviendaTemplate = groupTemplates.find(t => t.purposeCode === '001')!;
 const emprendimientoTemplate = groupTemplates.find(t => t.purposeCode === '003')!;
 const gustitoTemplate = groupTemplates.find(t => t.purposeCode === '004')!;
 
+
 export const initialGroups: Group[] = [
   {
     id: `ID-001-20240501-0001`,
@@ -66,10 +67,10 @@ export const initialGroups: Group[] = [
     status: 'Activo',
     userIsMember: true,
     userAwardStatus: "No Adjudicado",
-    monthsCompleted: 3, // Static value
-    activationDate: '2024-05-04T00:00:00.000Z', // Static date
+    activationDate: '2024-05-04T00:00:00.000Z',
     acquiredInAuction: false,
     isImmediateActivation: false,
+    missedPayments: 0,
   },
   {
     id: `ID-003-20240315-0001`,
@@ -84,10 +85,10 @@ export const initialGroups: Group[] = [
     status: 'Activo',
     userIsMember: true,
     userAwardStatus: "No Adjudicado",
-    monthsCompleted: 4, // Static value (5 months passed, 1 is overdue)
-    activationDate: '2024-03-17T00:00:00.000Z', // Static date
+    activationDate: '2024-03-17T00:00:00.000Z',
     acquiredInAuction: false,
     isImmediateActivation: false,
+    missedPayments: 1,
   },
   {
     id: `ID-004-20240701-0001`,
@@ -198,5 +199,3 @@ export const generateExampleInstallments = (capital: number, plazo: number): Ins
         };
     });
 };
-
-    
