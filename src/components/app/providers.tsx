@@ -86,10 +86,13 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
     const currentMyGroups = groups.filter(g => g.userIsMember);
     if (currentMyGroups.length > myGroupsCountRef.current && lastJoinedGroupRef.current) {
         if (!lastJoinedGroupRef.current.isImmediateActivation) {
-             toast({
-                title: "¡Felicitaciones!",
-                description: `Te has unido al grupo ${lastJoinedGroupRef.current.id}.`,
-            });
+             // Defer toast until after render cycle
+             setTimeout(() => {
+                toast({
+                    title: "¡Felicitaciones!",
+                    description: `Te has unido al grupo ${lastJoinedGroupRef.current!.id}.`,
+                });
+            }, 0);
         }
     }
     myGroupsCountRef.current = currentMyGroups.length;
