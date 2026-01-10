@@ -31,20 +31,21 @@ export default function FinancialHealthPage() {
 
         return Array.from({ length: group.monthsCompleted }, (_, i) => {
             const cuotaNumber = i + 1;
-            const membersWhoPaid = group.totalMembers - (group.missedPayments || 0); // Simplified for this example
             
-            // For the month with a missed payment, simulate one less person paying
-            const monthlyAlicuotaPaid = (cuotaNumber === group.monthsCompleted && group.missedPayments && group.missedPayments > 0)
-                ? alicuotaPura * (group.totalMembers - group.missedPayments)
-                : alicuotaPura * group.totalMembers;
+            // Simula que en el mes donde hay un pago omitido, un miembro no paga
+            const isMissedPaymentMonth = group.missedPayments && group.missedPayments > 0 && cuotaNumber === group.monthsCompleted;
+            const membersWhoPaidThisMonth = isMissedPaymentMonth ? group.totalMembers - group.missedPayments : group.totalMembers;
 
-            // Simulate some bid and advance payments for demonstration
+            const monthlyAlicuotaPaid = alicuotaPura * membersWhoPaidThisMonth;
+            
+            // Simula licitaciones y adelantos para la demo
             const totalLicitaciones = (cuotaNumber > 1 && Math.random() > 0.6) ? alicuotaPura * (Math.floor(Math.random() * 5) + 5) : 0;
             const totalAdelantos = (cuotaNumber > 2 && Math.random() > 0.8) ? alicuotaPura * (Math.floor(Math.random() * 3) + 2) : 0;
             
-            const impagos = (alicuotaPura * group.totalMembers) - monthlyAlicuotaPaid;
+            const expectedAlicuotaTotal = alicuotaPura * group.totalMembers;
+            const impagos = expectedAlicuotaTotal - monthlyAlicuotaPaid;
 
-            accumulated += monthlyAlicuotaPaid + totalLicitaciones + totalAdelantos;
+            accumulated = accumulated + monthlyAlicuotaPaid + totalLicitaciones + totalAdelantos;
 
             return {
                 cuotaNumber,
