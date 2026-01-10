@@ -57,26 +57,25 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
         const activationDate = parseISO(group.activationDate);
         let monthsPassed = differenceInMonths(today, activationDate);
         
-        // Logic for "Subasta Forzosa"
         const installments = generateInstallments(group.capital, group.plazo, group.activationDate);
+        
+        // This is the number of installments that should have been paid by now
+        const paidInstallments = monthsPassed - (group.missedPayments || 0);
+
         const overdueInstallments = installments.filter(inst => {
             const dueDate = parseISO(inst.dueDate);
-            const monthsCompletedWithMissed = Math.max(0, monthsPassed - (group.missedPayments || 0));
-            return isBefore(dueDate, today) && inst.number > monthsCompletedWithMissed;
+            return isBefore(dueDate, today) && inst.number > paidInstallments;
         });
 
         if (overdueInstallments.length >= 2) {
             const secondOverdueDate = parseISO(overdueInstallments[1].dueDate);
             const seventyTwoHoursAgo = addHours(today, -72);
-            if (isBefore(secondOverdueDate, seventyTwoHoursAgo)) {
-                return { ...group, status: 'Subastado', auctionStartDate: new Date().toISOString() };
+            if (isBefore(secondOverdueDate, seventyTwoHoursAgo) && !group.acquiredInAuction) {
+                return { ...group, status: 'Subastado', auctionStartDate: new Date().toISOString(), monthsCompleted: monthsPassed };
             }
         }
         
-        // Apply missed payments
-        const monthsCompleted = Math.max(0, monthsPassed - (group.missedPayments || 0));
-
-        return { ...group, monthsCompleted };
+        return { ...group, monthsCompleted: monthsPassed };
       }
       return group;
     });

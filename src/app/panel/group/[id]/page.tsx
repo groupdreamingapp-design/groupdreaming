@@ -19,7 +19,7 @@ import { generateInstallments, generateExampleInstallments, user as mockUser } f
 import { useMemo, useState, useEffect } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from '@/components/ui/separator';
-import { addDays, parseISO, format, isBefore, isToday } from 'date-fns';
+import { addDays, parseISO, format, isBefore, isToday, differenceInMonths } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -210,7 +210,8 @@ export default function GroupDetail() {
     );
   }
 
-  const cuotasPagadas = group.monthsCompleted || 0;
+  const installmentsIssued = group.monthsCompleted || 0;
+  const installmentsPaid = installmentsIssued - (group.missedPayments || 0);
   
   const isMember = group.userIsMember;
   
@@ -240,8 +241,8 @@ export default function GroupDetail() {
       if(!group.activationDate) return true;
       const groupInstallments = generateInstallments(group.capital, group.plazo, group.activationDate);
       const today = new Date();
-      return !groupInstallments.some(inst => inst.number <= cuotasPagadas && isBefore(parseISO(inst.dueDate), today));
-  }, [group, cuotasPagadas]);
+      return !groupInstallments.some(inst => inst.number <= installmentsPaid && isBefore(parseISO(inst.dueDate), today));
+  }, [group, installmentsPaid]);
 
   const hasAdvancedInstallments = false; // Mock state for benefit eligibility
 
@@ -253,13 +254,13 @@ export default function GroupDetail() {
 
   
   const alicuotaPuraTotal = realInstallments.length > 0 ? realInstallments[0].breakdown.alicuotaPura : (group.capital / group.plazo);
-  const capitalAportadoPuro = cuotasPagadas * alicuotaPuraTotal;
+  const capitalAportadoPuro = installmentsPaid * alicuotaPuraTotal;
 
   const IVA = 1.21;
   const penalidadBaja = capitalAportadoPuro * 0.05 * IVA;
 
   const totalCuotasEmitidas = realInstallments
-    .slice(0, cuotasPagadas)
+    .slice(0, installmentsIssued)
     .reduce((acc, installment) => acc + installment.total, 0);
 
   const precioBaseSubasta = totalCuotasEmitidas * 0.5;
@@ -272,41 +273,24 @@ export default function GroupDetail() {
     if (!isPlanActive) return -1;
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    return installments.findIndex(inst => inst.number > cuotasPagadas && !isBefore(parseISO(inst.dueDate), today));
-  }, [installments, cuotasPagadas, isPlanActive]);
+    return installments.findIndex(inst => inst.number > installmentsPaid && !isBefore(parseISO(inst.dueDate), today));
+  }, [installments, installmentsPaid, isPlanActive]);
   
   const cuotasFuturas = useMemo(() => {
     if (!isPlanActive || !group.activationDate) return 0;
-
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const advancedCount = advancedInstallments[group.id] || 0;
 
-    const futureInstallments = installments.filter((inst, index) => {
-        let currentStatus: Installment['status'] = 'Futuro';
-        const isAdvanced = inst.number > group.plazo - advancedCount;
-
-        if (isAdvanced) {
-            currentStatus = 'Pagado';
-        } else if (inst.number <= cuotasPagadas) {
-            currentStatus = 'Pagado';
-        } else {
-            const dueDate = parseISO(inst.dueDate);
-            if (isBefore(dueDate, today)) {
-                currentStatus = 'Vencido';
-            } else {
-                if (index === pendingInstallmentIndex) {
-                    currentStatus = 'Pendiente';
-                } else {
-                    currentStatus = 'Futuro';
-                }
-            }
-        }
-        return currentStatus === 'Futuro';
-    });
-
-    return futureInstallments.length;
-}, [installments, isPlanActive, cuotasPagadas, advancedInstallments, group.id, group.plazo, group.activationDate, pendingInstallmentIndex]);
+    return installments.filter(inst => {
+      const isAdvanced = inst.number > group.plazo - advancedCount;
+      if (isAdvanced) return false;
+      if (inst.number <= installmentsPaid) return false;
+      
+      const dueDate = parseISO(inst.dueDate);
+      return !isBefore(dueDate, today);
+    }).length;
+  }, [installments, isPlanActive, installmentsPaid, advancedInstallments, group.id, group.plazo, group.activationDate]);
 
 
   const futureInstallmentsForCalculation = useMemo(() => {
@@ -397,7 +381,7 @@ export default function GroupDetail() {
               </CardHeader>
               <CardContent className="grid grid-cols-2 gap-4 text-sm flex-grow">
                 <div className="flex items-center gap-2"><Info className="h-4 w-4 text-primary" /><span>N° de Orden: <strong>{userOrderNumber}</strong></span></div>
-                <div className="flex items-center gap-2"><TrendingUp className="h-4 w-4 text-primary" /><span>Cuotas Pagadas: <strong>{cuotasPagadas}/{group.plazo}</strong></span></div>
+                <div className="flex items-center gap-2"><TrendingUp className="h-4 w-4 text-primary" /><span>Cuotas Pagadas: <strong>{installmentsPaid}/{installmentsIssued}</strong></span></div>
                 <div className="flex items-center gap-2"><HandCoins className="h-4 w-4 text-primary" /><span>Capital Aportado (Puro): <strong>{formatCurrency(capitalAportadoPuro)}</strong></span></div>
                 <div className="flex items-center gap-2">
                     <AwardStatusIconComponent className={cn("h-4 w-4", group.userAwardStatus === "Adjudicado - Aprobado" ? "text-yellow-500" : "text-primary")} />
@@ -632,7 +616,7 @@ export default function GroupDetail() {
                    <>
                      <Dialog onOpenChange={() => { setCuotasToBid(0); setTermsAcceptedBid(false); }}>
                        <DialogTrigger asChild>
-                         <Button size="sm" disabled={!isPlanActive || cuotasPagadas < 2}>
+                         <Button size="sm" disabled={!isPlanActive || installmentsPaid < 2}>
                            <Gavel className="mr-2 h-4 w-4" /> Licitar
                          </Button>
                        </DialogTrigger>
@@ -685,7 +669,7 @@ export default function GroupDetail() {
                      </Dialog>
                      <Dialog onOpenChange={(open) => !open && setTermsAcceptedAuction(false)}>
                        <DialogTrigger asChild>
-                         <Button size="sm" variant="secondary" disabled={!isPlanActive || cuotasPagadas < 3}>
+                         <Button size="sm" variant="secondary" disabled={!isPlanActive || installmentsPaid < 3}>
                            <Hand className="mr-2 h-4 w-4" /> Subastar
                          </Button>
                        </DialogTrigger>
@@ -801,15 +785,16 @@ export default function GroupDetail() {
 
                       const advancedCount = advancedInstallments[group.id] || 0;
                       const isAdvanced = inst.number > group.plazo - advancedCount;
+                      const paidInstallmentsCount = (group.monthsCompleted || 0) - (group.missedPayments || 0);
 
                       if (isAdvanced) {
                         currentStatus = 'Pagado';
                       } else if (group.status === 'Activo' || group.status === 'Subastado' || group.status === 'Cerrado') {
-                          if (inst.number <= cuotasPagadas) {
+                          if (inst.number <= paidInstallmentsCount) {
                             currentStatus = 'Pagado';
                           } else {
                             const dueDate = parseISO(inst.dueDate);
-                            if (isBefore(dueDate, today) && inst.number > cuotasPagadas) {
+                            if (isBefore(dueDate, today) && inst.number > paidInstallmentsCount) {
                               currentStatus = 'Vencido';
                             } else if (index === pendingInstallmentIndex) {
                                 currentStatus = 'Pendiente';
@@ -821,7 +806,7 @@ export default function GroupDetail() {
                       
                       const awardsForReceipt = groupAwards[inst.number - 2] || [];
                       const awardDateString = (isPlanActive || group.status === 'Cerrado') && awardsForReceipt.length > 0 && inst.dueDate && !inst.dueDate.startsWith('Mes') ? addDays(parseISO(inst.dueDate), 5).toISOString() : undefined;
-                      const showAdjudicationInfo = inst.number <= cuotasPagadas + 1 && (group.status === 'Activo' || group.status === 'Cerrado' || group.status === 'Subastado');
+                      const showAdjudicationInfo = inst.number <= (group.monthsCompleted || 0) + 1 && (group.status === 'Activo' || group.status === 'Cerrado' || group.status === 'Subastado');
 
 
                       const handleReceiptClick = () => {
