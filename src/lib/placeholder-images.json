@@ -50,11 +50,11 @@
     },
     {
       "id": "goal-treat",
-      "description": "Un gusto personal",
-      "imageUrl": "https://images.unsplash.com/photo-1588196749597-9ff075ee6b5b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=774&q=80",
-      "imageHint": "personal gift",
-      "width": 774,
-      "height": 516
+      "description": "Una escapada a una isla paradisíaca.",
+      "imageUrl": "https://images.unsplash.com/photo-1649743823639-aefbb889f0ce?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxwYXJhZGlzZSUyMGlzbGFuZHxlbnwwfHx8fDE3NjgwODg1NjF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "paradise island",
+      "width": 600,
+      "height": 400
     },
     {
       "id": "collage-travel",
@@ -89,10 +89,10 @@
       "height": 400
     },
     {
-      "id": "goal-unexpected-income",
-      "description": "A surprise gift box with money.",
-      "imageUrl": "https://images.unsplash.com/photo-1724421768016-dba6fa6a2487?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxzdXJwcmlzZSUyMG1vbmV5fGVufDB8fHx8MTc2ODA4NTU2N3ww&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "surprise money",
+      "id": "goal-friends-gathering",
+      "description": "A group of friends having a good time.",
+      "imageUrl": "https://images.unsplash.com/photo-1672581666836-252a64b5b68e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxmcmllbmRzJTIwZ2F0aGVyaW5nfGVufDB8fHx8MTc2ODA4ODU2MXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "friends gathering",
       "width": 600,
       "height": 400
     }

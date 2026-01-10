@@ -1,4 +1,3 @@
-
 import type { GroupTemplate } from './types';
 import { PlaceHolderImages } from './placeholder-images';
 
@@ -33,15 +32,15 @@ export const groupTemplates: GroupTemplate[] = [
     capital: 5000,
     plazo: 36,
     imageUrl: PlaceHolderImages.find(img => img.id === 'goal-treat')?.imageUrl || '',
-    imageHint: 'personal gift',
+    imageHint: 'paradise island',
   },
   {
     purposeCode: "005",
     name: 'Familia y amigos',
     capital: 1000,
     plazo: 12,
-    imageUrl: PlaceHolderImages.find(img => img.id === 'goal-unexpected-income')?.imageUrl || '',
-    imageHint: 'surprise money',
+    imageUrl: PlaceHolderImages.find(img => img.id === 'goal-friends-gathering')?.imageUrl || '',
+    imageHint: 'friends gathering',
   },
 ];
 
