@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useParams, usePathname } from 'next/navigation';
+import { useParams, usePathname, useRouter } from 'next/navigation';
 import { generateExampleInstallments, calculateTotalFinancialCost } from '@/lib/data';
 import type { Installment } from '@/lib/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
@@ -12,7 +12,7 @@ import { ArrowLeft, Users, Clock, Scale, Users2, FileX2, CheckCircle, Ticket, Ha
 import Link from 'next/link';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
@@ -24,10 +24,23 @@ import { useGroups } from '@/hooks/use-groups';
 function GroupDetailContent() {
   const params = useParams();
   const pathname = usePathname();
+  const router = useRouter();
   const { groups } = useGroups();
+  const { user, loading: userLoading } = useUser();
   
   const groupId = typeof params.id === 'string' ? params.id : '';
   const group = useMemo(() => groups.find(g => g.id === groupId), [groups, groupId]);
+
+  useEffect(() => {
+    if (!userLoading && user) {
+        // If the user is logged in, they should be on the private version of this page
+        router.replace(`/panel/group-public/${groupId}`);
+    }
+  }, [user, userLoading, router, groupId]);
+
+  if (userLoading) {
+    return <div className="flex justify-center items-center h-full">Cargando...</div>;
+  }
 
   if (!group) {
     return (
@@ -48,6 +61,22 @@ function GroupDetailContent() {
   const formatCurrencyNoDecimals = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount);
 
   const renderCTA = () => {
+    // Wait until the auth state is fully resolved
+    if (userLoading) {
+      return (
+        <div className="h-10 w-[210px]"></div> // Placeholder to prevent layout shift
+      );
+    }
+
+    if (user) {
+        // This case should be rare due to the useEffect redirect, but it's a good fallback.
+        return (
+            <Button asChild>
+                <Link href={`/panel/group-public/${group.id}`}>Ir al Grupo</Link>
+            </Button>
+        );
+    }
+    
     return (
         <div className='flex gap-2'>
             <Button variant="ghost" asChild>
