@@ -6,7 +6,7 @@ import type { Group } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Users, Clock, CheckCircle2, Lock, Hourglass, ArrowRight, Trophy, Gavel, CalendarCheck, Zap, Percent, AlertCircle } from "lucide-react";
+import { Users, Clock, CheckCircle2, Lock, Hourglass, ArrowRight, Trophy, Gavel, CalendarCheck, Zap, Percent, AlertCircle, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { format, parseISO } from 'date-fns';
@@ -42,7 +42,6 @@ function ClientFormattedDate({ dateString, formatString }: { dateString: string,
 
 const statusConfig = {
   Abierto: { icon: Users, color: "bg-blue-500", text: "text-blue-500" },
-  Pendiente: { icon: Hourglass, color: "bg-yellow-500", text: "text-yellow-700" },
   Activo: { icon: CheckCircle2, color: "bg-green-500", text: "text-green-700" },
   Cerrado: { icon: Lock, color: "bg-gray-500", text: "text-gray-500" },
   Subastado: { icon: Gavel, color: "bg-red-500", text: "text-red-700" },
@@ -60,7 +59,7 @@ export function GroupCard({ group }: GroupCardProps) {
   const subscribedCapital = useMemo(() => {
     if (!user) return 0;
     return groups
-        .filter(g => g.userIsMember && (g.status === 'Activo' || g.status === 'Abierto' || g.status === 'Pendiente'))
+        .filter(g => g.userIsMember && g.status === 'Activo' || g.status === 'Abierto')
         .reduce((acc, g) => acc + g.capital, 0);
   }, [groups, user]);
 
@@ -71,17 +70,15 @@ export function GroupCard({ group }: GroupCardProps) {
     : group.status === 'Activo' || group.status === 'Subastado'
     ? ((group.monthsCompleted || 0) / group.plazo) * 100
     : group.status === 'Cerrado'
-    ? 100 : (group.status === 'Pendiente' ? 100 : 0);
+    ? 100 : 0;
   
   const membersMissing = group.totalMembers - group.membersCount;
-  const isFewMembersLeft = membersMissing > 0 && membersMissing <= 5 && !group.isImmediateActivation;
+  const isOpportunity = group.status === 'Abierto' && membersMissing > 0 && (membersMissing / group.totalMembers) <= 0.1;
 
   const progressText = group.status === 'Abierto'
     ? `${group.membersCount} de ${group.totalMembers} miembros`
     : (group.status === 'Activo' || group.status === 'Subastado')
     ? `${group.monthsCompleted} de ${group.plazo} meses`
-    : group.status === 'Pendiente'
-    ? `Validando (${group.totalMembers}/${group.totalMembers})`
     : 'Grupo finalizado';
     
   const getCardLink = () => {
@@ -139,7 +136,6 @@ export function GroupCard({ group }: GroupCardProps) {
 
   const badgeClassName = cn(
     "border-transparent text-white",
-    group.status === 'Pendiente' && 'bg-yellow-500',
     group.status === 'Activo' && 'bg-green-600',
     group.status === 'Abierto' && 'bg-blue-600',
     group.status === 'Subastado' && 'bg-orange-600',
@@ -171,25 +167,12 @@ export function GroupCard({ group }: GroupCardProps) {
                     <StatusIcon className="mr-1 h-3 w-3" />
                     {group.status}
                 </Badge>
-                {group.isImmediateActivation && (
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Badge variant="destructive" className="animate-pulse">
-                        <Zap className="mr-1 h-3 w-3" />
-                        Activación Inmediata
-                      </Badge>
-                    </TooltipTrigger>
-                     <TooltipContent>
-                      <p>Este grupo se activa al instante. ¡El débito de la cuota 1 es inmediato!</p>
-                    </TooltipContent>
-                  </Tooltip>
-                )}
-                 {isFewMembersLeft && (
+                {isOpportunity && (
                    <Tooltip>
                     <TooltipTrigger asChild>
-                      <Badge variant="destructive">
-                        <Users className="mr-1 h-3 w-3" />
-                        ¡Quedan pocos lugares!
+                      <Badge variant="destructive" className="animate-pulse">
+                        <Sparkles className="mr-1 h-3 w-3" />
+                        ¡Oportunidad!
                       </Badge>
                     </TooltipTrigger>
                      <TooltipContent>
@@ -213,9 +196,9 @@ export function GroupCard({ group }: GroupCardProps) {
                 </div>
                 <div className="relative">
                   <Progress value={progressValue} aria-label={`Progreso del grupo ${progressValue.toFixed(0)}%`} className={cn(group.status === 'Abierto' && membersMissing > 0 && "bg-primary/20")} />
-                  {group.status === 'Abierto' && membersMissing > 0 && !group.isImmediateActivation && (
+                  {isOpportunity && (
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-xs font-bold text-neutral-800">Faltan {membersMissing}</span>
+                      <span className="text-xs font-bold text-neutral-800">¡Faltan {membersMissing}!</span>
                     </div>
                   )}
                 </div>

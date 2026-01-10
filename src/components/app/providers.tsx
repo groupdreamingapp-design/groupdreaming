@@ -36,7 +36,6 @@ function generateNewGroup(template: GroupTemplate): Group {
       userAwardStatus: "No Adjudicado",
       monthsCompleted: 0,
       acquiredInAuction: false,
-      isImmediateActivation: false,
     };
 }
 
@@ -81,7 +80,6 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
   const joinGroup = useCallback((groupId: string) => {
     let joinedGroup: Group | null = null;
     let newGroupWasCreated = false;
-    let immediateActivation = false;
 
     setGroups(currentGroups => {
         const groupIndex = currentGroups.findIndex(g => g.id === groupId);
@@ -97,13 +95,8 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
         newGroups[groupIndex] = updatedGroup;
         
         if (updatedGroup.membersCount === updatedGroup.totalMembers) {
-            if (updatedGroup.isImmediateActivation) {
-                updatedGroup.status = 'Activo';
-                updatedGroup.activationDate = new Date().toISOString();
-                immediateActivation = true;
-            } else {
-                updatedGroup.status = 'Pendiente';
-            }
+            updatedGroup.status = 'Activo';
+            updatedGroup.activationDate = new Date().toISOString();
             
             const template = groupTemplates.find(t => t.name === updatedGroup.name);
             if (template) {
@@ -119,17 +112,11 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
     // Use a timeout to ensure the toast is called after the render cycle
     setTimeout(() => {
         if (joinedGroup) {
-            if (immediateActivation) {
+            if (newGroupWasCreated) {
                 toast({
-                    title: "¡Activación Inmediata!",
-                    description: `¡Te has unido y el grupo ${joinedGroup.id} se ha activado instantáneamente! Tu primera cuota ha sido debitada.`,
+                    title: "¡Grupo Completo y Activado!",
+                    description: `¡Te has unido y el grupo ${joinedGroup.id} se ha activado! Tu primera cuota ha sido debitada.`,
                     className: 'bg-green-100 border-green-500 text-green-700'
-                });
-            } else if (newGroupWasCreated) {
-                toast({
-                    title: "¡Grupo Completo!",
-                    description: `El grupo ${joinedGroup.id} está lleno y se activará pronto. Ya hemos creado un nuevo grupo '${joinedGroup.name}' para que más personas puedan unirse.`,
-                    className: 'bg-blue-100 border-blue-500 text-blue-700'
                 });
             } else {
                 toast({

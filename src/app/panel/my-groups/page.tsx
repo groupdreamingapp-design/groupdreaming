@@ -21,7 +21,7 @@ export default function MyGroups() {
 
   const myGroups = useMemo(() => groups.filter(g => g.userIsMember), [groups]);
 
-  const tabs: (GroupStatus | "Todos")[] = ["Todos", "Activo", "Subastado", "Abierto", "Pendiente", "Cerrado"];
+  const tabs: (GroupStatus | "Todos")[] = ["Todos", "Activo", "Subastado", "Abierto", "Cerrado"];
 
   const tabCounts = useMemo(() => {
     const counts: Record<string, number> = {};
@@ -29,13 +29,13 @@ export default function MyGroups() {
       counts[tab] = tab === "Todos" ? myGroups.length : myGroups.filter(g => g.status === tab).length;
     }
     return counts;
-  }, [myGroups]);
+  }, [myGroups, tabs]);
 
 
   const filteredGroups = useMemo(() => {
     if (activeTab === "Todos") {
       return myGroups.sort((a, b) => {
-        const statusOrder = { "Activo": 1, "Subastado": 2, "Abierto": 3, "Pendiente": 4, "Cerrado": 5 };
+        const statusOrder = { "Activo": 1, "Subastado": 2, "Abierto": 3, "Cerrado": 4 };
         return statusOrder[a.status] - statusOrder[b.status];
       });
     }

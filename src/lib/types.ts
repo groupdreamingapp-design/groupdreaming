@@ -10,7 +10,7 @@ export type User = {
   cuit: string;
 };
 
-export type GroupStatus = "Abierto" | "Pendiente" | "Activo" | "Cerrado" | "Subastado";
+export type GroupStatus = "Abierto" | "Activo" | "Cerrado" | "Subastado";
 export type UserAwardStatus = "No Adjudicado" | "Adjudicado - Pendiente Aceptación" | "Adjudicado - Pendiente Garantías" | "Adjudicado - Aprobado";
 
 export type Group = {
@@ -30,7 +30,6 @@ export type Group = {
   activationDate?: string;
   acquiredInAuction?: boolean;
   auctionStartDate?: string;
-  isImmediateActivation?: boolean;
   missedPayments?: number;
 };
 

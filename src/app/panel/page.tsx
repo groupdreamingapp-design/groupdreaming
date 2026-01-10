@@ -24,7 +24,7 @@ export default function Dashboard() {
   useEffect(() => {
     setIsClient(true);
     const capital = groups
-        .filter(g => g.userIsMember && (g.status === 'Activo' || g.status === 'Abierto' || g.status === 'Pendiente'))
+        .filter(g => g.userIsMember && (g.status === 'Activo' || g.status === 'Abierto'))
         .reduce((acc, g) => acc + g.capital, 0);
     setSubscribedCapital(capital);
   }, [groups]);
@@ -32,7 +32,7 @@ export default function Dashboard() {
   const formatCurrency = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount);
 
   const myGroups = useMemo(() => groups.filter(g => g.userIsMember).sort((a, b) => {
-    const statusOrder = { "Activo": 1, "Abierto": 2, "Pendiente": 3, "Subastado": 4, "Cerrado": 5 };
+    const statusOrder = { "Activo": 1, "Abierto": 2, "Subastado": 3, "Cerrado": 4 };
     return statusOrder[a.status] - statusOrder[b.status];
   }), [groups]);
 
@@ -67,7 +67,6 @@ export default function Dashboard() {
     switch (status) {
       case "Activo": return "default";
       case "Abierto": return "secondary";
-      case "Pendiente": return "outline";
       case "Subastado": return "destructive";
       case "Cerrado": return "destructive";
       default: return "default";
@@ -139,7 +138,6 @@ export default function Dashboard() {
                                       variant="outline"
                                       className={cn(
                                         "border-transparent text-white",
-                                        group.status === 'Pendiente' && 'bg-yellow-500',
                                         group.status === 'Activo' && 'bg-green-600',
                                         group.status === 'Abierto' && 'bg-blue-600',
                                         group.status === 'Subastado' && 'bg-orange-600',

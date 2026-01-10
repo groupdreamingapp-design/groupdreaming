@@ -71,7 +71,6 @@ export const initialGroups: Group[] = [
     userAwardStatus: "No Adjudicado",
     activationDate: '2024-05-04T00:00:00.000Z',
     acquiredInAuction: false,
-    isImmediateActivation: false,
     missedPayments: 0,
   },
   {
@@ -89,7 +88,6 @@ export const initialGroups: Group[] = [
     userAwardStatus: "No Adjudicado",
     activationDate: '2024-03-17T00:00:00.000Z',
     acquiredInAuction: false,
-    isImmediateActivation: false,
     missedPayments: 1,
   },
   {
@@ -106,7 +104,6 @@ export const initialGroups: Group[] = [
     userIsMember: true,
     userAwardStatus: "No Adjudicado",
     acquiredInAuction: false,
-    isImmediateActivation: false,
   },
   
   // Grupos disponibles para unirse
@@ -124,7 +121,6 @@ export const initialGroups: Group[] = [
     userIsMember: false,
     userAwardStatus: "No Adjudicado",
     acquiredInAuction: false,
-    isImmediateActivation: false,
   },
   {
     id: `ID-001-20240801-0001`,
@@ -135,12 +131,11 @@ export const initialGroups: Group[] = [
     imageHint: viviendaTemplate.imageHint,
     cuotaPromedio: calculateCuotaPromedio(viviendaTemplate.capital, viviendaTemplate.plazo),
     totalMembers: viviendaTemplate.plazo * 2,
-    membersCount: 120,
+    membersCount: 220,
     status: 'Abierto',
     userIsMember: false,
     userAwardStatus: "No Adjudicado",
     acquiredInAuction: false,
-    isImmediateActivation: false,
   },
   {
     id: `ID-003-20240805-0001`,
@@ -156,7 +151,6 @@ export const initialGroups: Group[] = [
     userIsMember: false,
     userAwardStatus: "No Adjudicado",
     acquiredInAuction: false,
-    isImmediateActivation: false,
   },
   {
     id: `ID-004-20240810-0001`,
@@ -172,7 +166,6 @@ export const initialGroups: Group[] = [
     userIsMember: false,
     userAwardStatus: "No Adjudicado",
     acquiredInAuction: false,
-    isImmediateActivation: true,
   }
 ];
 
