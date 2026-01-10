@@ -4,12 +4,13 @@
 import { useMemo } from 'react';
 import { useParams } from 'next/navigation';
 import { useGroups } from '@/hooks/use-groups';
-import { generateInstallments, generateStaticAwards } from '@/lib/data';
+import { generateStaticAwards } from '@/lib/data';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, FileX2 } from 'lucide-react';
+import { ArrowLeft, FileX2, PiggyBank, Target, TrendingDown, TrendingUp } from 'lucide-react';
 import Link from 'next/link';
+import { StatCard } from '@/components/app/stat-card';
 
 export default function FinancialHealthPage() {
     const params = useParams();
@@ -27,14 +28,18 @@ export default function FinancialHealthPage() {
         return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount);
     }
     
-    const collectionData = useMemo(() => {
-        if (!group || !group.activationDate || !group.monthsCompleted) return [];
+    const { collectionData, kpis } = useMemo(() => {
+        if (!group || !group.activationDate || !group.monthsCompleted) {
+            return { collectionData: [], kpis: {} };
+        }
 
-        const installments = generateInstallments(group.capital, group.plazo, group.activationDate);
-        const alicuotaPura = installments[0]?.breakdown.alicuotaPura || 0;
+        const installments = Array.from({ length: group.monthsCompleted }, (_, i) => i);
+        const alicuotaPura = group.capital / group.plazo;
         let accumulated = 0;
+        let totalImpagos = 0;
+        let totalLicitado = 0;
 
-        return Array.from({ length: group.monthsCompleted }, (_, i) => {
+        const collectionData = installments.map((_, i) => {
             const cuotaNumber = i + 1;
             
             const missedPaymentsThisMonth = (cuotaNumber === group.monthsCompleted) ? (group.missedPayments || 0) : 0;
@@ -42,18 +47,19 @@ export default function FinancialHealthPage() {
 
             const monthlyAlicuotaPaid = alicuotaPura * membersWhoPaidThisMonth;
             
-            const awardsThisMonth = groupAwards[cuotaNumber - 1] || [];
+            const awardsThisMonth = groupAwards[i] || [];
             const licitacionWinner = awardsThisMonth.find(a => a.type === 'licitacion');
             
             const totalLicitaciones = licitacionWinner ? alicuotaPura * (Math.floor(Math.random() * 10) + 8) : 0;
-            
+            totalLicitado += totalLicitaciones;
+
             const totalAdelantos = (cuotaNumber > 2 && Math.random() > 0.8) ? alicuotaPura * (Math.floor(Math.random() * 5) + 2) : 0;
             
             const impagos = alicuotaPura * missedPaymentsThisMonth;
+            totalImpagos += impagos;
             
             let adjudicadoDelMes = 0;
             if (cuotaNumber > 1) {
-                // If there was a licitacion winner, 2 capitals are awarded. Otherwise, only 1 (from sorteo).
                 adjudicadoDelMes = totalLicitaciones > 0 ? group.capital * 2 : group.capital;
             }
 
@@ -69,6 +75,15 @@ export default function FinancialHealthPage() {
                 acumulado: accumulated,
             };
         });
+
+        const kpis = {
+            totalAcumulado: accumulated,
+            totalImpagos: totalImpagos,
+            capitalNecesario: group.capital * 2,
+            totalLicitado: totalLicitado
+        };
+        
+        return { collectionData, kpis };
     }, [group, groupAwards]);
 
 
@@ -111,6 +126,33 @@ export default function FinancialHealthPage() {
                 <p className="text-muted-foreground">Un análisis del fondo general para adjudicaciones (Grupo {group.id}).</p>
             </div>
             
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
+                <StatCard 
+                    title="Capital Acumulado (Fondo General)"
+                    value={formatCurrency(kpis.totalAcumulado || 0)}
+                    icon={PiggyBank}
+                    description="Saldo actual del fondo para adjudicaciones."
+                />
+                 <StatCard 
+                    title="Capital Impago Acumulado"
+                    value={formatCurrency(kpis.totalImpagos || 0)}
+                    icon={TrendingDown}
+                    description="Se recupera vía subasta forzosa."
+                />
+                 <StatCard 
+                    title="Capital Necesario Mensual"
+                    value={formatCurrency(kpis.capitalNecesario || 0)}
+                    icon={Target}
+                    description="Monto para cubrir 2 adjudicaciones."
+                />
+                 <StatCard 
+                    title="Total Licitado Acumulado"
+                    value={formatCurrency(kpis.totalLicitado || 0)}
+                    icon={TrendingUp}
+                    description="Capital extra inyectado por los miembros."
+                />
+            </div>
+
             <Card>
                 <CardHeader>
                     <CardTitle>Tabla de Recaudación del Fondo General</CardTitle>
