@@ -54,16 +54,6 @@ const gustitoTemplate = groupTemplates.find(t => t.purposeCode === '004')!;
 
 const today = startOfToday();
 
-// "Mi vivienda" group - Active and up to date
-const viviendaActivationDate = new Date('2024-05-04T00:00:00.000Z');
-const viviendaMonthsCompleted = differenceInMonths(today, viviendaActivationDate);
-
-// "Mi emprendimiento" group - Active with last installment overdue
-const emprendimientoActivationDate = new Date('2024-03-17T00:00:00.000Z');
-const emprendimientoMonthsDue = differenceInMonths(today, emprendimientoActivationDate);
-const emprendimientoMonthsCompleted = Math.max(0, emprendimientoMonthsDue - 1);
-
-
 export const initialGroups: Group[] = [
   {
     id: `ID-001-20240501-0001`,
@@ -78,8 +68,8 @@ export const initialGroups: Group[] = [
     status: 'Activo',
     userIsMember: true,
     userAwardStatus: "No Adjudicado",
-    monthsCompleted: viviendaMonthsCompleted,
-    activationDate: viviendaActivationDate.toISOString(),
+    monthsCompleted: 3, // Static value
+    activationDate: '2024-05-04T00:00:00.000Z', // Static date
     acquiredInAuction: false,
     isImmediateActivation: false,
   },
@@ -96,13 +86,13 @@ export const initialGroups: Group[] = [
     status: 'Activo',
     userIsMember: true,
     userAwardStatus: "No Adjudicado",
-    monthsCompleted: emprendimientoMonthsCompleted,
-    activationDate: emprendimientoActivationDate.toISOString(),
+    monthsCompleted: 4, // Static value (5 months passed, 1 is overdue)
+    activationDate: '2024-03-17T00:00:00.000Z', // Static date
     acquiredInAuction: false,
     isImmediateActivation: false,
   },
   {
-    id: `ID-004-${format(today, 'yyyyMMdd')}-0001`,
+    id: `ID-004-20240701-0001`,
     name: gustitoTemplate.name,
     capital: gustitoTemplate.capital,
     plazo: gustitoTemplate.plazo,
@@ -118,9 +108,8 @@ export const initialGroups: Group[] = [
     acquiredInAuction: false,
     isImmediateActivation: false,
   },
-  // We can add a non-member group for exploration
   {
-    id: `ID-002-${format(today, 'yyyyMMdd')}-0002`,
+    id: `ID-002-20240710-0002`,
     name: 'Mi Auto',
     capital: 25000,
     plazo: 84,
