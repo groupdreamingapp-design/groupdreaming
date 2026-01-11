@@ -131,9 +131,9 @@ export default function GroupDetail() {
         const monthAward = groupAwards[i].find(a => a.orderNumber === userOrderNumber);
         if (monthAward) {
             // Check if the award is for the special 'AWRD' group and adjust month
-            if (group.id === 'ID-005-20250501-AWRD' && i === 1) {
+            if (group.id === 'ID-005-20250501-AWRD' && i === 6) {
                  return {
-                    month: i + 1, // Month 2
+                    month: i + 1, // Month 7
                     type: monthAward.type
                 };
             }
@@ -148,7 +148,7 @@ export default function GroupDetail() {
     }
     // Specific logic for the awarded user in the example group
     if (group.id === 'ID-005-20250501-AWRD' && group.userAwardStatus !== 'No Adjudicado') {
-        return { month: 2, type: 'sorteo' };
+        return { month: 7, type: 'sorteo' };
     }
     return undefined;
   }, [groupAwards, group, userOrderNumber]);
@@ -892,4 +892,3 @@ export default function GroupDetail() {
     </TooltipProvider>
   );
 }
-
