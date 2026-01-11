@@ -557,7 +557,7 @@ export default function GroupDetail() {
                             type="button"
                             onClick={handleAdvanceInstallments}
                             disabled={!termsAcceptedAdvance || !isAdvanceInputValid}>
-                            Adelantar Cuotas
+                            Pagar con Wallet GD
                          </Button>
                        </DialogClose>
                      </DialogFooter>

@@ -133,12 +133,12 @@ export default function Auctions() {
     if (autoBidEnabled) {
         toast({
             title: "¡Oferta automática configurada!",
-            description: `Tu puja automática para ${auction.groupId} con un máximo de ${formatCurrency(Number(maxBid))} ha sido guardada.`,
+            description: `Tu puja automática para ${auction.groupId} con un máximo de ${formatCurrency(Number(maxBid))} ha sido guardada. Si ganas, deberás integrar el capital.`,
         });
     } else {
         toast({
           title: "¡Oferta realizada con éxito!",
-          description: `Tu oferta de ${formatCurrency(Number(offerAmount))} por el plan ${auction.groupId} ha sido registrada.`,
+          description: `Tu oferta de ${formatCurrency(Number(offerAmount))} por el plan ${auction.groupId} ha sido registrada. Si ganas, se generará el VEP para el pago.`,
         });
     }
     
@@ -288,6 +288,17 @@ export default function Auctions() {
                           </div>
                       ) : (
                           <div className="space-y-4">
+                            <Alert>
+                                <ShieldAlert className="h-4 w-4" />
+                                <AlertTitle>Acción Requerida al Ganar</AlertTitle>
+                                <AlertDescription>
+                                    Si tu oferta resulta ganadora, tendrás 24hs para integrar el capital ofertado a través de SIRO. 
+                                    <Button size="sm" className="w-full mt-2" onClick={() => toast({ title: "Simulación de Pago de Subasta", description: "Redirigiendo a pasarela de SIRO..."})}>
+                                        Pagar Subasta con SIRO (Sim)
+                                    </Button>
+                                </AlertDescription>
+                            </Alert>
+
                             <div className="grid grid-cols-2 gap-4 text-sm">
                               <div className="font-medium">Puja Actual:</div>
                               <div className="text-right font-bold">{formatCurrency(startBid)}</div>
