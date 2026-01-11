@@ -2,7 +2,7 @@
 'use client';
 
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, DollarSign, Megaphone, FileText, ShieldCheck, Clock, Zap, Handshake, UserCheck, HeartHandshake, BadgeCheck, BadgePercent, UserX, Landmark, FileCheck, Banknote, Users, Gavel, Save } from "lucide-react";
+import { ArrowLeft, DollarSign, Megaphone, FileText, ShieldCheck, Clock, Zap, Handshake, UserCheck, HeartHandshake, BadgeCheck, BadgePercent, UserX, Landmark, FileCheck, Gavel, Save, Users, Banknote } from "lucide-react";
 import Link from "next/link";
 import { useUser } from "@/firebase";
 import { useRouter } from "next/navigation";
@@ -87,8 +87,8 @@ const bankPoints = [
     },
     {
         icon: Landmark,
-        title: "La Trampa de la Prenda",
-        description: "El banco hipoteca tu bien y te impone seguros caros. Con GD el capital es de libre disponibilidad, el bien es 100% tuyo desde el inicio y eliges tu propio seguro."
+        title: "Flexibilidad en Garantías",
+        description: "El banco hipoteca tu bien y te impone seguros caros. Con GD el capital es tuyo, y para garantizarlo puedes optar por un accesible Seguro de Caución, sin comprometer tus bienes."
     },
     {
         icon: FileCheck,

@@ -82,8 +82,8 @@ const bankPoints = [
     },
     {
         icon: Landmark,
-        title: "La Trampa de la Prenda",
-        description: "El banco hipoteca tu bien y te impone seguros caros. Con GD el capital es de libre disponibilidad, el bien es 100% tuyo desde el inicio y eliges tu propio seguro."
+        title: "Flexibilidad en Garantías",
+        description: "El banco hipoteca tu bien y te impone seguros caros. Con GD el capital es tuyo, y para garantizarlo puedes optar por un accesible Seguro de Caución, sin comprometer tus bienes."
     },
     {
         icon: FileCheck,

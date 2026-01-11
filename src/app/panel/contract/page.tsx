@@ -1,4 +1,5 @@
 
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, FileText } from "lucide-react";
@@ -31,7 +32,7 @@ const contractClauses = [
     },
     {
         title: "SÉPTIMA: GARANTÍAS DE ADJUDICACIÓN",
-        content: "Al momento de resultar adjudicado y previo a la entrega del capital, EL SUSCRIPTOR deberá constituir una garantía a satisfacción de LA ADMINISTRADORA para asegurar el cumplimiento del pago de las cuotas restantes. La garantía requerida será determinada por LA ADMINISTRADORA en función del análisis de riesgo crediticio (incluyendo, pero no limitado a, scoring crediticio y reportes de Veraz), el saldo deudor y el plazo restante del plan. Las garantías aceptadas podrán ser, a modo enunciativo: a) presentación de uno o más recibos de sueldo que demuestren solvencia suficiente, b) una garantía propietaria de un inmueble, c) la contratación de un seguro de caución a cargo de EL SUSCRIPTOR."
+        content: "Al momento de resultar adjudicado y previo a la entrega del capital, EL SUSCRIPTOR deberá constituir una garantía a satisfacción de LA ADMINISTRADORA para asegurar el pago de las cuotas restantes. La garantía será determinada por LA ADMINISTRADORA en función del análisis de riesgo crediticio del suscriptor. Las opciones de garantía, presentadas de forma inclusiva y flexible, son: a) la contratación de un Seguro de Caución por Saldo Deudor a cargo del suscriptor, cuyo costo podrá ser descontado del capital a recibir, b) la presentación de una garantía propietaria de un inmueble, o c) la demostración de ingresos fehacientes (como recibos de sueldo) que, a exclusivo criterio de LA ADMINISTRADORA, demuestren solvencia suficiente para cubrir el saldo pendiente."
     },
     {
         title: "OCTAVA: FINALIZACIÓN DEL CONTRATO, INCUMPLIMIENTO Y BAJA",

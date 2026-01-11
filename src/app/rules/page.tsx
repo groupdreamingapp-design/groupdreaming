@@ -84,7 +84,7 @@ const platformRules = [
         [
             "Si ganas por licitación, es obligatorio integrar el capital ofertado en el plazo establecido.",
             "Previo a la entrega del capital (por sorteo o licitación), debes presentar las garantías requeridas por la administradora.",
-            "Las garantías (ej: recibo de sueldo, garantía propietaria, seguro de caución) aseguran el pago de las cuotas restantes del plan.",
+            "Las garantías son flexibles: puedes optar por un accesible Seguro de Caución, una garantía propietaria, o presentar recibos de sueldo que demuestren solvencia.",
         ]
     }
 ];
