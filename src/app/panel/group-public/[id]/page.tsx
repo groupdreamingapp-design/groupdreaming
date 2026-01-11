@@ -104,20 +104,17 @@ export default function GroupPublicDetail() {
         </DialogTrigger>
         <DialogContent>
             <DialogHeader>
-                <DialogTitle>Confirmar Unión al Grupo {group.id}</DialogTitle>
+                <DialogTitle>Confirmar Adhesión al Grupo {group.id}</DialogTitle>
                   <DialogDescription>Estás a punto de unirte a un plan de {formatCurrencyNoDecimals(group.capital)} en {group.plazo} meses.</DialogDescription>
             </DialogHeader>
 
             {isVerified ? (
                 <div className="space-y-4">
-                    <p className="text-sm text-muted-foreground">
-                        Al confirmar, se debitará la primera cuota desde tu método de pago principal para asegurar tu lugar en el grupo.
-                    </p>
-                    <Alert>
-                        <CheckCircle className="h-4 w-4" />
-                        <AlertTitle>¡Identidad Verificada!</AlertTitle>
+                    <Alert variant="default">
+                        <ShieldAlert className="h-4 w-4" />
+                        <AlertTitle>Paso Final: Pago de Adhesión</AlertTitle>
                         <AlertDescription>
-                            Tu cuenta está verificada y lista para operar.
+                           Al confirmar, se generará un Volante Electrónico de Pago (VEP) a través de SIRO para que abones la primera cuota y asegures tu lugar.
                         </AlertDescription>
                     </Alert>
                     <div className="space-y-2">
@@ -164,7 +161,7 @@ export default function GroupPublicDetail() {
             <DialogFooter>
                 <DialogClose asChild><Button variant="ghost">Cancelar</Button></DialogClose>
                 {isVerified ? (
-                    <Button onClick={handleJoinGroup} disabled={!termsAccepted}>Confirmar y Unirme</Button>
+                    <Button onClick={handleJoinGroup} disabled={!termsAccepted}>Confirmar y Pagar Adhesión</Button>
                 ) : (
                     <Button asChild>
                         <Link href="/panel/verify">Ir a Verificar</Link>
