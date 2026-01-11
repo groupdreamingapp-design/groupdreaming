@@ -418,6 +418,10 @@ export const generateStaticAwards = (group: Group): Award[][] => {
 
         alreadyAwardedInMonth = awards[i].map(a => a.orderNumber);
         // Add Licitacion winner if not present and pool is not empty
+        // Bidding tie-breaker rule: If multiple members bid the same amount, 
+        // the one with the lowest order number wins. This simulation simplifies this
+        // by just picking one winner, but a real implementation would need to
+        // collect bids and apply this rule.
         if (!hasLicitacion && winnerPool.length > 0) {
             const isDeserted = customRandom() < 0.15 && desertedLicitaciones < 3; // 15% chance, max 3
             if (!isDeserted) {
