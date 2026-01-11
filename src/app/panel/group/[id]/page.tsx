@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { ArrowLeft, Users, Clock, Users2, Calendar, Gavel, HandCoins, Ticket, Info, Trophy, FileX2, TrendingUp, Hand, Scale, CalendarCheck, Gift, Check, X, Award as AwardIcon, Sparkles, Upload, MessageCircleQuestion, Youtube, CalendarDays, LineChart, Bot } from 'lucide-react';
+import { ArrowLeft, Users, Clock, Users2, Calendar, Gavel, HandCoins, Ticket, Info, Trophy, FileX2, TrendingUp, Hand, Scale, CalendarCheck, Gift, Check, X, Award as AwardIcon, Sparkles, Upload, MessageCircleQuestion, Youtube, CalendarDays, LineChart, Bot, ShieldCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { useGroups } from '@/hooks/use-groups';
@@ -295,24 +295,25 @@ export default function GroupDetail() {
     today.setHours(0, 0, 0, 0);
 
     const nextInstallment = installments.find(inst => inst.number > installmentsPaid && !isBefore(parseISO(inst.dueDate), today));
-    if (!nextInstallment) return null;
-
-    const adjudicationDate = setDate(parseISO(nextInstallment.dueDate), 15);
     
-    if (isBefore(today, adjudicationDate)) {
-      return adjudicationDate;
+    if (!nextInstallment) {
+        // If there are no future installments, there is no next adjudication.
+        // This can happen if the plan is fully paid.
+        return null;
     }
 
-    // If past the 15th, check the next month's installment
-    const nextMonthInstallmentIndex = installments.findIndex(inst => inst.number === nextInstallment.number + 1);
-    if(nextMonthInstallmentIndex > -1) {
-        const nextMonthInstallment = installments[nextMonthInstallmentIndex];
-        return setDate(parseISO(nextMonthInstallment.dueDate), 15);
+    const nextInstallmentDate = parseISO(nextInstallment.dueDate);
+    let adjudicationDate = setDate(nextInstallmentDate, 15);
+    
+    // If the 15th of the current installment's month has already passed,
+    // move to the next month's adjudication date.
+    if (isBefore(adjudicationDate, today)) {
+        const nextMonthDate = addMonths(nextInstallmentDate, 1);
+        adjudicationDate = setDate(nextMonthDate, 15);
     }
     
-    return null;
-
-  }, [installments, installmentsPaid]);
+    return adjudicationDate;
+}, [installments, installmentsPaid]);
 
 
   return (
@@ -446,9 +447,9 @@ export default function GroupDetail() {
                         <DialogContent>
                             <DialogHeader>
                                 <DialogTitle>Presentación de Garantías</DialogTitle>
-                                <DialogDescription>Sube la documentación requerida. Tienes 72hs.</DialogDescription>
+                                <DialogDescription>Sube la documentación requerida para asegurar tu capital. Tienes 72hs.</DialogDescription>
                             </DialogHeader>
-                            <div className='space-y-4'>
+                            <div className='space-y-6'>
                                 <Alert>
                                     <AlertTitle>Liquidación de Licitación</AlertTitle>
                                     <AlertDescription className='flex justify-between items-center'>
@@ -456,20 +457,42 @@ export default function GroupDetail() {
                                         <Button size="sm">Pagar Ahora</Button>
                                     </AlertDescription>
                                 </Alert>
-                                <div className="space-y-2">
-                                    <Label htmlFor="dniFront">Recibo de Sueldo / Comprobante de Ingresos</Label>
-                                    <Input id="dniFront" type="file" />
+                                
+                                <Card>
+                                  <CardContent className="p-4 space-y-4">
+                                      <h3 className='font-semibold text-center'>Opción 1: Seguro de Caución (Recomendado)</h3>
+                                      <p className="text-xs text-center text-muted-foreground">La forma más rápida y sencilla. Sin garantes ni propiedades.</p>
+                                      <Button className="w-full" onClick={handleApproveAward}>
+                                        <ShieldCheck className="mr-2 h-4 w-4" />
+                                        Contratar Seguro de Caución
+                                      </Button>
+                                  </CardContent>
+                                </Card>
+
+                                <div className="relative">
+                                  <Separator />
+                                  <span className="absolute left-1/2 -top-3 -translate-x-1/2 bg-popover px-2 text-sm text-muted-foreground">Otras Garantías</span>
                                 </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="dniBack">Garantía Propietaria / Seguro de Caución</Label>
-                                    <Input id="dniBack" type="file" />
-                                </div>
+
+                                <Card>
+                                  <CardContent className="p-4 space-y-4">
+                                      <h3 className='font-semibold text-center'>Opción 2: Subir Documentación</h3>
+                                      <div className="space-y-2">
+                                          <Label htmlFor="dniFront">Recibo de Sueldo / Comprobante de Ingresos</Label>
+                                          <Input id="dniFront" type="file" />
+                                      </div>
+                                      <div className="space-y-2">
+                                          <Label htmlFor="dniBack">Garantía Propietaria</Label>
+                                          <Input id="dniBack" type="file" />
+                                      </div>
+                                      <DialogFooter className="mt-4">
+                                        <DialogClose asChild>
+                                            <Button type="button" onClick={handleApproveAward} className="w-full">Enviar Documentación</Button>
+                                        </DialogClose>
+                                      </DialogFooter>
+                                  </CardContent>
+                                </Card>
                             </div>
-                            <DialogFooter>
-                                <DialogClose asChild>
-                                    <Button type="button" onClick={handleApproveAward}>Enviar Documentación</Button>
-                                </DialogClose>
-                            </DialogFooter>
                         </DialogContent>
                     </Dialog>
                 )}
@@ -914,3 +937,4 @@ export default function GroupDetail() {
   );
 }
 
+    
