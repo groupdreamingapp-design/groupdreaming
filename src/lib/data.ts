@@ -71,8 +71,8 @@ export const initialGroups: Group[] = [
     status: 'Activo',
     userIsMember: true,
     userAwardStatus: "Adjudicado - Pendiente Aceptación",
-    activationDate: '2024-01-01T00:00:00.000Z',
-    monthsCompleted: 7,
+    activationDate: '2025-06-01T00:00:00.000Z',
+    monthsCompleted: 0,
     acquiredInAuction: false,
     missedPayments: 0,
   },
@@ -237,6 +237,24 @@ export const initialGroups: Group[] = [
     monthsCompleted: 18,
     auctionStartDate: new Date().toISOString(),
     acquiredInAuction: false,
+  },
+  {
+    id: 'ID-SUBASTA-EJEMPLO-001',
+    name: 'Subasta de Prueba',
+    capital: 15000,
+    plazo: 60,
+    imageUrl: emprendimientoTemplate.imageUrl,
+    imageHint: emprendimientoTemplate.imageHint,
+    cuotaPromedio: calculateCuotaPromedio(15000, 60),
+    totalMembers: 120,
+    membersCount: 120,
+    status: 'Subastado',
+    userIsMember: false,
+    userAwardStatus: 'No Adjudicado',
+    activationDate: '2023-06-01T00:00:00.000Z',
+    monthsCompleted: 14,
+    auctionStartDate: new Date().toISOString(),
+    acquiredInAuction: false,
   }
 ];
 
@@ -350,18 +368,29 @@ export const generateStaticAwards = (group: Group): Award[][] => {
     const awards: Award[][] = Array.from({ length: group.plazo }, () => []);
     
     // If the user is already awarded, remove them from the main pool and place their award
-    if (group.userAwardStatus !== 'No Adjudicado') {
+    if (group.userAwardStatus !== 'No Adjudicado' && group.id === 'ID-005-20250501-AWRD') {
         const userIndex = potentialWinners.indexOf(userOrderNumber);
         if (userIndex > -1) {
             potentialWinners.splice(userIndex, 1);
         }
-        // Force the award to be in month 7 (index 6) for simulation
-        const awardMonthIndex = 6;
+        // Force the award to be in month 2 (index 1) for simulation for this specific group
+        const awardMonthIndex = 1;
         
         if (!awards[awardMonthIndex].some(a => a.orderNumber === userOrderNumber)) {
            awards[awardMonthIndex].push({ type: 'sorteo', orderNumber: userOrderNumber });
         }
+    } else if (group.userAwardStatus !== 'No Adjudicado') {
+        const userIndex = potentialWinners.indexOf(userOrderNumber);
+        if (userIndex > -1) {
+            potentialWinners.splice(userIndex, 1);
+        }
+        // For other awarded groups, place it in month 7 (index 6)
+        const awardMonthIndex = 6;
+        if (!awards[awardMonthIndex].some(a => a.orderNumber === userOrderNumber)) {
+           awards[awardMonthIndex].push({ type: 'sorteo', orderNumber: userOrderNumber });
+        }
     }
+
 
     let winnerPool = [...potentialWinners];
     let desertedLicitaciones = 0;
