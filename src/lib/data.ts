@@ -105,7 +105,7 @@ export const initialGroups: Group[] = [
     membersCount: emprendimientoTemplate.plazo * 2,
     status: 'Activo',
     userIsMember: true,
-    userAwardStatus: "No Adjudicado",
+    userAwardStatus: "Adjudicado - Pendiente Aceptación",
     activationDate: '2024-03-17T00:00:00.000Z',
     acquiredInAuction: false,
     missedPayments: 1,
@@ -387,8 +387,8 @@ export const generateStaticAwards = (group: Group): Award[][] => {
         if (userIndex > -1) {
             potentialWinners.splice(userIndex, 1);
         }
-        // For other awarded groups, place it in month 7 (index 6)
-        const awardMonthIndex = 6;
+        // For other awarded groups, place it in month 2 (index 1)
+        const awardMonthIndex = 1;
         if (!awards[awardMonthIndex].some(a => a.orderNumber === userOrderNumber)) {
            awards[awardMonthIndex].push({ type: 'sorteo', orderNumber: userOrderNumber });
         }

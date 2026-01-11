@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import type { Group, Installment, Award, UserAwardStatus } from '@/lib/types';
@@ -10,7 +11,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { ArrowLeft, Users, Clock, Users2, Calendar, Gavel, HandCoins, Ticket, Info, Trophy, FileX2, TrendingUp, Hand, Scale, CalendarCheck, Gift, Check, X, Award as AwardIcon, Sparkles, Upload, MessageCircleQuestion, Youtube, CalendarDays, LineChart, Bot, ShieldCheck, ShieldAlert } from 'lucide-react';
+import { ArrowLeft, Users, Clock, Users2, Calendar, Gavel, HandCoins, Ticket, Info, Trophy, FileX2, TrendingUp, Hand, Scale, CalendarCheck, Gift, Check, X, Award as AwardIcon, Sparkles, Upload, MessageCircleQuestion, Youtube, CalendarDays, LineChart, Bot, ShieldCheck, ShieldAlert, AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { useGroups } from '@/hooks/use-groups';
@@ -103,6 +104,7 @@ export default function GroupDetail() {
 
   const installmentsIssued = group?.monthsCompleted || 0;
   const installmentsPaid = installmentsIssued - (group?.missedPayments || 0);
+  const hasOverduePayments = (group?.missedPayments || 0) > 0;
 
   useEffect(() => {
     if (!installments.length || !installmentsPaid) {
@@ -161,25 +163,22 @@ export default function GroupDetail() {
     for (let i = 0; i < groupAwards.length; i++) {
         const monthAward = groupAwards[i].find(a => a.orderNumber === userOrderNumber);
         if (monthAward) {
-            // Check if the award is for the special 'AWRD' group and adjust month
-            if (group.id === 'ID-005-20250501-AWRD' && i === 6) {
-                 return {
-                    month: i + 1, // Month 7
-                    type: monthAward.type
-                };
+            // Special case for AWRD group to be month 7
+            if (group.id === 'ID-005-20250501-AWRD') {
+                 return { month: 7, type: monthAward.type };
             }
-            // For other groups, or if it's not the special case
-            if (group.id !== 'ID-005-20250501-AWRD') {
-                 return {
-                    month: i + 1,
-                    type: monthAward.type
-                };
+            if(group.id === 'ID-003-20240315-0001'){
+                return { month: 2, type: monthAward.type };
             }
+            return { month: i + 1, type: monthAward.type };
         }
     }
     // Specific logic for the awarded user in the example group
     if (group.id === 'ID-005-20250501-AWRD' && group.userAwardStatus !== 'No Adjudicado') {
         return { month: 7, type: 'sorteo' };
+    }
+     if (group.id === 'ID-003-20240315-0001' && group.userAwardStatus !== 'No Adjudicado') {
+        return { month: 2, type: 'sorteo' };
     }
     return undefined;
   }, [groupAwards, group, userOrderNumber]);
@@ -407,7 +406,16 @@ export default function GroupDetail() {
                  <CardDescription>Opciones disponibles para tu plan.</CardDescription>
                </CardHeader>
                <CardContent className="flex flex-wrap gap-2">
-                {group.userAwardStatus === "Adjudicado - Pendiente Aceptación" && (
+                 {hasOverduePayments && group.userAwardStatus.startsWith("Adjudicado") && (
+                   <Alert variant="destructive">
+                     <AlertCircle className="h-4 w-4" />
+                     <AlertTitle>Deuda Pendiente</AlertTitle>
+                     <AlertDescription>
+                       Tienes cuotas vencidas. Debes regularizar tu situación para poder aceptar la adjudicación y continuar con el proceso.
+                     </AlertDescription>
+                   </Alert>
+                 )}
+                {group.userAwardStatus === "Adjudicado - Pendiente Aceptación" && !hasOverduePayments && (
                     <Dialog onOpenChange={(open) => !open && (setAwardTermsAccepted(false), setHasReadAwardRules(false))}>
                         <DialogTrigger asChild>
                             <Button size="sm" variant="default" className='bg-green-600 hover:bg-green-700'>
@@ -447,7 +455,7 @@ export default function GroupDetail() {
                         </DialogContent>
                     </Dialog>
                 )}
-                 {group.userAwardStatus === "Adjudicado - Pendiente Garantías" && (
+                 {group.userAwardStatus === "Adjudicado - Pendiente Garantías" && !hasOverduePayments && (
                      <Dialog>
                         <DialogTrigger asChild>
                             <Button size="sm" variant="default">
