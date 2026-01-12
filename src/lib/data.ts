@@ -334,6 +334,11 @@ export const generateExampleInstallments = (capital: number, plazo: number): Ins
     });
 };
 
+/**
+ * Simulates the awarding process for a group.
+ * NOTE: For prototyping purposes, this uses a deterministic algorithm based on the group ID.
+ * The real implementation would use an external, auditable source like a public lottery draw.
+ */
 export const generateStaticAwards = (group: Group): Award[][] => {
     // Initialize a pseudo-random generator based on the group ID for consistency
     let seed = 0;
@@ -370,18 +375,7 @@ export const generateStaticAwards = (group: Group): Award[][] => {
     const awards: Award[][] = Array.from({ length: group.plazo }, () => []);
     
     // If the user is already awarded, remove them from the main pool and place their award
-    if (group.userAwardStatus !== 'No Adjudicado' && group.id === 'ID-005-20250501-AWRD') {
-        const userIndex = potentialWinners.indexOf(userOrderNumber);
-        if (userIndex > -1) {
-            potentialWinners.splice(userIndex, 1);
-        }
-        // Force the award to be in month 7 (index 6) for simulation for this specific group
-        const awardMonthIndex = 6;
-        
-        if (!awards[awardMonthIndex].some(a => a.orderNumber === userOrderNumber)) {
-           awards[awardMonthIndex].push({ type: 'sorteo', orderNumber: userOrderNumber });
-        }
-    } else if (group.userAwardStatus !== 'No Adjudicado') {
+    if (group.userAwardStatus !== 'No Adjudicado') {
         const userIndex = potentialWinners.indexOf(userOrderNumber);
         if (userIndex > -1) {
             potentialWinners.splice(userIndex, 1);

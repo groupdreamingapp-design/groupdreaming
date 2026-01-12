@@ -33,11 +33,11 @@ const complianceSections = [
         ]
     },
     {
-        title: "4. Seguridad de la Información y Algoritmos de Adjudicación",
+        title: "4. Seguridad de la Información y Transparencia en Adjudicaciones",
         content: [
             "La Sociedad garantiza la transparencia de sus procesos mediante:",
             "Inmutabilidad de Datos: Uso de snapshots persistidos en base de datos al momento de la activación del grupo.",
-            "Algoritmos Deterministas: El proceso de adjudicación se rige por software auditable basado en semillas (seeds) inalterables, eliminando cualquier posibilidad de manipulación manual de los ganadores."
+            "Sorteo por Lotería Pública: El sorteo mensual para la adjudicación se determina utilizando los tres últimos dígitos del primer premio del sorteo nocturno de la Lotería de la Ciudad de Buenos Aires (LOTBA S.E.) del día del acto. El número de orden ganador será aquel cuyas últimas tres cifras coincidan, o el más próximo en forma ascendente en caso de no haber coincidencia exacta."
         ]
     }
 ];
