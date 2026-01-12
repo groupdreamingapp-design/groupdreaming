@@ -55,14 +55,8 @@ export default function FinancialHealthPage() {
             const impagos = alicuotaPura * missedPaymentsThisMonth;
             totalImpagos += impagos;
             
-            let adjudicadoDelMes = 0;
-            if (cuotaNumber > 1) {
-                 if (totalLicitaciones > 0) {
-                    adjudicadoDelMes = group.capital * 2;
-                } else {
-                    adjudicadoDelMes = group.capital;
-                }
-            }
+            const adjudicadoDelMes = awardsThisMonth.length * group.capital;
+
 
             accumulated = accumulated + monthlyAlicuotaPaid + totalLicitaciones + totalAdelantos - adjudicadoDelMes;
 

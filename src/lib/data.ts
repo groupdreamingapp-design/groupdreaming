@@ -1,5 +1,4 @@
 
-
 import type { Group, User, Auction, Installment, GroupTemplate, Award } from './types';
 import { PlaceHolderImages } from './placeholder-images';
 import { format, addMonths, setDate, addDays, parseISO, lastDayOfMonth, differenceInMonths, startOfToday } from 'date-fns';
@@ -440,8 +439,12 @@ export const generateStaticAwards = (group: Group): Award[][] => {
     
     // Final month adjudication
     const lastMonthIndex = group.plazo - 1;
+    let awardedLastMonth = new Set<number>();
     winnerPool.forEach(winner => {
-        awards[lastMonthIndex].push({ type: 'sorteo-especial', orderNumber: winner });
+        if (!awardedLastMonth.has(winner)) {
+            awards[lastMonthIndex].push({ type: 'sorteo-especial', orderNumber: winner });
+            awardedLastMonth.add(winner);
+        }
     });
     
     // Add deserted licitaciones as extra sorteos especiales in the last month
