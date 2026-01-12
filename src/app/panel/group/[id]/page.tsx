@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import type { Group, Installment, Award, UserAwardStatus } from '@/lib/types';
@@ -10,7 +11,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { ArrowLeft, Users, Clock, Users2, Calendar, Gavel, HandCoins, Ticket, Info, Trophy, FileX2, TrendingUp, Hand, Scale, CalendarCheck, Gift, Check, X, Award as AwardIcon, Sparkles, Upload, MessageCircleQuestion, Youtube, CalendarDays, LineChart, Bot, ShieldCheck, ShieldAlert, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Users, Clock, Users2, Calendar, Gavel, HandCoins, Ticket, Info, Trophy, FileX2, TrendingUp, Hand, Scale, CalendarCheck, Gift, Check, X, Award as AwardIcon, Sparkles, Upload, MessageCircleQuestion, Youtube, CalendarDays, LineChart, Bot, ShieldCheck, ShieldAlert, AlertCircle, ArrowUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { useGroups } from '@/hooks/use-groups';
@@ -60,9 +61,6 @@ export default function GroupDetail() {
   const [termsAcceptedAdvance, setTermsAcceptedAdvance] = useState(false);
   
   const [cuotasToBid, setCuotasToBid] = useState<number>(0);
-  const [autoBidEnabledBid, setAutoBidEnabledBid] = useState(false);
-  const [maxCuotasBid, setMaxCuotasBid] = useState<number>(0);
-  const [autoIncrementBid, setAutoIncrementBid] = useState<number>(0);
   const [termsAcceptedBid, setTermsAcceptedBid] = useState(false);
 
   const [termsAcceptedAuction, setTermsAcceptedAuction] = useState(false);
@@ -77,9 +75,6 @@ export default function GroupDetail() {
 
   const resetBiddingDialog = () => {
     setCuotasToBid(0);
-    setAutoBidEnabledBid(false);
-    setMaxCuotasBid(0);
-    setAutoIncrementBid(0);
     setTermsAcceptedBid(false);
   };
 
@@ -256,12 +251,7 @@ export default function GroupDetail() {
   // Bidding logic
   const canBid = isPlanActive && installmentsPaid >= 2;
   const isManualBidInvalid = cuotasToBid < 1 || cuotasToBid > cuotasFuturas;
-  const isMaxCuotasBidInvalid = maxCuotasBid > 0 && (maxCuotasBid <= cuotasToBid || maxCuotasBid > cuotasFuturas);
-  const isAutoIncrementBidInvalid = autoIncrementBid < 1;
-
-  const isBidValid = autoBidEnabledBid
-    ? maxCuotasBid > 0 && !isMaxCuotasBidInvalid && !isAutoIncrementBidInvalid
-    : cuotasToBid > 0 && !isManualBidInvalid;
+  const isBidValid = cuotasToBid > 0 && !isManualBidInvalid;
 
   const calculateSavings = (cuotasCount: number) => {
     if (cuotasCount <= 0 || cuotasCount > futureInstallmentsForCalculation.length) return { totalToPay: 0, totalOriginal: 0, totalSaving: 0 };
@@ -275,7 +265,7 @@ export default function GroupDetail() {
   }
 
   const advanceSavings = calculateSavings(cuotasToAdvance);
-  const bidSavings = calculateSavings(cuotasToBid > 0 ? cuotasToBid : maxCuotasBid);
+  const bidSavings = calculateSavings(cuotasToBid);
 
 
   const formatCurrency = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD' }).format(amount);
@@ -311,17 +301,10 @@ export default function GroupDetail() {
   }
   
   const handleConfirmBid = () => {
-    if (autoBidEnabledBid) {
-        toast({
-            title: "¡Licitación automática configurada!",
-            description: `Se ofertará por ti hasta un máximo de ${maxCuotasBid} cuotas.`,
-        });
-    } else {
-        toast({
-          title: "¡Licitación registrada!",
-          description: `Tu oferta de ${cuotasToBid} cuota(s) ha sido registrada para el próximo acto.`,
-        });
-    }
+    toast({
+      title: "¡Licitación registrada!",
+      description: `Tu oferta de ${cuotasToBid} cuota(s) ha sido registrada para el próximo acto.`,
+    });
   }
 
   const awardStatusText: Record<UserAwardStatus, string> = {
@@ -595,61 +578,34 @@ export default function GroupDetail() {
                          </Button>
                        </DialogTrigger>
                        <DialogContent>
-                         <DialogHeader><DialogTitle>Licitar por Adjudicación</DialogTitle><DialogDescription>Ofrece adelantar cuotas para obtener el capital. Quien más ofrezca, gana.</DialogDescription></DialogHeader>
-                         <div className="space-y-4">
-                            <div className="flex items-center justify-between">
-                                <Label htmlFor="autobid-switch-bid" className="flex items-center gap-2">
-                                  <Bot className="h-5 w-5" />
-                                  <span>Licitación Automática</span>
-                                </Label>
-                                <Switch id="autobid-switch-bid" checked={autoBidEnabledBid} onCheckedChange={setAutoBidEnabledBid} disabled={termsAcceptedBid}/>
-                            </div>
-                            
-                            {autoBidEnabledBid ? (
-                               <div className="space-y-4 p-4 border rounded-md bg-muted/50">
-                                 <p className="text-xs text-muted-foreground">El sistema ofertará por ti hasta tu límite, usando el incremento que definas.</p>
-                                 <div className="grid grid-cols-2 gap-4">
-                                     <div className="space-y-2">
-                                       <Label htmlFor="max-cuotas-bid">Máximo de Cuotas a Licitar</Label>
-                                       <Input 
-                                           id="max-cuotas-bid" 
-                                           type="number" 
-                                           placeholder={`1 - ${cuotasFuturas}`}
-                                           value={maxCuotasBid > 0 ? maxCuotasBid : ''}
-                                           onChange={(e) => setMaxCuotasBid(Number(e.target.value))}
-                                           className={cn(maxCuotasBid > 0 && isMaxCuotasBidInvalid && "border-red-500")}
-                                           disabled={termsAcceptedBid}
-                                       />
-                                     </div>
-                                     <div className="space-y-2">
-                                       <Label htmlFor="auto-increment-bid">Incremento (en cuotas)</Label>
-                                       <Input 
-                                           id="auto-increment-bid" 
-                                           type="number" 
-                                           placeholder="Mín: 1"
-                                           value={autoIncrementBid > 0 ? autoIncrementBid : ''}
-                                           onChange={(e) => setAutoIncrementBid(Number(e.target.value))}
-                                           className={cn(autoIncrementBid > 0 && isAutoIncrementBidInvalid && "border-red-500")}
-                                           disabled={termsAcceptedBid}
-                                       />
-                                     </div>
-                                 </div>
-                               </div>
-                            ) : (
-                               <div className="grid w-full items-center gap-1.5">
-                                  <Label htmlFor="cuotas-licitar">Cuotas a licitar (adelantar)</Label>
-                                  <Input
-                                     id="cuotas-licitar"
-                                     type="number"
-                                     placeholder={`Entre 1 y ${cuotasFuturas}`}
-                                     value={cuotasToBid > 0 ? cuotasToBid : ''}
-                                     onChange={(e) => setCuotasToBid(Number(e.target.value))}
-                                     className={cn(cuotasToBid > 0 && isManualBidInvalid && "border-red-500")}
-                                     disabled={cuotasFuturas === 0 || termsAcceptedBid}
-                                  />
-                                  <p className="text-xs text-muted-foreground">Tu oferta competirá con otros miembros. Si ganas, cancelas las últimas cuotas.</p>
-                              </div>
-                            )}
+                          <DialogHeader>
+                              <DialogTitle>Licitar por Adjudicación</DialogTitle>
+                              <DialogDescription>Ofrece adelantar cuotas para ganar la adjudicación. La subasta dura 48hs y la oferta más alta gana.</DialogDescription>
+                          </DialogHeader>
+                          <div className="space-y-4">
+                              <Card className="bg-muted/50 p-4 space-y-2">
+                                  <div className="flex justify-between text-sm">
+                                      <span className="text-muted-foreground">Mejor Oferta Actual:</span>
+                                      <span className="font-bold">7 Cuotas (Orden #23)</span>
+                                  </div>
+                                  <div className="flex justify-between text-sm">
+                                      <span className="text-muted-foreground">Próxima Oferta Mínima:</span>
+                                      <span className="font-bold flex items-center gap-1"><ArrowUp className="h-4 w-4 text-green-500" />8 Cuotas</span>
+                                  </div>
+                              </Card>
+                              <div className="grid w-full items-center gap-1.5">
+                                 <Label htmlFor="cuotas-licitar">Tu Oferta (en cuotas)</Label>
+                                 <Input
+                                    id="cuotas-licitar"
+                                    type="number"
+                                    placeholder={`Mínimo 8`}
+                                    value={cuotasToBid > 0 ? cuotasToBid : ''}
+                                    onChange={(e) => setCuotasToBid(Number(e.target.value))}
+                                    className={cn(cuotasToBid > 0 && isManualBidInvalid && "border-red-500")}
+                                    disabled={cuotasFuturas === 0 || termsAcceptedBid}
+                                 />
+                                 <p className="text-xs text-muted-foreground">Tu oferta competirá con otros miembros. Si ganas, cancelas las últimas cuotas.</p>
+                             </div>
 
                              {isBidValid ? (
                                 <div className="space-y-2">

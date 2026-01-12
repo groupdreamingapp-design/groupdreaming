@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { Button } from "@/components/ui/button";
@@ -43,7 +44,7 @@ const platformRules = [
         title: "Propuestas de Licitación",
         icon: Gavel,
         points: [
-            "Puedes licitar para acelerar tu adjudicación ofreciendo adelantar cuotas.",
+            "Puedes licitar para acelerar tu adjudicación ofreciendo adelantar cuotas. La oferta mínima es de 1 cuota y la máxima es el total de cuotas futuras pendientes.",
             "La oferta se realiza con el valor de la 'alícuota pura', ahorrando en gastos administrativos.",
             "En caso de ganar, debes integrar el capital ofertado en el plazo estipulado. De lo contrario, se aplican penalidades.",
         ]
