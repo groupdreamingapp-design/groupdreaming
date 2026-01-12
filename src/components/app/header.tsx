@@ -40,16 +40,6 @@ export function Header() {
       </Sheet>
       <div className="flex-1" />
       <div className="flex items-center gap-2">
-         <div className="hidden md:flex items-center gap-1">
-            {infoLinks.map(link => (
-                <Button key={link.href} variant="ghost" asChild size="sm">
-                    <Link href={link.href}>
-                        <link.icon className="mr-2 h-4 w-4" />
-                        {link.label}
-                    </Link>
-                </Button>
-            ))}
-         </div>
         <Notifications />
         <UserNav />
       </div>

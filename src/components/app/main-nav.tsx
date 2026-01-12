@@ -54,6 +54,13 @@ export function MainNav({ isMobile = false }: MainNavProps) {
     },
   ];
 
+  const infoRoutes = [
+    { href: "/panel/benefits", label: "Beneficios", icon: Gift },
+    { href: "/panel/rules", label: "Reglamento", icon: Landmark },
+    { href: "/panel/compliance", label: "Marco Legal", icon: Landmark },
+    { href: "/panel/faq", label: "Preguntas Frecuentes", icon: HelpCircle },
+  ]
+
   const adminRoutes = [
     {
       href: "/panel/admin",
@@ -92,9 +99,23 @@ export function MainNav({ isMobile = false }: MainNavProps) {
           {route.label}
         </Link>
       ))}
+
+      <div className="px-3 py-2 mt-4">
+        <span className="text-xs font-semibold text-muted-foreground">Información</span>
+      </div>
+      {infoRoutes.map((route) => (
+        <Link
+          key={route.href}
+          href={route.href}
+          className={linkClass(route.href)}
+        >
+          <route.icon className="h-4 w-4" />
+          {route.label}
+        </Link>
+      ))}
       {isAdmin && (
         <>
-            <div className="px-3 py-2">
+            <div className="px-3 py-2 mt-4">
                 <span className="text-xs font-semibold text-muted-foreground">Admin</span>
             </div>
             {adminRoutes.map((route) => (
