@@ -32,6 +32,10 @@ function ClientFormattedDate({ dateString }: { dateString: string }) {
         }
     }, [dateString, isMounted]);
 
+    if (!isMounted) {
+        return <>...</>;
+    }
+
     return <>{formattedDate}</>;
 }
 

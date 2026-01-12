@@ -28,27 +28,22 @@ import { InstallmentReceipt } from '@/components/app/receipt';
 
 
 // Component to safely format dates on the client side, avoiding hydration mismatch.
-function ClientFormattedDate({ dateString, formatString }: { dateString: string, formatString: string }) {
-  const [formattedDate, setFormattedDate] = useState(dateString);
-  const [isMounted, setIsMounted] = useState(false);
+function ClientFormattedDate({ dateString, formatString }: { dateString: string | undefined, formatString: string }) {
+  const [formattedDate, setFormattedDate] = useState<string | null>(null);
 
   useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (isMounted) {
-        try {
-            const date = parseISO(dateString);
-            setFormattedDate(format(date, formatString, { locale: es }));
-        } catch (error) {
-            setFormattedDate(dateString);
-        }
+    if (dateString) {
+      try {
+        const date = parseISO(dateString);
+        setFormattedDate(format(date, formatString, { locale: es }));
+      } catch (error) {
+        setFormattedDate(dateString); // Fallback on error
+      }
     }
-  }, [dateString, formatString, isMounted]);
+  }, [dateString, formatString]);
 
-  if (!isMounted) {
-    return <>{dateString}</>; // Render initial server-side value
+  if (!formattedDate) {
+    return <>...</>; // Placeholder for server render and initial client render
   }
 
   return <>{formattedDate}</>;
@@ -396,11 +391,7 @@ export default function GroupDetail() {
                         <CalendarDays className="h-5 w-5 text-blue-600" />
                         <div>
                             <p className="font-semibold">Fecha del Acto</p>
-                            {nextAdjudicationInfo ? (
-                                <p><ClientFormattedDate dateString={nextAdjudicationInfo.toISOString()} formatString="EEEE, dd 'de' MMMM" /></p>
-                            ) : (
-                                <p>Calculando...</p>
-                            )}
+                            <p><ClientFormattedDate dateString={nextAdjudicationInfo?.toISOString()} formatString="EEEE, dd 'de' MMMM" /></p>
                         </div>
                     </div>
                     <div className="flex items-center gap-3">
@@ -890,7 +881,7 @@ export default function GroupDetail() {
                               {showAdjudicationInfo && awardDateString && awardsForReceipt.length > 0 && isBefore(new Date(), parseISO(awardDateString)) && (
                                   <div className="flex items-center gap-2">
                                        <CalendarCheck className="h-4 w-4" />
-                                       <span>{<ClientFormattedDate dateString={awardDateString} formatString="dd/MM/yyyy" />}</span>
+                                       <span><ClientFormattedDate dateString={awardDateString} formatString="dd/MM/yyyy" /></span>
                                   </div>
                               )}
                               {showAdjudicationInfo && awardsForReceipt.length > 0 && (
