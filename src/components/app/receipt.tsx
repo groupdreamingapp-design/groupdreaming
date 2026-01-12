@@ -59,8 +59,8 @@ export function InstallmentReceipt({ installment, group, awards }: ReceiptProps)
     
     const receiptId = `R${installment.number.toString().padStart(4, '0')}-${group.id.split('-')[1]}`;
     const paymentDate = new Date(); // Simulate payment date as today
-    const isAdvancedPayment = installment.total === installment.breakdown.alicuotaPura;
-    const previousMonthNumber = installment.number - 1;
+    const isSpecialPayment = installment.total > 0 && (installment.breakdown.gastosAdm === 0 && installment.breakdown.seguroVida === 0);
+    const isAwardedZeroPayment = installment.total === 0;
 
     return (
         <div className="bg-background text-foreground p-4 md:p-8">
@@ -105,10 +105,15 @@ export function InstallmentReceipt({ installment, group, awards }: ReceiptProps)
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {isAdvancedPayment ? (
+                            {isSpecialPayment ? (
                                 <TableRow>
                                     <TableCell>Alícuota Pura (Adelanto)</TableCell>
                                     <TableCell className="text-right">{formatCurrency(installment.breakdown.alicuotaPura)}</TableCell>
+                                </TableRow>
+                            ) : isAwardedZeroPayment ? (
+                                 <TableRow>
+                                    <TableCell>Cuota bonificada por Adjudicación</TableCell>
+                                    <TableCell className="text-right">{formatCurrency(0)}</TableCell>
                                 </TableRow>
                             ) : (
                                 <>
@@ -146,7 +151,7 @@ export function InstallmentReceipt({ installment, group, awards }: ReceiptProps)
                     <div className="flex justify-between items-center">
                         <div>
                              <h3 className="text-sm font-semibold mb-2">Forma de Pago:</h3>
-                             <p>{isAdvancedPayment ? "Adelanto de Saldo" : "Débito de Wallet GD"}</p>
+                             <p>{isSpecialPayment ? "Adelanto de Saldo" : isAwardedZeroPayment ? "Bonificado" : "Débito de Wallet GD"}</p>
                         </div>
                         <div className="text-right">
                            <h3 className="text-sm font-semibold mb-2">Vencimiento Original:</h3>
@@ -156,9 +161,9 @@ export function InstallmentReceipt({ installment, group, awards }: ReceiptProps)
                 </section>
                 
                 <section className="mt-6 pt-4 border-t">
-                    {previousMonthNumber > 0 && awards.length > 0 && !isAdvancedPayment ? (
+                    {installment.number > 1 && awards.length > 0 && !isSpecialPayment ? (
                         <div>
-                            <h3 className="text-sm font-semibold mb-3">Información de Adjudicación (Mes Anterior: {previousMonthNumber}):</h3>
+                            <h3 className="text-sm font-semibold mb-3">Información de Adjudicación (Mes Anterior: {installment.number - 1}):</h3>
                             <div className="grid grid-cols-2 gap-4 text-xs">
                                 {awards.find(a => a.type === 'sorteo') && (
                                     <div className="flex items-center gap-2">

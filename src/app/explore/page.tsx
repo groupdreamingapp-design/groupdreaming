@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState, useEffect, useMemo } from "react";
@@ -43,7 +44,7 @@ export default function ExploreGroups() {
 
   const processedGroups = useMemo(() => {
     if (groupsLoading) return [];
-    let filteredGroups: Group[] = allGroups.filter(g => g.status === 'Abierto' && !g.userIsMember);
+    let filteredGroups: Group[] = allGroups.filter(g => g.status === 'Abierto');
     
     // Sorting logic
     filteredGroups.sort((a, b) => {
@@ -61,7 +62,12 @@ export default function ExploreGroups() {
             case 'cuota_desc':
                 return b.cuotaPromedio - a.cuotaPromedio;
             case 'miembros_faltantes':
-                return (a.totalMembers - a.membersCount) - (b.totalMembers - b.membersCount);
+                const aFaltantes = a.totalMembers - a.membersCount;
+                const bFaltantes = b.totalMembers - b.membersCount;
+                if (aFaltantes !== bFaltantes) {
+                    return aFaltantes - bFaltantes;
+                }
+                return a.cuotaPromedio - b.cuotaPromedio; // Secondary sort by quota
             default:
                 return 0;
         }
@@ -70,14 +76,8 @@ export default function ExploreGroups() {
     return filteredGroups;
   }, [allGroups, groupsLoading, sortKey]);
   
-  if (userLoading) {
+  if (userLoading || (user && !groupsLoading)) {
     return <div className="flex justify-center items-center h-full">Cargando...</div>;
-  }
-  
-  if (user) {
-    // If user is logged in, they should be on the private version of this page.
-    // This also prevents a flash of the public content.
-    return <div className="flex justify-center items-center h-full">Redirigiendo...</div>;
   }
 
   const renderActionButton = (group: Group) => {

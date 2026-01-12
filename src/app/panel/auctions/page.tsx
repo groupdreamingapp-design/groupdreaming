@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState, useEffect } from "react";
@@ -22,16 +23,9 @@ import type { Group, Auction } from "@/lib/types";
 
 
 function ClientCountdown({ endDate, isUrgent }: { endDate: string, isUrgent?: boolean }) {
-  const [timeLeft, setTimeLeft] = useState<string>('Calculando...');
-  const [isMounted, setIsMounted] = useState(false);
+  const [timeLeft, setTimeLeft] = useState<string | null>(null);
 
   useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (!isMounted) return;
-
     const calculateTimeLeft = () => {
       const end = new Date(endDate);
       const now = new Date();
@@ -51,19 +45,19 @@ function ClientCountdown({ endDate, isUrgent }: { endDate: string, isUrgent?: bo
       setTimeLeft(`${totalHours.toString().padStart(2, '0')}:${minutes}:${seconds}`);
     };
 
-    calculateTimeLeft();
+    calculateTimeLeft(); // Initial calculation
     const timer = setInterval(calculateTimeLeft, 1000);
 
     return () => clearInterval(timer);
-  }, [endDate, isMounted]);
+  }, [endDate]);
 
-  if (!isMounted) {
-    return (
-      <div className="flex items-center gap-2">
-        <Clock className="h-4 w-4 text-muted-foreground" />
-        <span>Calculando...</span>
-      </div>
-    );
+  if (timeLeft === null) {
+      return (
+        <div className="flex items-center gap-2">
+            <Clock className="h-4 w-4 text-muted-foreground" />
+            <span>Calculando...</span>
+        </div>
+      )
   }
 
   return (
@@ -250,7 +244,7 @@ export default function Auctions() {
                           <div className="w-full">
                             <Button 
                               className="w-full"
-                              onClick={() => !auction.isMine && handleOpenChange(auction.id, true)} 
+                              onClick={() => handleOpenChange(auction.id, true)} 
                               disabled={auction.isMine}
                             >
                               Hacer una oferta

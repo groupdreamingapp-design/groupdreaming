@@ -1,7 +1,8 @@
 
+
 'use client';
 
-import { useState, createContext, useContext, ReactNode, useEffect, useMemo } from "react";
+import { useState, createContext, useContext, ReactNode, useEffect, useMemo, useCallback } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
@@ -31,7 +32,7 @@ type UserNavContextType = {
 const UserNavContext = createContext<UserNavContextType | undefined>(undefined);
 
 export function UserNavProvider({ children }: { children: ReactNode }) {
-  const [isVerified, setIsVerified] = useState(true);
+  const [isVerified, setIsVerifiedState] = useState(true);
   const { user } = useUser();
   const firestore = useFirestore();
 
@@ -45,9 +46,15 @@ export function UserNavProvider({ children }: { children: ReactNode }) {
   const { data: adminDoc } = useDoc(adminDocRef);
 
   const isAdmin = useMemo(() => !!adminDoc, [adminDoc]);
+  
+  const setIsVerified = useCallback((verified: boolean) => {
+    setIsVerifiedState(verified);
+  }, []);
+
+  const contextValue = useMemo(() => ({ isVerified, setIsVerified, isAdmin }), [isVerified, setIsVerified, isAdmin]);
 
   return (
-    <UserNavContext.Provider value={{ isVerified, setIsVerified, isAdmin }}>
+    <UserNavContext.Provider value={contextValue}>
       {children}
     </UserNavContext.Provider>
   );

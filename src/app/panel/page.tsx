@@ -18,16 +18,18 @@ const MAX_CAPITAL = 100000;
 
 export default function Dashboard() {
   const { groups } = useGroups();
-  const [subscribedCapital, setSubscribedCapital] = useState(0);
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
-    const capital = groups
-        .filter(g => g.userIsMember && (g.status === 'Activo' || g.status === 'Abierto'))
-        .reduce((acc, g) => acc + g.capital, 0);
-    setSubscribedCapital(capital);
+  }, []);
+
+  const subscribedCapital = useMemo(() => {
+    return groups
+      .filter(g => g.userIsMember && (g.status === 'Activo' || g.status === 'Abierto'))
+      .reduce((acc, g) => acc + g.capital, 0);
   }, [groups]);
+
 
   const formatCurrency = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(amount);
 
@@ -47,6 +49,9 @@ export default function Dashboard() {
     if (group.status === 'Abierto') {
       return (group.membersCount / group.totalMembers) * 100;
     }
+     if (group.status === 'Subastado' && group.monthsCompleted) {
+      return (group.monthsCompleted / group.plazo) * 100;
+    }
     if (group.status === 'Cerrado') {
       return 100;
     }
@@ -59,6 +64,9 @@ export default function Dashboard() {
     }
     if (group.status === 'Abierto') {
       return `${group.membersCount} de ${group.totalMembers} miembros`;
+    }
+    if (group.status === 'Subastado' && group.monthsCompleted) {
+        return `${group.monthsCompleted} de ${group.plazo} cuotas completadas`;
     }
     return `Finalizado`;
   }

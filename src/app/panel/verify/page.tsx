@@ -37,7 +37,7 @@ const verificationSchema = z.object({
   phone: z.string().min(8, "El teléfono es requerido"),
   email: z.string().email("El correo electrónico no es válido"),
 
-  // Beneficiary data (optional)
+  // Beneficiary data (conditionally optional)
   beneficiaryFullName: z.string().optional(),
   beneficiaryDni: z.string().optional(),
   beneficiaryPhone: z.string().optional(),
@@ -53,6 +53,17 @@ const verificationSchema = z.object({
   // Documents
   dniFront: z.any().refine(fileList => fileList && fileList.length > 0, 'El frente del DNI es requerido.'),
   dniBack: z.any().refine(fileList => fileList && fileList.length > 0, 'El dorso del DNI es requerido.'),
+}).superRefine((data, ctx) => {
+    const { beneficiaryFullName, beneficiaryDni, beneficiaryPhone, beneficiaryRelationship } = data;
+    const beneficiaryFields = [beneficiaryFullName, beneficiaryDni, beneficiaryPhone, beneficiaryRelationship];
+    const filledFields = beneficiaryFields.filter(field => field && field.length > 0).length;
+
+    if (filledFields > 0 && filledFields < beneficiaryFields.length) {
+        if (!beneficiaryFullName) ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Nombre y Apellido del beneficiario es requerido.", path: ['beneficiaryFullName'] });
+        if (!beneficiaryDni) ctx.addIssue({ code: z.ZodIssueCode.custom, message: "DNI del beneficiario es requerido.", path: ['beneficiaryDni'] });
+        if (!beneficiaryPhone) ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Teléfono del beneficiario es requerido.", path: ['beneficiaryPhone'] });
+        if (!beneficiaryRelationship) ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Parentesco del beneficiario es requerido.", path: ['beneficiaryRelationship'] });
+    }
 });
 
 type VerificationForm = z.infer<typeof verificationSchema>;
@@ -77,38 +88,41 @@ export default function Verification() {
     });
 
     useEffect(() => {
-      const getCameraPermission = async () => {
-          if (biometricStep !== 'capturing') return;
-          
-          try {
-              const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-              setHasCameraPermission(true);
-              if (videoRef.current) {
-                  videoRef.current.srcObject = stream;
-              }
-              // Simulate capture and success
-              setTimeout(() => {
-                  if (videoRef.current && videoRef.current.srcObject) {
-                      const tracks = (videoRef.current.srcObject as MediaStream).getTracks();
-                      tracks.forEach(track => track.stop());
-                  }
-                  setBiometricStep('success');
-              }, 3000);
-          } catch (error) {
-              console.error("Error accessing camera: ", error);
-              setHasCameraPermission(false);
-              setBiometricStep('failed');
-              toast({
-                variant: 'destructive',
-                title: 'Camera Access Denied',
-                description: 'Please enable camera permissions in your browser settings to use this feature.',
-              });
-          }
-      };
-      
-      getCameraPermission();
-      
-    }, [biometricStep, toast]);
+        let stream: MediaStream | null = null;
+        
+        const getCameraPermission = async () => {
+            if (biometricStep !== 'capturing') return;
+            
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                setHasCameraPermission(true);
+                if (videoRef.current) {
+                    videoRef.current.srcObject = stream;
+                }
+                // Simulate capture and success
+                setTimeout(() => {
+                    setBiometricStep('success');
+                }, 3000);
+            } catch (error) {
+                console.error("Error accessing camera: ", error);
+                setHasCameraPermission(false);
+                setBiometricStep('failed');
+                toast({
+                  variant: 'destructive',
+                  title: 'Camera Access Denied',
+                  description: 'Please enable camera permissions in your browser settings to use this feature.',
+                });
+            }
+        };
+        
+        getCameraPermission();
+
+        return () => {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+        }
+      }, [biometricStep, toast]);
 
     const handleStartBiometric = () => {
         setBiometricStep('capturing');
@@ -281,7 +295,7 @@ export default function Verification() {
                     <Card>
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2"><HeartHandshake className="text-primary" /> Beneficiario del Seguro de Vida</CardTitle>
-                            <CardDescription>Esta persona recibirá el capital en caso de fallecimiento del titular. (Opcional)</CardDescription>
+                            <CardDescription>Esta persona recibirá el capital en caso de fallecimiento del titular. Si completas un campo, todos son obligatorios.</CardDescription>
                         </CardHeader>
                         <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-2 md:col-span-2">
@@ -418,7 +432,7 @@ export default function Verification() {
                             
                             {biometricStep === 'capturing' && (
                                 <div className="space-y-4 text-center">
-                                    <video ref={videoRef} className="w-full aspect-video rounded-md" autoPlay playsInline muted />
+                                    <video ref={videoRef} className="w-full aspect-video rounded-md bg-muted" autoPlay playsInline muted />
                                     { !hasCameraPermission && (
                                         <Alert variant="destructive">
                                             <AlertTitle>Camera Access Required</AlertTitle>

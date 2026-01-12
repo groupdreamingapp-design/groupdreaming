@@ -10,11 +10,13 @@ import Link from "next/link";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Group, GroupStatus } from "@/lib/types";
 import { ArrowRight, Loader2 } from "lucide-react";
+import { useUser } from "@/firebase";
 
 export default function MyGroups() {
   const { groups } = useGroups();
   const [activeTab, setActiveTab] = useState<GroupStatus | "Todos">("Todos");
   const [isClient, setIsClient] = useState(false);
+  const { user } = useUser();
 
   useEffect(() => {
     setIsClient(true);
@@ -25,13 +27,12 @@ export default function MyGroups() {
   const tabs: (GroupStatus | "Todos")[] = ["Todos", "Activo", "Subastado", "Abierto", "Cerrado"];
 
   const tabCounts = useMemo(() => {
-    if (!isClient) return {}; // Don't compute counts on the server
     const counts: Record<string, number> = {};
     for (const tab of tabs) {
       counts[tab] = tab === "Todos" ? myGroups.length : myGroups.filter(g => g.status === tab).length;
     }
     return counts;
-  }, [myGroups, tabs, isClient]);
+  }, [myGroups, tabs]);
 
 
   const filteredGroups = useMemo(() => {
@@ -65,24 +66,22 @@ export default function MyGroups() {
         <CardHeader>
           <CardTitle>Todos mis planes</CardTitle>
           <CardDescription>Aquí encontrarás todos los grupos a los que te has unido.</CardDescription>
-          <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as GroupStatus | "Todos")} className="pt-4">
-            <TabsList>
-              {tabs.map(tab => {
-                const count = tabCounts[tab];
-                const isLoading = !isClient || count === undefined;
-                return (
-                  <TabsTrigger key={tab} value={tab} disabled={isLoading || count === 0}>
-                    {tab}{' '}
-                    {isLoading ? (
-                      <Loader2 className="ml-2 h-4 w-4 animate-spin" />
-                    ) : (
-                      `(${count})`
-                    )}
-                  </TabsTrigger>
-                );
-              })}
-            </TabsList>
-          </Tabs>
+          {isClient && user && (
+            <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as GroupStatus | "Todos")} className="pt-4">
+              <TabsList>
+                {tabs.map(tab => {
+                  const count = tabCounts[tab];
+                  const isLoading = !isClient || count === undefined;
+                  return (
+                    <TabsTrigger key={tab} value={tab} disabled={isLoading || count === 0}>
+                      {tab}{' '}
+                      {!isLoading && `(${count})`}
+                    </TabsTrigger>
+                  );
+                })}
+              </TabsList>
+            </Tabs>
+          )}
         </CardHeader>
 
         {myGroups.length > 0 ? (

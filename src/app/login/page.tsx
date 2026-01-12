@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState, Suspense } from 'react';
@@ -18,6 +19,7 @@ import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
 import { FirebaseError } from 'firebase/app';
 import { ArrowLeft } from 'lucide-react';
+import { handleAuthError } from '@/firebase/auth/auth-errors';
 
 const loginSchema = z.object({
   email: z.string().email('Por favor, introduce un email válido.'),
@@ -63,7 +65,7 @@ function LoginPageContent() {
       await initiateEmailSignIn(auth, data.email, data.password);
       handleSuccess();
     } catch (error: any) {
-      handleAuthError(error);
+      handleAuthError(error, toast);
     } finally {
       setIsLoading(false);
     }
@@ -76,46 +78,10 @@ function LoginPageContent() {
       await signInWithGoogle(auth);
       handleSuccess();
     } catch (error: any) {
-      handleAuthError(error);
+      handleAuthError(error, toast);
     } finally {
       setIsGoogleLoading(false);
     }
-  }
-
-  const handleAuthError = (error: any) => {
-    let title = 'Error al iniciar sesión';
-    let description = 'Ocurrió un error inesperado. Por favor, intenta de nuevo.';
-
-    if (error instanceof FirebaseError) {
-      switch (error.code) {
-        case 'auth/user-not-found':
-        case 'auth/wrong-password':
-          title = 'Credenciales incorrectas';
-          description = 'El email o la contraseña no son correctos. Por favor, verifica tus datos.';
-          break;
-        case 'auth/invalid-credential':
-           title = 'Credenciales inválidas';
-           description = 'El email o la contraseña no son correctos.';
-           break;
-        case 'auth/too-many-requests':
-          title = 'Demasiados intentos';
-          description = 'El acceso a esta cuenta ha sido temporalmente deshabilitado. Intenta más tarde.';
-          break;
-        case 'auth/popup-closed-by-user':
-          title = 'Ventana cerrada';
-          description = 'El inicio de sesión con Google fue cancelado.';
-          break;
-        default:
-          description = error.message;
-          break;
-      }
-    }
-    
-    toast({
-        variant: "destructive",
-        title: title,
-        description: description,
-    });
   }
 
   return (

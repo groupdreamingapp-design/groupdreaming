@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState, Suspense } from 'react';
@@ -18,6 +19,7 @@ import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
 import { FirebaseError } from 'firebase/app';
 import { ArrowLeft } from 'lucide-react';
+import { handleAuthError } from '@/firebase/auth/auth-errors';
 
 const registerSchema = z.object({
   email: z.string().email('Por favor, introduce un email válido.'),
@@ -63,7 +65,7 @@ function RegisterPageContent() {
       await initiateEmailSignUp(auth, data.email, data.password);
       handleSuccess();
     } catch (error: any) {
-      handleAuthError(error);
+      handleAuthError(error, toast);
     } finally {
       setIsLoading(false);
     }
@@ -76,41 +78,10 @@ function RegisterPageContent() {
       await signInWithGoogle(auth);
       handleSuccess();
     } catch (error: any) {
-      handleAuthError(error);
+      handleAuthError(error, toast);
     } finally {
       setIsGoogleLoading(false);
     }
-  }
-
-  const handleAuthError = (error: any) => {
-     let title = 'Error al registrarse';
-    let description = 'Ocurrió un error inesperado. Por favor, intenta de nuevo.';
-
-    if (error instanceof FirebaseError) {
-      switch (error.code) {
-        case 'auth/email-already-in-use':
-          title = 'Email en uso';
-          description = 'Este email ya está registrado. Intenta iniciar sesión.';
-          break;
-        case 'auth/weak-password':
-          title = 'Contraseña débil';
-          description = 'La contraseña debe tener al menos 6 caracteres.';
-          break;
-        case 'auth/popup-closed-by-user':
-          title = 'Ventana cerrada';
-          description = 'El registro con Google fue cancelado.';
-          break;
-        default:
-          description = error.message;
-          break;
-      }
-    }
-    
-    toast({
-        variant: "destructive",
-        title: title,
-        description: description,
-    });
   }
 
   return (
