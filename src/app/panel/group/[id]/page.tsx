@@ -26,6 +26,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useParams } from 'next/navigation';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { InstallmentReceipt } from '@/components/app/receipt';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 
 // Component to safely format dates on the client side, avoiding hydration mismatch.
@@ -63,6 +64,8 @@ export default function GroupDetail() {
   const [cuotasToBid, setCuotasToBid] = useState<number>(0);
   const [termsAcceptedBid, setTermsAcceptedBid] = useState(false);
 
+  const [bidType, setBidType] = useState<'comun' | 'plus'>('comun');
+
   const [termsAcceptedAuction, setTermsAcceptedAuction] = useState(false);
   const [termsAcceptedBaja, setTermsAcceptedBaja] = useState(false);
 
@@ -76,6 +79,7 @@ export default function GroupDetail() {
   const resetBiddingDialog = () => {
     setCuotasToBid(0);
     setTermsAcceptedBid(false);
+    setBidType('comun');
   };
 
   const resetAdvanceDialog = () => {
@@ -266,6 +270,7 @@ export default function GroupDetail() {
 
   const advanceSavings = calculateSavings(cuotasToAdvance);
   const bidSavings = calculateSavings(cuotasToBid);
+  const plusBidRetention = bidSavings.totalToPay * 0.05 * 1.21;
 
 
   const formatCurrency = (amount: number) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD' }).format(amount);
@@ -380,7 +385,7 @@ export default function GroupDetail() {
                     <div className="flex items-center gap-3">
                         <Clock className="h-5 w-5 text-blue-600" />
                         <div>
-                            <p className="font-semibold">Apertura y Licitación</p>
+                            <p className="font-semibold">Cierre de Licitación</p>
                             <p>El acto abre 8:30hs. La licitación se define 9:00hs.</p>
                         </div>
                     </div>
@@ -578,10 +583,36 @@ export default function GroupDetail() {
                          </Button>
                        </DialogTrigger>
                        <DialogContent>
-                          <DialogHeader>
-                              <DialogTitle>Licitar por Adjudicación</DialogTitle>
-                              <DialogDescription>Ofrece adelantar cuotas para ganar la adjudicación. La subasta dura 48hs y la oferta más alta gana.</DialogDescription>
-                          </DialogHeader>
+                            <DialogHeader>
+                                <DialogTitle>Licitar por Adjudicación</DialogTitle>
+                                <DialogDescription>Ofrece adelantar cuotas para ganar la adjudicación. La subasta dura desde el día 11 hasta el 15 a las 9am.</DialogDescription>
+                            </DialogHeader>
+                           
+                           <Tabs value={bidType} onValueChange={(value) => setBidType(value as any)} className="w-full">
+                                <TabsList className="grid w-full grid-cols-2">
+                                    <TabsTrigger value="comun">Licitación Común</TabsTrigger>
+                                    <TabsTrigger value="plus">Licitación Plus</TabsTrigger>
+                                </TabsList>
+                                <TabsContent value="comun" className="space-y-4 pt-4">
+                                     <Alert variant='default'>
+                                        <Info className="h-4 w-4" />
+                                        <AlertTitle>Con Fondos Propios</AlertTitle>
+                                        <AlertDescription>
+                                            Si ganas, deberás integrar el capital ofertado desde tu cuenta bancaria en un plazo de 72hs.
+                                        </AlertDescription>
+                                    </Alert>
+                                </TabsContent>
+                                <TabsContent value="plus" className="space-y-4 pt-4">
+                                     <Alert variant='default'>
+                                        <Sparkles className="h-4 w-4" />
+                                        <AlertTitle>Con Retención de Capital</AlertTitle>
+                                        <AlertDescription>
+                                            Si ganas, el monto ofertado se descontará del capital que recibes. Tiene un costo de retención del 5% (+IVA) sobre tu oferta.
+                                        </AlertDescription>
+                                    </Alert>
+                                </TabsContent>
+                            </Tabs>
+
                           <div className="space-y-4">
                               <Card className="bg-muted/50 p-4 space-y-2">
                                   <div className="flex justify-between text-sm">
@@ -607,19 +638,18 @@ export default function GroupDetail() {
                                  <p className="text-xs text-muted-foreground">Tu oferta competirá con otros miembros. Si ganas, cancelas las últimas cuotas.</p>
                              </div>
 
-                             {isBidValid ? (
+                             {isBidValid && (
                                 <div className="space-y-2">
                                      <Card className="bg-muted/50">
                                          <CardContent className="p-4 text-sm space-y-1">
                                              <p>Monto de la oferta (valor puro): <strong>{formatCurrency(bidSavings.totalToPay)}</strong></p>
+                                              {bidType === 'plus' && (
+                                                <p className="text-red-500 font-semibold">Retención Licitación Plus (5% + IVA): -{formatCurrency(plusBidRetention)}</p>
+                                              )}
                                              <p className="text-green-600 font-semibold">Ahorro estimado (gastos adm. y seguros): {formatCurrency(bidSavings.totalSaving)}</p>
                                          </CardContent>
                                      </Card>
                                 </div>
-                             ) : (
-                                <p className="text-xs text-muted-foreground">
-                                    {cuotasFuturas > 0 ? 'Ingresa un número de cuotas válido para ver el monto.' : 'No tienes cuotas futuras para licitar.'}
-                                </p>
                              )}
                              <div className="items-top flex space-x-2 pt-2">
                                <Switch id="terms-bid" checked={termsAcceptedBid} onCheckedChange={setTermsAcceptedBid} disabled={!isBidValid} />
@@ -936,3 +966,4 @@ export default function GroupDetail() {
     </TooltipProvider>
   );
 }
+
