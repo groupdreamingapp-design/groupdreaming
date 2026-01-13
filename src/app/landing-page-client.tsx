@@ -6,7 +6,7 @@ import { Logo } from '@/components/icons';
 import Link from 'next/link';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { ArrowRight, CheckCircle, Clock, FileText, Gift, Home, LayoutDashboard, PieChart, PiggyBank, Users, DollarSign, Megaphone, ShieldCheck, Search, Landmark } from 'lucide-react';
+import { ArrowRight, CheckCircle, Clock, FileText, Gift, Home, LayoutDashboard, PieChart, PiggyBank, Users, DollarSign, Megaphone, ShieldCheck, Search, Landmark, BookText } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { useUser } from '@/firebase';
 
@@ -24,6 +24,18 @@ const sections = [
         href: "/explore",
         icon: Search
     },
+     {
+        title: "Cómo Funciona",
+        description: "Entiende en detalle cómo nuestro sistema híbrido te ayuda a alcanzar tus metas.",
+        href: "/how-it-works",
+        icon: BookText
+    },
+    {
+        title: "Comparativas",
+        description: "Analiza las ventajas clave de Group Dreaming frente a los sistemas tradicionales.",
+        href: "/comparisons",
+        icon: FileText
+    },
     {
         title: "Programa de Beneficios",
         description: "Descubre las recompensas e incentivos que tenemos por tu fidelidad y compromiso.",
@@ -38,16 +50,10 @@ const sections = [
     },
     {
         title: "Transparencia",
-        description: "Entiende en detalle cómo funciona el sistema y a dónde va cada parte de tu cuota.",
+        description: "Entiende en detalle el destino de tu cuota y el ciclo de vida de cada grupo.",
         href: "/transparency",
         icon: PieChart
     },
-    {
-        title: "Comparativas",
-        description: "Analiza las ventajas clave de Group Dreaming frente a los sistemas tradicionales.",
-        href: "/comparisons",
-        icon: FileText
-    }
 ];
 
 export default function LandingPageClient() {

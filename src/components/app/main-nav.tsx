@@ -4,7 +4,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
-import { Gavel, LayoutDashboard, Search, Users, PieChart, Shield, HelpCircle, Gift, Landmark, Bell, Waves, TestTube2 } from "lucide-react"
+import { Gavel, LayoutDashboard, Search, Users, PieChart, Shield, HelpCircle, Gift, Landmark, Bell, Waves, TestTube2, BookText } from "lucide-react"
 import { useUserNav } from "./user-nav";
 
 
@@ -55,6 +55,7 @@ export function MainNav({ isMobile = false }: MainNavProps) {
   ];
 
   const infoRoutes = [
+    { href: "/panel/how-it-works", label: "Cómo Funciona", icon: BookText },
     { href: "/panel/benefits", label: "Beneficios", icon: Gift },
     { href: "/panel/rules", label: "Reglamento", icon: Landmark },
     { href: "/panel/compliance", label: "Marco Legal", icon: Landmark },
