@@ -8,6 +8,7 @@ import { GroupsContext } from '@/hooks/use-groups';
 import { useToast } from '@/hooks/use-toast';
 import { groupTemplates } from '@/lib/group-templates';
 import { format, differenceInMonths, parseISO, addHours, isBefore } from 'date-fns';
+import { useUser } from '@/firebase';
 
 let groupSequence: Record<string, number> = {};
 
@@ -44,18 +45,23 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [advancedInstallments, setAdvancedInstallments] = useState<Record<string, number>>({});
   const { toast } = useToast();
-  
+  const { user } = useUser();
+
   useEffect(() => {
-    // This effect runs only on the client-side after hydration
+    // This effect runs only on the client-side after hydration.
+    // It now also depends on the user's UID. When the user changes, this will re-run.
     const today = new Date();
-    const updatedGroups = initialGroups.map(group => {
+    
+    // Create a fresh deep copy of the initialGroups to avoid mutation across sessions
+    const freshInitialGroups = JSON.parse(JSON.stringify(initialGroups));
+
+    const updatedGroups = freshInitialGroups.map((group: Group) => {
       if (group.status === 'Activo' && group.activationDate) {
         const activationDate = parseISO(group.activationDate);
         let monthsPassed = differenceInMonths(today, activationDate);
         
         const installments = generateInstallments(group.capital, group.plazo, group.activationDate);
         
-        // This is the number of installments that should have been paid by now
         const paidInstallments = monthsPassed - (group.missedPayments || 0);
 
         const overdueInstallments = installments.filter(inst => {
@@ -63,11 +69,17 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
             return isBefore(dueDate, today) && inst.number > paidInstallments;
         });
 
-        if (overdueInstallments.length >= 2) {
+        // Forced auction logic based on non-payment for more than 72 hours on the second overdue installment
+        if (overdueInstallments.length >= 2 && !group.acquiredInAuction) {
             const secondOverdueDate = parseISO(overdueInstallments[1].dueDate);
             const seventyTwoHoursAgo = addHours(today, -72);
-            if (isBefore(secondOverdueDate, seventyTwoHoursAgo) && !group.acquiredInAuction) {
-                return { ...group, status: 'Subastado' as GroupStatus, auctionStartDate: new Date().toISOString(), monthsCompleted: monthsPassed };
+            if (isBefore(secondOverdueDate, seventyTwoHoursAgo)) {
+                 return { 
+                    ...group, 
+                    status: 'Subastado' as GroupStatus, 
+                    auctionStartDate: new Date().toISOString(), 
+                    monthsCompleted: monthsPassed 
+                };
             }
         }
         
@@ -76,8 +88,9 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
       return group;
     });
     setGroups(updatedGroups);
+    setAdvancedInstallments({}); // Reset advanced installments on user change
     setLoading(false);
-  }, []); // Empty dependency array ensures this runs only once on mount
+  }, [user?.uid]); // Dependency on user.uid ensures state is reset on user change.
 
   const joinGroup = useCallback((groupId: string) => {
     let joinedGroup: Group | null = null;
@@ -111,7 +124,6 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
         return newGroups;
     });
 
-    // Use a timeout to ensure the toast is called after the render cycle
     setTimeout(() => {
         if (joinedGroup) {
             if (newGroupWasCreated) {
