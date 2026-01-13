@@ -6,15 +6,6 @@ import { format, addMonths, setDate, addDays, parseISO, lastDayOfMonth, differen
 import { es } from 'date-fns/locale';
 import { groupTemplates } from './group-templates';
 
-export const user: User = {
-  id: 'user-1',
-  name: 'Juan Perez',
-  email: 'juan.perez@example.com',
-  avatarUrl: PlaceHolderImages.find(img => img.id === 'user-avatar-1')?.imageUrl || '',
-  dni: '30.123.456',
-  cuit: '20-30123456-7',
-};
-
 const IVA = 1.21;
 
 export const calculateCuotaPromedio = (capital: number, plazo: number): number => {

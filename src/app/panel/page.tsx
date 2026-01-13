@@ -1,8 +1,9 @@
 
+
 'use client';
 
 import { useMemo, useState, useEffect } from "react";
-import { user } from "@/lib/data"
+import { useUser } from "@/firebase";
 import { useGroups } from "@/hooks/use-groups";
 import { Repeat, Wallet, PieChart, Info, Loader2 } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -17,6 +18,7 @@ import type { Group } from "@/lib/types";
 const MAX_CAPITAL = 100000;
 
 export default function Dashboard() {
+  const { user } = useUser();
   const { groups } = useGroups();
   const [isClient, setIsClient] = useState(false);
 
@@ -83,7 +85,7 @@ export default function Dashboard() {
 
   return (
     <>
-      <h1 className="text-3xl font-bold font-headline">Hola, {user.name.split(' ')[0]}!</h1>
+      <h1 className="text-3xl font-bold font-headline">Hola, {user?.displayName?.split(' ')[0] || 'Usuario'}!</h1>
       
        <div className="grid gap-4 md:grid-cols-2">
          <Card>

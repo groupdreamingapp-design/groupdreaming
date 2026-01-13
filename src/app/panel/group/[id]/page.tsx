@@ -15,7 +15,7 @@ import { ArrowLeft, Users, Clock, Users2, Calendar, Gavel, HandCoins, Ticket, In
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { useGroups } from '@/hooks/use-groups';
-import { generateInstallments, generateExampleInstallments, user as mockUser, generateStaticAwards } from '@/lib/data';
+import { generateInstallments, generateExampleInstallments, generateStaticAwards } from '@/lib/data';
 import { useMemo, useState, useEffect } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from '@/components/ui/separator';
@@ -32,9 +32,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 // Component to safely format dates on the client side, avoiding hydration mismatch.
 function ClientFormattedDate({ dateString, formatString }: { dateString: string | undefined, formatString: string }) {
   const [formattedDate, setFormattedDate] = useState<string | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    if (dateString) {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (isMounted && dateString) {
       try {
         const date = parseISO(dateString);
         setFormattedDate(format(date, formatString, { locale: es }));
@@ -42,9 +47,9 @@ function ClientFormattedDate({ dateString, formatString }: { dateString: string 
         setFormattedDate(dateString); // Fallback on error
       }
     }
-  }, [dateString, formatString]);
+  }, [dateString, formatString, isMounted]);
 
-  if (!formattedDate) {
+  if (!isMounted || !formattedDate) {
     return <>...</>; // Placeholder for server render and initial client render
   }
 
